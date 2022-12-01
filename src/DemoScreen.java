@@ -112,7 +112,7 @@ public class DemoScreen extends JFrame {
 			}
 		});
 		btnNewButton_2.setAlignmentX(Component.CENTER_ALIGNMENT);
-		btnNewButton_2.setBounds(290, 209, 112, 21);
+		btnNewButton_2.setBounds(87, 206, 112, 21);
 		desktopPane.add(btnNewButton_2);
 	}
 }
