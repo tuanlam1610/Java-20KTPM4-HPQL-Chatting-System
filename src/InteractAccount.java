@@ -1,5 +1,3 @@
-package JMenu;
-
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
