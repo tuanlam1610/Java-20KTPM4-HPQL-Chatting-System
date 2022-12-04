@@ -84,5 +84,7 @@ public class GroupDetails extends JFrame {
 		table_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		table_1.setEnabled(false);
 		scrollPane_1.setViewportView(table_1);
+		table.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
+		table_1.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
 	}
 }

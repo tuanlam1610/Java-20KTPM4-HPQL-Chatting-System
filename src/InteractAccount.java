@@ -136,6 +136,7 @@ public class InteractAccount extends JFrame {
 		table.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		table.setEnabled(false);
 		table.setDefaultEditor(Object.class, null);
+		table.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
 		scrollPane.setViewportView(table);
 		
 		JLabel lblDanhSchBn = new JLabel("Danh sách bạn bè");

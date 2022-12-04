@@ -28,7 +28,7 @@ AdminMainScreen(){
             
     };
     // Column Names
-    String[] columnNames = { "Username", "Họ tên", "Địa chỉ", "Ngày sinh", "Giới tính", "email" };
+    String[] columnNames = { "Username", "Họ tên", "Địa chỉ", "Ngày sinh", "Giới tính", "Email" };
     JPanel p1=new JPanel();  
     p1.setBackground(new Color(255, 255, 255)); 
     tp.add("Danh sách người dùng",p1);
@@ -51,6 +51,7 @@ AdminMainScreen(){
     table.setCellSelectionEnabled(false);
     table.setDefaultEditor(Object.class, null);
     table.setRowSelectionAllowed(true);
+    table.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
     JScrollPane sp = new JScrollPane();
     sp.setFont(new Font("Tahoma", Font.PLAIN, 15));
     sp.setLocation(0, 127);
@@ -99,6 +100,7 @@ AdminMainScreen(){
     table2.setFont(new Font("Tahoma", Font.PLAIN, 16));
     table2.setEnabled(false);
     table2.setDefaultEditor(Object.class, null);
+    table2.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
     JScrollPane sp2 = new JScrollPane();
     sp2.setLocation(0, 0);
     sp2.setSize(1061, 649);
@@ -119,6 +121,7 @@ AdminMainScreen(){
     String[] columnNames3 = { "Tên nhóm", "Thời gian tạo", "Admin" };
     table3 = new JTable(data3, columnNames3);
     table3.setFont(new Font("Tahoma", Font.PLAIN, 16));
+    table3.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
     table3.addMouseListener(new MouseAdapter() {
     	@Override
     	public void mouseClicked(MouseEvent e) {
