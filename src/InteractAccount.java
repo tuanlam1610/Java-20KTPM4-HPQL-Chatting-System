@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
 
 public class InteractAccount extends JFrame {
 
@@ -40,7 +41,7 @@ public class InteractAccount extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public InteractAccount(String username, String Fullname, String Address, String DOB, String Email) {
+	public InteractAccount(String username, String Fullname, String Address, String DOB, String Gender, String Email) {
 		setResizable(false);
 		setTitle("Interact account");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -52,63 +53,75 @@ public class InteractAccount extends JFrame {
 		contentPane.setLayout(null);
 		
 		JLabel lblUsername = new JLabel("Username:");
+		lblUsername.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblUsername.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblUsername.setBounds(21, 25, 63, 15);
+		lblUsername.setBounds(20, 25, 84, 15);
 		contentPane.add(lblUsername);
 		
 		JLabel lblUsername_1 = new JLabel("Username");
+		lblUsername_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblUsername_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblUsername_1.setBounds(94, 25, 63, 15);
+		lblUsername_1.setBounds(114, 25, 200, 15);
 		contentPane.add(lblUsername_1);
 		
 		JLabel lblFullname = new JLabel("Họ tên:");
+		lblFullname.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblFullname.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblFullname.setBounds(21, 50, 63, 15);
+		lblFullname.setBounds(41, 49, 63, 15);
 		contentPane.add(lblFullname);
 		
 		textFieldFullname = new JTextField();
-		textFieldFullname.setBounds(94, 48, 150, 19);
+		textFieldFullname.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		textFieldFullname.setBounds(114, 47, 200, 20);
 		contentPane.add(textFieldFullname);
 		textFieldFullname.setColumns(10);
 		
 		JLabel lblAddress = new JLabel("Địa chỉ:");
+		lblAddress.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblAddress.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblAddress.setBounds(21, 77, 63, 15);
+		lblAddress.setBounds(41, 76, 63, 15);
 		contentPane.add(lblAddress);
 		
 		textFieldAddress = new JTextField();
+		textFieldAddress.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		textFieldAddress.setColumns(10);
-		textFieldAddress.setBounds(94, 75, 150, 19);
+		textFieldAddress.setBounds(114, 74, 200, 20);
 		contentPane.add(textFieldAddress);
 		
 		JLabel lblDob = new JLabel("Ngày sinh:");
+		lblDob.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblDob.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblDob.setBounds(21, 104, 63, 15);
+		lblDob.setBounds(20, 103, 84, 15);
 		contentPane.add(lblDob);
 		
 		textFieldDOB = new JTextField();
+		textFieldDOB.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		textFieldDOB.setColumns(10);
-		textFieldDOB.setBounds(94, 102, 150, 19);
+		textFieldDOB.setBounds(114, 101, 200, 20);
 		contentPane.add(textFieldDOB);
 		
 		JLabel lblGender = new JLabel("Giới tính:");
+		lblGender.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblGender.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblGender.setBounds(21, 131, 63, 15);
+		lblGender.setBounds(20, 130, 84, 15);
 		contentPane.add(lblGender);
 		
 		textFieldGender = new JTextField();
+		textFieldGender.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		textFieldGender.setColumns(10);
-		textFieldGender.setBounds(94, 129, 150, 19);
+		textFieldGender.setBounds(114, 128, 200, 20);
 		contentPane.add(textFieldGender);
 		
 		JLabel lblEmail = new JLabel("Email:");
+		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblEmail.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblEmail.setBounds(21, 158, 63, 15);
+		lblEmail.setBounds(41, 157, 63, 15);
 		contentPane.add(lblEmail);
 		
 		textFieldEmail = new JTextField();
+		textFieldEmail.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		textFieldEmail.setColumns(10);
-		textFieldEmail.setBounds(94, 156, 150, 19);
+		textFieldEmail.setBounds(114, 155, 200, 20);
 		contentPane.add(textFieldEmail);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -120,16 +133,20 @@ public class InteractAccount extends JFrame {
 	            
 	    };
 		table = new JTable(data, columnNames);
+		table.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		table.setEnabled(false);
 		table.setDefaultEditor(Object.class, null);
+		table.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
 		scrollPane.setViewportView(table);
 		
 		JLabel lblDanhSchBn = new JLabel("Danh sách bạn bè");
+		lblDanhSchBn.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblDanhSchBn.setHorizontalAlignment(SwingConstants.CENTER);
 		lblDanhSchBn.setBounds(143, 185, 150, 15);
 		contentPane.add(lblDanhSchBn);
 		
 		JButton btnUpdate = new JButton("Cập nhật");
+		btnUpdate.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Update succesfully!");
@@ -140,6 +157,7 @@ public class InteractAccount extends JFrame {
 		contentPane.add(btnUpdate);
 		
 		JButton btnDelete = new JButton("Xóa");
+		btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Delete succesfully!");
@@ -150,6 +168,7 @@ public class InteractAccount extends JFrame {
 		contentPane.add(btnDelete);
 		
 		JButton btnBlock = new JButton("Chặn");
+		btnBlock.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnBlock.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Block succesfully!");
@@ -160,6 +179,7 @@ public class InteractAccount extends JFrame {
 		contentPane.add(btnBlock);
 		
 		JButton btnResetPassword = new JButton("Khởi tạo lại mật khẩu");
+		btnResetPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnResetPassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Reset password succesfully!\nNew password was send to email for user.");
@@ -168,5 +188,12 @@ public class InteractAccount extends JFrame {
 		});
 		btnResetPassword.setBounds(190, 351, 200, 21);
 		contentPane.add(btnResetPassword);
+		textFieldFullname.setText(Fullname);
+		textFieldAddress.setText(Address);
+		textFieldDOB.setText(DOB);
+		textFieldGender.setText(Gender);
+		textFieldEmail.setText(Email);
+		lblUsername_1.setText(username);
+		
 	}
 }
