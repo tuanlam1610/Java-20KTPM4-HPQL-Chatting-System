@@ -7,6 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
+import java.awt.Font;
 
 public class GroupDetails extends JFrame {
 
@@ -43,6 +44,7 @@ public class GroupDetails extends JFrame {
 		contentPane.setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("Danh sách Admin");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setBounds(143, 25, 150, 13);
 		contentPane.add(lblNewLabel);
@@ -56,12 +58,14 @@ public class GroupDetails extends JFrame {
 		};
 		String[] colNames = {"username", "Họ tên"};
 		table = new JTable(dataAdmin, colNames);
+		table.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		table.setEnabled(false);
 		scrollPane.setViewportView(table);
 		
 		JLabel lblDanhSchThnh = new JLabel("Danh sách thành viên");
+		lblDanhSchThnh.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblDanhSchThnh.setHorizontalAlignment(SwingConstants.CENTER);
-		lblDanhSchThnh.setBounds(143, 219, 150, 13);
+		lblDanhSchThnh.setBounds(143, 219, 203, 13);
 		contentPane.add(lblDanhSchThnh);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
@@ -77,6 +81,7 @@ public class GroupDetails extends JFrame {
 				{"lam123", "Ha Tuan Lam"},
 		};
 		table_1 = new JTable(dataMember, colNames);
+		table_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		table_1.setEnabled(false);
 		scrollPane_1.setViewportView(table_1);
 	}
