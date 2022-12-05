@@ -31,8 +31,10 @@ import javax.swing.Box;
 import javax.swing.JEditorPane;
 import java.awt.Color;
 import java.awt.Window.Type;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-public class DemoScreen extends JFrame {
+public class MainScreen extends JFrame {
 	private JTextField textField;
 	private JTextField textField_1;
 	private JTextField usernameInput;
@@ -45,7 +47,7 @@ public class DemoScreen extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					DemoScreen mainfrm = new DemoScreen();
+					MainScreen mainfrm = new MainScreen();
 					mainfrm.setLocationRelativeTo(null);
 					mainfrm.setVisible(true);
 				} catch (Exception e) {
@@ -58,7 +60,7 @@ public class DemoScreen extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public DemoScreen() {
+	public MainScreen() {
 		// Set Up Top Level Frame
 		setResizable(false);
 		setTitle("HPQL Chatting System");
@@ -130,6 +132,21 @@ public class DemoScreen extends JFrame {
 		btnPanel.setLayout(null);
 		
 		JButton loginBtn = new JButton("Đăng Nhập");
+		loginBtn.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(usernameInput.getText().equals("user")) {
+					MainScreen_User user = new MainScreen_User();
+					user.setLocationRelativeTo(null);
+					user.setVisible(true);
+					dispose();
+				}
+				else if (usernameInput.getText() == "admin") {
+					 new AdminMainScreen();
+					dispose();
+				}
+			}
+		});
 		loginBtn.setBounds(0, 0, 112, 42);
 		btnPanel.add(loginBtn);
 		loginBtn.setForeground(new Color(255, 255, 255));
