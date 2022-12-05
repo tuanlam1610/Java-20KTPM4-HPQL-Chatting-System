@@ -8,16 +8,18 @@ import java.awt.event.MouseEvent;
 import java.awt.Font;
 
 public class AdminMainScreen extends JFrame {
-	JFrame f;
+	private JPanel contentPane;
 	private JTable table;
 	private JTextField textField;
+	private JTable table2;
 	private JTable table3;
+	
 
 	public AdminMainScreen() {
-		f = new JFrame();
-		f.setTitle("Admin Main Screen");
-		f.getContentPane().setBackground(new Color(255, 255, 255));
-		f.setResizable(false);
+		
+		setTitle("Admin Main Screen");
+		getContentPane().setBackground(new Color(255, 255, 255));
+		setResizable(false);
 		JPanel p2 = new JPanel();
 		p2.setBackground(new Color(255, 255, 255));
 		JPanel p3 = new JPanel();
@@ -95,7 +97,7 @@ public class AdminMainScreen extends JFrame {
 		String[][] data2 = { { "2022-12-03 12:03:30", "lam123", "Tuấn Lâm" },
 				{ "2022-12-02 16:14:30", "quang123", "Ngọc Quang" }, { "2022-12-02 10:30:30", "huy123", "Gia Huy" }, };
 		String[] columnNames2 = { "Thời gian đăng nhập", "Username", "Họ tên" };
-		JTable table2 = new JTable(data2, columnNames2);
+		table2 = new JTable(data2, columnNames2);
 		table2.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		table2.setEnabled(false);
 		table2.setDefaultEditor(Object.class, null);
@@ -141,10 +143,10 @@ public class AdminMainScreen extends JFrame {
 		});
 		btnSortByDate.setBounds(608, 15, 247, 21);
 		p3.add(btnSortByDate);
-		f.getContentPane().add(tp);
-		f.setSize(1080, 720);
-		f.getContentPane().setLayout(null);
-		f.setVisible(true);
+		getContentPane().add(tp);
+		setSize(1080, 720);
+		getContentPane().setLayout(null);
+		setVisible(true);
 	}
 
 	public static void main(String[] args) {
