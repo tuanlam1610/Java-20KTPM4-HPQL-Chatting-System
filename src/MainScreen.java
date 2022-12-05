@@ -155,6 +155,15 @@ public class MainScreen extends JFrame {
 		loginBtn.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
 		JButton registerBtn = new JButton("Đăng Ký");
+		registerBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				RegisterScreen new_register = new RegisterScreen();
+				new_register.setLocationRelativeTo(null);
+				new_register.setVisible(true);
+				dispose();
+				
+			}
+		});
 		registerBtn.setBounds(129, 0, 112, 42);
 		btnPanel.add(registerBtn);
 		registerBtn.setBorder(new LineBorder(new Color(102, 153, 255), 2));
