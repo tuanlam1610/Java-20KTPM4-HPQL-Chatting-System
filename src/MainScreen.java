@@ -33,6 +33,7 @@ import java.awt.Color;
 import java.awt.Window.Type;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Cursor;
 
 public class MainScreen extends JFrame {
 	private JTextField textField;
@@ -132,6 +133,7 @@ public class MainScreen extends JFrame {
 		btnPanel.setLayout(null);
 		
 		JButton loginBtn = new JButton("Đăng Nhập");
+		loginBtn.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		loginBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -141,8 +143,10 @@ public class MainScreen extends JFrame {
 					user.setVisible(true);
 					dispose();
 				}
-				else if (usernameInput.getText() == "admin") {
-					 new AdminMainScreen();
+				else if (usernameInput.getText().equals("admin")) {
+					AdminMainScreen admin = new AdminMainScreen();
+					admin.setLocationRelativeTo(null);
+					admin.setVisible(true);
 					dispose();
 				}
 			}
@@ -164,6 +168,7 @@ public class MainScreen extends JFrame {
 				
 			}
 		});
+		registerBtn.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		registerBtn.setBounds(129, 0, 112, 42);
 		btnPanel.add(registerBtn);
 		registerBtn.setBorder(new LineBorder(new Color(102, 153, 255), 2));

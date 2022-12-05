@@ -1,6 +1,7 @@
 import javax.swing.*;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -16,7 +17,7 @@ public class AdminMainScreen extends JFrame {
 	
 
 	public AdminMainScreen() {
-		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Admin Main Screen");
 		getContentPane().setBackground(new Color(255, 255, 255));
 		setResizable(false);

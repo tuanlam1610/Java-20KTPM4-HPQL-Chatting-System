@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 
 import java.awt.GridBagLayout;
 import java.awt.CardLayout;
-
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.swing.BoxLayout;
@@ -71,6 +70,7 @@ public class RegisterScreen extends JFrame {
 	 * Create the frame.
 	 */
 	public RegisterScreen() {
+		setTitle("HPQL Chatting System");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 720, 480);
@@ -93,9 +93,10 @@ public class RegisterScreen extends JFrame {
 		Panel.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_3 = new JLabel("Tên đăng nhập:");
+		lblNewLabel_3.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblNewLabel_3.setForeground(new Color(102, 153, 255));
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel_3.setBounds(70, 88, 141, 28);
+		lblNewLabel_3.setBounds(39, 88, 172, 28);
 		Panel.add(lblNewLabel_3);
 		
 		txtUser = new JTextField();
@@ -105,9 +106,10 @@ public class RegisterScreen extends JFrame {
 		Panel.add(txtUser);
 		
 		JLabel lblNewLabel_2_1 = new JLabel("Email:");
+		lblNewLabel_2_1.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblNewLabel_2_1.setForeground(new Color(102, 153, 255));
 		lblNewLabel_2_1.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel_2_1.setBounds(70, 125, 141, 28);
+		lblNewLabel_2_1.setBounds(39, 125, 172, 28);
 		Panel.add(lblNewLabel_2_1);
 		
 		txtMail = new JTextField();
@@ -117,9 +119,10 @@ public class RegisterScreen extends JFrame {
 		Panel.add(txtMail);
 		
 		JLabel lblNewLabel = new JLabel("Mật khẩu:");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblNewLabel.setForeground(new Color(102, 153, 255));
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel.setBounds(70, 160, 141, 28);
+		lblNewLabel.setBounds(39, 160, 172, 28);
 		Panel.add(lblNewLabel);
 		
 		txtPass = new JTextField();
@@ -129,9 +132,10 @@ public class RegisterScreen extends JFrame {
 		Panel.add(txtPass);
 		
 		JLabel lblNewLabel_2 = new JLabel("Xác nhận mật khẩu:");
+		lblNewLabel_2.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblNewLabel_2.setForeground(new Color(102, 153, 255));
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel_2.setBounds(70, 197, 141, 28);
+		lblNewLabel_2.setBounds(39, 197, 172, 28);
 		Panel.add(lblNewLabel_2);
 		
 		txtRePass = new JTextField();
@@ -158,7 +162,8 @@ public class RegisterScreen extends JFrame {
 		Panel.add(btnNewButton_2_1);
 		
 		JButton btnRegister = new JButton("Đăng Ký");
-		btnRegister.setForeground(new Color(102, 153, 255));
+		btnRegister.setBackground(new Color(102, 153, 255));
+		btnRegister.setForeground(new Color(255, 255, 255));
 		btnRegister.setBorder(new LineBorder(new Color(102, 153, 255), 2));
 		btnRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -206,7 +211,7 @@ public class RegisterScreen extends JFrame {
 			}
 		});
 		btnRegister.setFont(new Font("Tahoma", Font.BOLD, 16));
-		btnRegister.setBounds(165, 262, 125, 51);
+		btnRegister.setBounds(171, 262, 112, 42);
 		Panel.add(btnRegister);
 
 
