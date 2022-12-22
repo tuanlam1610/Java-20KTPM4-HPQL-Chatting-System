@@ -2,10 +2,16 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
+
+import javax.swing.JOptionPane;
 
 public class Server {
 	private int port;
+	private Connection conn;
 	//private Set<String> userNames = new HashSet<>();
 	private HashMap<ThreadServer, String> userThreads = new HashMap<ThreadServer, String>();
 
@@ -23,14 +29,23 @@ public class Server {
 
 	public void execute() {
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
-
+			try {
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost/chattingsystem","root","V1p3v0N7");
+				JOptionPane.showMessageDialog(null, "Connected to database successfully...");
+			}catch (SQLException se) { // Handle errors for JDBC
+				se.printStackTrace();
+				
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			System.out.println("Chat Server is listening on port " + port);
 
 			while (true) {
 				Socket socket = serverSocket.accept();
 				System.out.println("New user connected");
 
-				ThreadServer newUser = new ThreadServer(socket, this);
+				ThreadServer newUser = new ThreadServer(socket, this, conn);
 				newUser.start();
 			}
 

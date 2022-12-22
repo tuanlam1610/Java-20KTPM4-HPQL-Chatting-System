@@ -33,6 +33,15 @@ import java.awt.Color;
 import java.awt.Window.Type;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.awt.Cursor;
 
 public class MainScreen extends JFrame {
@@ -40,6 +49,9 @@ public class MainScreen extends JFrame {
 	private JTextField textField_1;
 	private JTextField usernameInput;
 	private JPasswordField passInput;
+	private int port = 0;
+	private Socket clientSocket;
+	private PrintWriter pw;
 
 	/**
 	 * Launch the application.
@@ -62,6 +74,23 @@ public class MainScreen extends JFrame {
 	 * Create the frame.
 	 */
 	public MainScreen() {
+		this.port = 1234;
+		clientSocket = null;
+		// Create a client socket
+		try {
+			clientSocket = new Socket(InetAddress.getLocalHost(), port);
+			OutputStream output = clientSocket.getOutputStream();
+			pw = new PrintWriter(output, true);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// Get Client Name
+		System.out.println("Client socket is created " + clientSocket);
 		// Set Up Top Level Frame
 		setResizable(false);
 		setTitle("HPQL Chatting System");
@@ -137,18 +166,53 @@ public class MainScreen extends JFrame {
 		loginBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(usernameInput.getText().equals("user")) {
-					MainScreen_User user = new MainScreen_User();
-					user.setLocationRelativeTo(null);
-					user.setVisible(true);
-					dispose();
+				pw.println("login-" + usernameInput.getText() + "-" + passInput.getText());
+				BufferedReader reader;
+				InputStream input;
+				try {
+					input = clientSocket.getInputStream();
+					reader = new BufferedReader(new InputStreamReader(input));
+					String msg = reader.readLine();
+					String[] data = msg.split("-");
+					if (data[0].equals("logined")) {
+						if (data[1].equals("1")) {
+							JOptionPane.showMessageDialog(null,"Login successfully!");
+							AdminMainScreen admin = new AdminMainScreen();
+							admin.setLocationRelativeTo(null);
+							admin.setVisible(true);
+							dispose();
+						}
+						else {
+							JOptionPane.showMessageDialog(null,"Login successfully!");
+							MainScreen_User user = new MainScreen_User();
+							user.setLocationRelativeTo(null);
+							user.setVisible(true);
+							dispose();
+						}
+					}
+					else {
+						usernameInput.setText(null);
+						passInput.setText(null);
+						JOptionPane.showMessageDialog(null,"Login fail!");
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-				else if (usernameInput.getText().equals("admin")) {
-					AdminMainScreen admin = new AdminMainScreen();
-					admin.setLocationRelativeTo(null);
-					admin.setVisible(true);
-					dispose();
-				}
+				
+
+//				if(usernameInput.getText().equals("user")) {
+//					MainScreen_User user = new MainScreen_User();
+//					user.setLocationRelativeTo(null);
+//					user.setVisible(true);
+//					dispose();
+//				}
+//				else if (usernameInput.getText().equals("admin")) {
+//					AdminMainScreen admin = new AdminMainScreen();
+//					admin.setLocationRelativeTo(null);
+//					admin.setVisible(true);
+//					dispose();
+//				}
 			}
 		});
 		loginBtn.setBounds(0, 0, 112, 42);
@@ -160,28 +224,19 @@ public class MainScreen extends JFrame {
 		
 		JButton registerBtn = new JButton("Đăng Ký");
 		registerBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				RegisterScreen new_register = new RegisterScreen();
-				new_register.setLocationRelativeTo(null);
-				new_register.setVisible(true);
-				dispose();
-				
-			}
-		});
-		registerBtn.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		registerBtn.setBounds(129, 0, 112, 42);
-		btnPanel.add(registerBtn);
-		registerBtn.setBorder(new LineBorder(new Color(102, 153, 255), 2));
-		registerBtn.setForeground(new Color(102, 153, 255));
-		registerBtn.setBackground(new Color(255, 255, 255));
-		registerBtn.setFont(new Font("Tahoma", Font.BOLD, 16));
-		
-		// Reset Pane
-		JDesktopPane reset_desktopPane = new JDesktopPane();
-		reset_desktopPane.setBorder(null);
-		reset_desktopPane.setBackground(Color.WHITE);
-		reset_desktopPane.setBounds(0, 0, 720, 480);
-		getContentPane().add(reset_desktopPane);
+
+	public void actionPerformed(ActionEvent e) {
+		RegisterScreen new_register = new RegisterScreen();
+		new_register.setLocationRelativeTo(null);
+		new_register.setVisible(true);
+		dispose();
+
+	}});registerBtn.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));registerBtn.setBounds(129,0,112,42);btnPanel.add(registerBtn);registerBtn.setBorder(new LineBorder(new Color(102,153,255),2));registerBtn.setForeground(new Color(102,153,255));registerBtn.setBackground(new Color(255,255,255));registerBtn.setFont(new Font("Tahoma",Font.BOLD,16));
+
+	// Reset Pane
+	JDesktopPane reset_desktopPane = new JDesktopPane();reset_desktopPane.setBorder(null);reset_desktopPane.setBackground(Color.WHITE);reset_desktopPane.setBounds(0,0,720,480);
+
+	getContentPane().add(reset_desktopPane);
 		reset_desktopPane.setVisible(false);
 		
 		JLabel resetTitle = new JLabel("KHÔI PHỤC MẬT KHẨU");
@@ -247,5 +302,7 @@ public class MainScreen extends JFrame {
 				login_desktopPane.setVisible(false);
 			}
 		});
+		
+		
 	}
 }
