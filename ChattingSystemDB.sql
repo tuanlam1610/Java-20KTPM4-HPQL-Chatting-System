@@ -23,6 +23,12 @@ Create table BanBe (
     primary key (user_username, friend_username)
 );
 
+Create table LoiMoiKetBan (
+	receiver_username varchar(20),
+	sender_username varchar(20),
+    primary key (receiver_username, sender_username)
+);
+
 Create table Nhom (
 	ID_nhom varchar(8),
     tennhom varchar(30) charset utf8mb4,
@@ -60,6 +66,11 @@ Add Foreign Key(username) references TaiKhoan(username);
 Alter Table LichSuDangNhap
 Add Foreign Key(username) references TaiKhoan(username);
 
+Alter Table LoiMoiKetBan
+Add Foreign Key(receiver_username) references TaiKhoan(username),
+Add Foreign Key(sender_username) references TaiKhoan(username);
+
+
 
 -- Tạo dữ liệu mẫu
 insert into TaiKhoan(username, pass, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao)
@@ -92,3 +103,15 @@ values ("nnquang", "htlam"),
 	("lhminh", "htlam"),
 	("lhminh", "ntphu"),
 	("lhminh", "tghuy");
+    
+insert into LoiMoiKetBan(sender_username, receiver_username)
+values ("nnquang", "htlam"),
+	("nnquang", "ntphu"),
+	("htlam", "nnquang"),
+	("htlam", "ntphu"),
+	("ntphu", "nnquang"),
+	("ntphu", "htlam"),
+	("tghuy", "nnquang"),
+	("tghuy", "htlam"),
+	("lhminh", "nnquang"),
+	("lhminh", "htlam");
