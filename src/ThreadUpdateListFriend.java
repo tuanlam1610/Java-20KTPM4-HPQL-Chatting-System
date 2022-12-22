@@ -17,9 +17,18 @@ public class ThreadUpdateListFriend extends Thread {
 	 
 	public void run() {
 		DefaultListModel<String> lst = new DefaultListModel<String>();
-		for (String aUser : _listOnline) {
-			if (!aUser.equals(_username)) {
-				lst.addElement(aUser);
+		String friend = "";
+		
+		for (String status : _listOnline) {
+			friend = status.substring(0, status.length() - 2);
+			System.out.println(friend);
+			if (!friend.equals(_username)) {
+				if (status.endsWith("1")) {
+					friend = friend.concat(" (Online)");
+					lst.addElement(friend);
+				} else {
+					lst.addElement(friend);
+				}
 			}
 		}
 		_listFriend.setModel(lst);
