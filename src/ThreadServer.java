@@ -129,18 +129,18 @@ public class ThreadServer extends Thread {
 	// Update Online List
 	
 	public void updateListFriend(HashMap<ThreadServer, String> listOnline, ThreadServer threadServer) {
-		String listFriend = "";
+		String listOnl = (server.getUserName(threadServer).concat(" 1")).concat("-");
 		
 		for (String friend : _listFriend) {
 			if (listOnline.containsValue(friend)) {
-				listFriend += (friend.concat(" (Online)")).concat("-");
+				listOnl += (friend.concat(" 1")).concat("-");
 			}
 			else {
-				listFriend += friend.concat("-");
+				listOnl += (friend.concat(" 0")).concat("-");
 			}
 		}
-		listFriend = "update_online_list," + listFriend;
-		server.broadcast(listFriend, threadServer);
+		listOnl = "update_online_list," + listOnl;
+		server.broadcast(listOnl, threadServer);
 	}
 	
 	/**
