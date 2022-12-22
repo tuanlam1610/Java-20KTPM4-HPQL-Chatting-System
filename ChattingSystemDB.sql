@@ -5,6 +5,7 @@ Use ChattingSystem;
 -- Tạo Bảng
 Create table TaiKhoan (
 	username varchar(20),
+    pass tinytext,
     hoten varchar(50) charset utf8mb4,
     email tinytext,
     dob date,
@@ -61,23 +62,14 @@ Add Foreign Key(username) references TaiKhoan(username);
 
 
 -- Tạo dữ liệu mẫu
-insert into TaiKhoan(username, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao)
-values ("nnquang", "Nguyễn Ngọc Quang", "nnquang20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22");
-
-insert into TaiKhoan(username, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao)
-values ("htlam", "Hà Tuấn Lâm", "htlam20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22");
-
-insert into TaiKhoan(username, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao)
-values ("ntphu", "Nguyễn Thiên Phú", "ntphu20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22");
-
-insert into TaiKhoan(username, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao)
-values ("tghuy", "Trương Gia Huy", "tghuy20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22");
-
-insert into TaiKhoan(username, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao)
-values ("lhminh", "Lưu Hoàng Minh", "lhminh20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22");
-
-insert into TaiKhoan(username, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao)
-values ("admin1", "Admin 1", "admin1@gmail.com", "2002-01-01", "227 Nguyễn Văn Cừ", true, true, current_timestamp(), "2022-12-22");
+insert into TaiKhoan(username, pass, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao)
+values 
+("nnquang", "123", "Nguyễn Ngọc Quang", "nnquang20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
+("htlam", "123", "Hà Tuấn Lâm", "htlam20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
+("ntphu", "123", "Nguyễn Thiên Phú", "ntphu20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
+("tghuy", "123", "Trương Gia Huy", "tghuy20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
+("lhminh", "123", "Lưu Hoàng Minh", "lhminh20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
+("admin1", "123", "Admin 1", "admin1@gmail.com", "2002-01-01", "227 Nguyễn Văn Cừ", true, true, current_timestamp(), "2022-12-22");
 
 insert into BanBe(user_username, friend_username)
 values ("nnquang", "htlam"),
