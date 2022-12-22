@@ -44,4 +44,25 @@ public class Server {
 		Server server = new Server(1234);
 		server.execute();
 	}
+	
+	public void broadcast(String message, ThreadServer excludeUser) {
+		for (ThreadServer aUser : userThreads.keySet()) {
+			aUser.sendMessage(message);
+		}
+	}
+	
+	public String getUserName(ThreadServer threadServer) {
+		String username = userThreads.get(threadServer);
+		
+		return username;
+	}
+
+	public void addUserName(ThreadServer threadServer, String userName) {
+		userThreads.put(threadServer, userName);
+	}
+	 
+	public void removeUser(String userName, ThreadServer aUser) {
+		userThreads.remove(aUser);
+		System.out.println("The user " + userName + " quitted");
+	}
 }
