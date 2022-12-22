@@ -80,7 +80,23 @@ insert into TaiKhoan(username, hoten, email, dob, diachi, gioitinh, isAdmin, tho
 values ("admin1", "Admin 1", "admin1@gmail.com", "2002-01-01", "227 Nguyễn Văn Cừ", true, true, current_timestamp(), "2022-12-22");
 
 insert into BanBe(user_username, friend_username)
-values ("nnquang", "htlam");
-
-insert into BanBe(user_username, friend_username)
-values ("htlam", "nnquang");
+values ("nnquang", "htlam"),
+	("nnquang", "ntphu"),
+	("nnquang", "tghuy"),
+	("nnquang", "lhminh"),
+	("htlam", "nnquang"),
+	("htlam", "ntphu"),
+	("htlam", "tghuy"),
+	("htlam", "lhminh"),
+	("ntphu", "nnquang"),
+	("ntphu", "htlam"),
+	("ntphu", "tghuy"),
+	("ntphu", "lhminh"),
+	("tghuy", "nnquang"),
+	("tghuy", "htlam"),
+	("tghuy", "ntphu"),
+	("tghuy", "lhminh"),
+	("lhminh", "nnquang"),
+	("lhminh", "htlam"),
+	("lhminh", "ntphu"),
+	("lhminh", "tghuy");
