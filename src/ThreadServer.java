@@ -10,7 +10,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 public class ThreadServer extends Thread {
 	private Socket socket;
@@ -18,6 +21,7 @@ public class ThreadServer extends Thread {
 	private PrintWriter writer;
 	private String _username;
 	private Connection conn;
+	private List<String> _listFriend = new ArrayList<String>(); 
 
 	public ThreadServer(Socket socket, Server server, Connection conn) {
 		this.socket = socket;
@@ -55,7 +59,18 @@ public class ThreadServer extends Thread {
 									writer.println("logined-1");
 								}
 								else {
+									server.addUserName(this, data[1]);
+									
 									writer.println("logined-0");
+									
+									query = "select friend_username from BanBe where user_username = '" + data[1] + "'";
+									rs = st.executeQuery(query);
+			
+									while(rs.next()) {
+										_listFriend.add(rs.getString(1));
+									}
+									
+									updateListFriend(server.getUserThreads(), this);
 								}
 							}
 							else {
@@ -105,7 +120,7 @@ public class ThreadServer extends Thread {
 		} catch (IOException ex) {
 			System.out.println("Error in ThreadServer: " + ex.getMessage());
 			server.removeUser(_username, this);
-			updateOnlineList(server.getUserThreads().values(), this);
+			updateListFriend(server.getUserThreads(), this);
 			//socket.close();
 			ex.printStackTrace();
 		}
@@ -113,14 +128,19 @@ public class ThreadServer extends Thread {
 	
 	// Update Online List
 	
-	public void updateOnlineList(Collection<String> listUser, ThreadServer threadServer) {
-		String listOfUserName = "";
+	public void updateListFriend(HashMap<ThreadServer, String> listOnline, ThreadServer threadServer) {
+		String listFriend = "";
 		
-		for (String username : listUser) {
-			listOfUserName += username.concat("-");
+		for (String friend : _listFriend) {
+			if (listOnline.containsValue(friend)) {
+				listFriend += (friend.concat(" (Online)")).concat("-");
+			}
+			else {
+				listFriend += friend.concat("-");
+			}
 		}
-		listOfUserName = "update_online_list," + listOfUserName;
-		server.broadcast(listOfUserName, threadServer);
+		listFriend = "update_online_list," + listFriend;
+		server.broadcast(listFriend, threadServer);
 	}
 	
 	/**
