@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -60,10 +61,14 @@ public class Server {
 		server.execute();
 	}
 	
-	public void broadcast(String message, ThreadServer excludeUser) {
+	public void broadcast(String message) {
 		for (ThreadServer aUser : userThreads.keySet()) {
 			aUser.sendMessage(message);
 		}
+	}
+	
+	public void sendMessageToAUser(ThreadServer threadServer, String message) {
+		threadServer.sendMessage(message);
 	}
 	
 	public String getUserName(ThreadServer threadServer) {

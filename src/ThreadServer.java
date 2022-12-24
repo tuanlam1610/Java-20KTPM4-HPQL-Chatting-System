@@ -36,6 +36,7 @@ public class ThreadServer extends Thread {
 
 			OutputStream output = socket.getOutputStream();
 			writer = new PrintWriter(output, true);
+			
 			while(true) {
 				String message = reader.readLine();
 				System.out.println(message);
@@ -59,18 +60,20 @@ public class ThreadServer extends Thread {
 									writer.println("logined-1");
 								}
 								else {
+									_username = server.getUserName(this);
 									server.addUserName(this, data[1]);
 									
 									writer.println("logined-0");
 									
 									query = "select friend_username from BanBe where user_username = '" + data[1] + "'";
 									rs = st.executeQuery(query);
-			
+									_listFriend.add(data[1]);
+									
 									while(rs.next()) {
 										_listFriend.add(rs.getString(1));
 									}
 									
-									updateListFriend(server.getUserThreads(), this);
+									updateListFriend(server.getUserThreads());
 								}
 							}
 							else {
@@ -120,7 +123,7 @@ public class ThreadServer extends Thread {
 		} catch (IOException ex) {
 			System.out.println("Error in ThreadServer: " + ex.getMessage());
 			server.removeUser(_username, this);
-			updateListFriend(server.getUserThreads(), this);
+			updateListFriend(server.getUserThreads());
 			//socket.close();
 			ex.printStackTrace();
 		}
@@ -128,8 +131,9 @@ public class ThreadServer extends Thread {
 	
 	// Update Online List
 	
-	public void updateListFriend(HashMap<ThreadServer, String> listOnline, ThreadServer threadServer) {
-		String listOnl = (server.getUserName(threadServer).concat(" 1")).concat("-");
+	@SuppressWarnings("unchecked")
+	public void updateListFriend(HashMap<ThreadServer, String> listOnline) {
+		String listOnl = "";
 		
 		for (String friend : _listFriend) {
 			if (listOnline.containsValue(friend)) {
@@ -140,7 +144,14 @@ public class ThreadServer extends Thread {
 			}
 		}
 		listOnl = "update_online_list," + listOnl;
-		server.broadcast(listOnl, threadServer);
+		
+		for (String friend : _listFriend) {
+			for (ThreadServer aUser : listOnline.keySet()) {
+				if (listOnline.get(aUser).equals(friend)) {
+					server.sendMessageToAUser(aUser, listOnl);;
+				}
+			}
+		}
 	}
 	
 	/**
