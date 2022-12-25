@@ -48,9 +48,6 @@ public class UserMainScreen extends JFrame {
 	private Socket _clientSocket;
 	private PrintWriter _writer;
 	private ClientReaderThread _readThread;
-	
-	
-	
 
 	/**
 	 * Launch the application.
@@ -426,6 +423,7 @@ public class UserMainScreen extends JFrame {
 		btnSENDMSG.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String msgOut = "";
+				String sendmsg = "";
 				msgOut = msg_field.getText().trim();
 				msg_field.setText("");
 				btnSENDMSG.setEnabled(false);
@@ -438,7 +436,8 @@ public class UserMainScreen extends JFrame {
 				// area
 				msg_area.setText(msg_area.getText().trim() + "\n"+ _username + "(" + dtf.format(now) + "): " + msgOut);
 				friendChatMSG.put(value, msg_area.getText());
-
+				sendmsg = "message-" + _username + "-" + value + "-" + _username + "(" + dtf.format(now) + "): " + msgOut;
+				_writer.println(sendmsg);
 				// msg_area.setText(msg_area.getText().trim()+ "\n Server: \t" + msgOut);
 			}
 		});
