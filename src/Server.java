@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -14,17 +15,17 @@ public class Server {
 	private int port;
 	private Connection conn;
 	//private Set<String> userNames = new HashSet<>();
-	private HashMap<ThreadServer, String> userThreads = new HashMap<ThreadServer, String>();
+	private HashMap<String, ThreadServer> userThreads = new HashMap<String, ThreadServer>();
 
 	public Server(int port) {
 		this.port = port;
 	}
 
-	public HashMap<ThreadServer, String> getUserThreads() {
+	public HashMap<String, ThreadServer> getUserThreads() {
 		return userThreads;
 	}
 
-	public void setUserThreads(HashMap<ThreadServer, String> userThreads) {
+	public void setUserThreads(HashMap<String, ThreadServer> userThreads) {
 		this.userThreads = userThreads;
 	}
 
@@ -32,7 +33,7 @@ public class Server {
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/chattingsystem","root","thienphu1206");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/chattingsystem","root","17092002");
 				JOptionPane.showMessageDialog(null, "Connected to database successfully...");
 			}catch (SQLException se) { // Handle errors for JDBC
 				se.printStackTrace();
@@ -62,9 +63,14 @@ public class Server {
 	}
 	
 	public void broadcast(String message) {
-		for (ThreadServer aUser : userThreads.keySet()) {
-			aUser.sendMessage(message);
+		for(Map.Entry<String, ThreadServer> entry : userThreads.entrySet()) {
+			//String username = entry.getKey();
+			ThreadServer userThread = entry.getValue();
+			userThread.sendMessage(message);
 		}
+//		for (ThreadServer aUser : userThreads.get()) {
+//			aUser.sendMessage(message);
+//		}
 	}
 	
 	public void sendMessageToAUser(ThreadServer threadServer, String message) {
@@ -72,17 +78,23 @@ public class Server {
 	}
 	
 	public String getUserName(ThreadServer threadServer) {
-		String username = userThreads.get(threadServer);
-		
-		return username;
+//		String username = userThreads.get(threadServer);
+//		return username;
+		for(Map.Entry<String, ThreadServer> entry : userThreads.entrySet()) {
+			if(entry.getValue().equals(threadServer)) {
+				return entry.getKey();
+			}
+		}
+		return "Can't find username";
 	}
 
 	public void addUserName(ThreadServer threadServer, String userName) {
-		userThreads.put(threadServer, userName);
+		userThreads.put(userName, threadServer);
+		System.out.println("Add userThread: " + userName + "-" + threadServer);
 	}
 	 
 	public void removeUser(String userName, ThreadServer aUser) {
-		userThreads.remove(aUser);
+		userThreads.remove(userName);
 		System.out.println("The user " + userName + " quitted");
 	}
 }

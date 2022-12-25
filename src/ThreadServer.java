@@ -21,7 +21,7 @@ public class ThreadServer extends Thread {
 	private PrintWriter writer;
 	private String _username;
 	private Connection conn;
-	private List<String> _listFriend = new ArrayList<String>(); 
+	private List<String> _listFriend = new ArrayList<String>();
 
 	public ThreadServer(Socket socket, Server server, Connection conn) {
 		this.socket = socket;
@@ -36,51 +36,45 @@ public class ThreadServer extends Thread {
 
 			OutputStream output = socket.getOutputStream();
 			writer = new PrintWriter(output, true);
-			
-			while(true) {
+
+			while (true) {
 				String message = reader.readLine();
 				System.out.println(message);
 				String[] data = message.split("-");
-				for (String w: data) {
+				for (String w : data) {
 					System.out.println(w);
 				}
-				switch (data[0])
-				{
-				case "login":{
+				switch (data[0]) {
+				case "login": {
 					try {
 						Statement st = conn.createStatement();
-						String query = "select username, isAdmin, pass from taikhoan where username ='" + data[1] + "';";
+						String query = "select username, isAdmin, pass from taikhoan where username ='" + data[1]
+								+ "';";
 						ResultSet rs = st.executeQuery(query);
 						if (rs.next()) {
 							System.out.println(rs.getString(3));
 							System.out.println(data[2]);
-							
+
 							if (data[2].equals(rs.getString(3))) {
 								if (rs.getString(2).equals("1")) {
 									writer.println("logined-1");
-								}
-								else {
-									_username = server.getUserName(this);
+								} else {
 									server.addUserName(this, data[1]);
-									
+									_username = server.getUserName(this);
 									writer.println("logined-0");
-									
 									query = "select friend_username from BanBe where user_username = '" + data[1] + "'";
 									rs = st.executeQuery(query);
 									_listFriend.add(data[1]);
-									
-									while(rs.next()) {
+
+									while (rs.next()) {
 										_listFriend.add(rs.getString(1));
 									}
-									
 									updateListFriend(server.getUserThreads());
 								}
-							}
-							else {
+							} else {
 								writer.println("notlogined");
 							}
-						}
-						else {
+						} else {
 							writer.println("notlogined");
 						}
 					} catch (SQLException e) {
@@ -89,7 +83,11 @@ public class ThreadServer extends Thread {
 					}
 					break;
 				}
-				default:{
+				case "message": {
+
+					break;
+				}
+				default: {
 					System.out.println("Message is invalid!");
 				}
 				}
@@ -122,38 +120,43 @@ public class ThreadServer extends Thread {
 
 		} catch (IOException ex) {
 			System.out.println("Error in ThreadServer: " + ex.getMessage());
+			try {
+				socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			server.removeUser(_username, this);
 			updateListFriend(server.getUserThreads());
-			//socket.close();
 			ex.printStackTrace();
 		}
 	}
-	
+
 	// Update Online List
-	
-	@SuppressWarnings("unchecked")
-	public void updateListFriend(HashMap<ThreadServer, String> listOnline) {
+	public void updateListFriend(HashMap<String, ThreadServer> listOnline) {
 		String listOnl = "";
-		
 		for (String friend : _listFriend) {
-			if (listOnline.containsValue(friend)) {
+			if (listOnline.containsKey(friend)) {
 				listOnl += (friend.concat(" 1")).concat("-");
-			}
-			else {
+			} else {
 				listOnl += (friend.concat(" 0")).concat("-");
 			}
 		}
 		listOnl = "update_online_list," + listOnl;
-		
+
 		for (String friend : _listFriend) {
-			for (ThreadServer aUser : listOnline.keySet()) {
-				if (listOnline.get(aUser).equals(friend)) {
-					server.sendMessageToAUser(aUser, listOnl);;
-				}
+//			for (ThreadServer aUser : listOnline.keySet()) {
+//				if (listOnline.get(aUser).equals(friend)) {
+//					server.sendMessageToAUser(aUser, listOnl);
+//					;
+//				}
+//			}
+			if (listOnline.containsKey(friend)) {
+				server.sendMessageToAUser(listOnline.get(friend), listOnl);
 			}
 		}
 	}
-	
+
 	/**
 	 * Sends a message to the client.
 	 */

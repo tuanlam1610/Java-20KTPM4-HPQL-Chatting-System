@@ -96,9 +96,9 @@ public class MainScreen extends JFrame {
 		setTitle("HPQL Chatting System");
 		getContentPane().setEnabled(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 720, 480);  
+		setBounds(100, 100, 720, 480);
 		getContentPane().setLayout(null);
-		
+
 		// Login Pane
 		JDesktopPane login_desktopPane = new JDesktopPane();
 		login_desktopPane.setForeground(new Color(255, 255, 255));
@@ -106,38 +106,38 @@ public class MainScreen extends JFrame {
 		login_desktopPane.setBounds(0, 0, 720, 480);
 		getContentPane().add(login_desktopPane);
 		login_desktopPane.setBackground(new Color(255, 255, 255));
-		
+
 		JPanel inputPanel = new JPanel();
 		inputPanel.setBackground(new Color(255, 255, 255));
 		inputPanel.setBounds(192, 168, 336, 97);
 		login_desktopPane.add(inputPanel);
 		inputPanel.setLayout(null);
-		
+
 		JLabel usernameLabel = new JLabel("Tên đăng nhập:");
 		usernameLabel.setBounds(0, 0, 140, 28);
 		inputPanel.add(usernameLabel);
 		usernameLabel.setForeground(new Color(102, 153, 255));
 		usernameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		usernameLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
-		
+
 		usernameInput = new JTextField();
 		usernameInput.setBounds(150, 0, 186, 28);
 		inputPanel.add(usernameInput);
 		usernameInput.setHorizontalAlignment(SwingConstants.LEFT);
 		usernameInput.setColumns(10);
-		
+
 		JLabel passLabel = new JLabel("Mật khẩu:");
 		passLabel.setBounds(45, 38, 95, 28);
 		inputPanel.add(passLabel);
 		passLabel.setForeground(new Color(102, 153, 255));
 		passLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		passLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
-		
+
 		passInput = new JPasswordField();
 		passInput.setBounds(150, 38, 186, 28);
 		inputPanel.add(passInput);
 		passInput.setHorizontalAlignment(SwingConstants.LEFT);
-		
+
 		JButton forgotPassBtn = new JButton("<HTML><u>Quên mật khẩu?</u></HTML>");
 		forgotPassBtn.setBounds(224, 76, 112, 21);
 		inputPanel.add(forgotPassBtn);
@@ -146,7 +146,7 @@ public class MainScreen extends JFrame {
 		forgotPassBtn.setBackground(Color.WHITE);
 		forgotPassBtn.setBorder(null);
 		forgotPassBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-		
+
 		JLabel loginTitle = new JLabel("ĐĂNG NHẬP");
 		loginTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 		loginTitle.setForeground(new Color(102, 153, 255));
@@ -154,13 +154,13 @@ public class MainScreen extends JFrame {
 		loginTitle.setFont(new Font("Tahoma", Font.BOLD, 28));
 		loginTitle.setBounds(0, 80, 720, 53);
 		login_desktopPane.add(loginTitle);
-		
+
 		JPanel btnPanel = new JPanel();
 		btnPanel.setBackground(new Color(255, 255, 255));
 		btnPanel.setBounds(239, 300, 241, 42);
 		login_desktopPane.add(btnPanel);
 		btnPanel.setLayout(null);
-		
+
 		JButton loginBtn = new JButton("Đăng Nhập");
 		loginBtn.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		loginBtn.addMouseListener(new MouseAdapter() {
@@ -176,43 +176,27 @@ public class MainScreen extends JFrame {
 					String[] data = msg.split("-");
 					if (data[0].equals("logined")) {
 						if (data[1].equals("1")) {
-							JOptionPane.showMessageDialog(null,"Login successfully!");
+							JOptionPane.showMessageDialog(null, "Login successfully!");
 							AdminMainScreen admin = new AdminMainScreen();
 							admin.setLocationRelativeTo(null);
 							admin.setVisible(true);
 							dispose();
-						}
-						else {
-							JOptionPane.showMessageDialog(null,"Login successfully!");
+						} else {
+							JOptionPane.showMessageDialog(null, "Login successfully!");
 							UserMainScreen user = new UserMainScreen(clientSocket, usernameInput.getText());
 							user.setLocationRelativeTo(null);
 							user.setVisible(true);
 							dispose();
 						}
-					}
-					else {
+					} else {
 						usernameInput.setText(null);
 						passInput.setText(null);
-						JOptionPane.showMessageDialog(null,"Login fail!");
+						JOptionPane.showMessageDialog(null, "Login fail!");
 					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
-
-//				if(usernameInput.getText().equals("user")) {
-//					MainScreen_User user = new MainScreen_User();
-//					user.setLocationRelativeTo(null);
-//					user.setVisible(true);
-//					dispose();
-//				}
-//				else if (usernameInput.getText().equals("admin")) {
-//					AdminMainScreen admin = new AdminMainScreen();
-//					admin.setLocationRelativeTo(null);
-//					admin.setVisible(true);
-//					dispose();
-//				}
 			}
 		});
 		loginBtn.setBounds(0, 0, 112, 42);
@@ -221,24 +205,34 @@ public class MainScreen extends JFrame {
 		loginBtn.setBorder(null);
 		loginBtn.setBackground(new Color(102, 153, 255));
 		loginBtn.setFont(new Font("Tahoma", Font.BOLD, 16));
-		
+
 		JButton registerBtn = new JButton("Đăng Ký");
 		registerBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				RegisterScreen new_register = new RegisterScreen();
+				new_register.setLocationRelativeTo(null);
+				new_register.setVisible(true);
+				dispose();
 
-	public void actionPerformed(ActionEvent e) {
-		RegisterScreen new_register = new RegisterScreen();
-		new_register.setLocationRelativeTo(null);
-		new_register.setVisible(true);
-		dispose();
+			}
+		});
+		registerBtn.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		registerBtn.setBounds(129, 0, 112, 42);
+		btnPanel.add(registerBtn);
+		registerBtn.setBorder(new LineBorder(new Color(102, 153, 255), 2));
+		registerBtn.setForeground(new Color(102, 153, 255));
+		registerBtn.setBackground(new Color(255, 255, 255));
+		registerBtn.setFont(new Font("Tahoma", Font.BOLD, 16));
 
-	}});registerBtn.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));registerBtn.setBounds(129,0,112,42);btnPanel.add(registerBtn);registerBtn.setBorder(new LineBorder(new Color(102,153,255),2));registerBtn.setForeground(new Color(102,153,255));registerBtn.setBackground(new Color(255,255,255));registerBtn.setFont(new Font("Tahoma",Font.BOLD,16));
+		// Reset Pane
+		JDesktopPane reset_desktopPane = new JDesktopPane();
+		reset_desktopPane.setBorder(null);
+		reset_desktopPane.setBackground(Color.WHITE);
+		reset_desktopPane.setBounds(0, 0, 720, 480);
 
-	// Reset Pane
-	JDesktopPane reset_desktopPane = new JDesktopPane();reset_desktopPane.setBorder(null);reset_desktopPane.setBackground(Color.WHITE);reset_desktopPane.setBounds(0,0,720,480);
-
-	getContentPane().add(reset_desktopPane);
+		getContentPane().add(reset_desktopPane);
 		reset_desktopPane.setVisible(false);
-		
+
 		JLabel resetTitle = new JLabel("KHÔI PHỤC MẬT KHẨU");
 		resetTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 		resetTitle.setForeground(new Color(102, 153, 255));
@@ -246,13 +240,13 @@ public class MainScreen extends JFrame {
 		resetTitle.setFont(new Font("Tahoma", Font.BOLD, 28));
 		resetTitle.setBounds(0, 80, 720, 49);
 		reset_desktopPane.add(resetTitle);
-		
+
 		JPanel verifyPanel = new JPanel();
 		verifyPanel.setBackground(new Color(255, 255, 255));
 		verifyPanel.setBounds(192, 168, 336, 66);
 		reset_desktopPane.add(verifyPanel);
 		verifyPanel.setLayout(null);
-		
+
 		JLabel lblNewLabel_resetUsername = new JLabel("Tên đăng nhập:");
 		lblNewLabel_resetUsername.setBounds(0, 0, 140, 28);
 		verifyPanel.add(lblNewLabel_resetUsername);
@@ -260,26 +254,26 @@ public class MainScreen extends JFrame {
 		lblNewLabel_resetUsername.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_resetUsername.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel_resetUsername.setLabelFor(textField);
-		
+
 		textField = new JTextField();
 		textField.setBounds(150, 0, 186, 28);
 		verifyPanel.add(textField);
 		textField.setHorizontalAlignment(SwingConstants.LEFT);
 		textField.setColumns(10);
-		
+
 		JLabel lblNewLabel_resetEmail = new JLabel("Email:");
 		lblNewLabel_resetEmail.setBounds(75, 38, 65, 28);
 		verifyPanel.add(lblNewLabel_resetEmail);
 		lblNewLabel_resetEmail.setForeground(new Color(102, 153, 255));
 		lblNewLabel_resetEmail.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel_resetEmail.setFont(new Font("Tahoma", Font.BOLD, 16));
-		
+
 		textField_1 = new JTextField();
 		textField_1.setBounds(150, 38, 186, 28);
 		verifyPanel.add(textField_1);
 		textField_1.setHorizontalAlignment(SwingConstants.LEFT);
 		textField_1.setColumns(10);
-		
+
 		JButton btnConfirm = new JButton("Xác Nhận");
 		btnConfirm.setBorder(null);
 		btnConfirm.setBackground(new Color(102, 153, 255));
@@ -287,7 +281,7 @@ public class MainScreen extends JFrame {
 		btnConfirm.setFont(new Font("Tahoma", Font.BOLD, 16));
 		btnConfirm.setBounds(300, 300, 120, 44);
 		reset_desktopPane.add(btnConfirm);
-		
+
 		// Event Listener
 		btnConfirm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -295,14 +289,13 @@ public class MainScreen extends JFrame {
 				login_desktopPane.setVisible(true);
 			}
 		});
-		
+
 		forgotPassBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				reset_desktopPane.setVisible(true);
 				login_desktopPane.setVisible(false);
 			}
 		});
-		
-		
+
 	}
 }
