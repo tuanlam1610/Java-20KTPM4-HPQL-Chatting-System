@@ -105,7 +105,7 @@ values ("nnquang", "htlam"),
 	("lhminh", "ntphu"),
 	("lhminh", "tghuy");
     
-insert into LoiMoiKetBan(sender_username, receiver_username)
+/*insert into LoiMoiKetBan(sender_username, receiver_username)
 values ("nnquang", "htlam"),
 	("nnquang", "ntphu"),
 	("htlam", "nnquang"),
@@ -115,4 +115,7 @@ values ("nnquang", "htlam"),
 	("tghuy", "nnquang"),
 	("tghuy", "htlam"),
 	("lhminh", "nnquang"),
-	("lhminh", "htlam");
+	("lhminh", "htlam");*/
+    
+select * from LoiMoiKetBan;
+select sender_username from LoiMoiKetBan where receiver_username = "ntphu";
