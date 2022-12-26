@@ -369,7 +369,7 @@ public class UserMainScreen extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				// On Mouse Click
 				String value = listFriend.getSelectedValue().toString();
-
+				
 				btnUnfriend.setVisible(true);
 				btnSearchHistory.setVisible(true);
 				btnDeleteHistory.setVisible(true);
@@ -408,19 +408,29 @@ public class UserMainScreen extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				// On Mouse Click
 				String value = listFriendRequest.getSelectedValue().toString();
-
-				int click = JOptionPane.showConfirmDialog(null, "This is a confirm dialog");
+				String reply = "";
+				
+				Object[] options = {"OK nè", "Không, nha bé", "Để suy nghĩ"};
+				
+				int click = JOptionPane.showOptionDialog(null, "Hello, kết bạn với mình nè", "Lời mời kết bạn", JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                 if (click==JOptionPane.YES_OPTION) {
-                     JOptionPane.showMessageDialog(null, "Click Yes");
+                	reply = "reply_friend_request-".concat("YES-");
+                	reply = (reply.concat(value)).concat("-");
+                	reply = reply.concat(_username);
+                	
+                	_writeThread = new ClientWriteThread(_clientSocket, _pw, reply);
                 }
-                if (click==JOptionPane.NO_OPTION) {
-                     JOptionPane.showMessageDialog(null, "Click No");
+                else if (click==JOptionPane.NO_OPTION) {
+                	reply = "reply_friend_request-".concat("NO-");
+                	reply = (reply.concat(value)).concat("-");
+                	reply = reply.concat(_username);
+                	
+                	_writeThread = new ClientWriteThread(_clientSocket, _pw, reply);	
                 }
-                if (click==JOptionPane.CANCEL_OPTION) {
-                     JOptionPane.showMessageDialog(null, "Click Cancel");
-                }
+                _writeThread.start();
 
-				msg_area.setText(friendChatMSG.get(value));
+				//msg_area.setText(friendChatMSG.get(value));
 
 			}
 		});

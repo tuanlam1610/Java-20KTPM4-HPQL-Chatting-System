@@ -12,10 +12,12 @@ public class ClientReceiveFriendRequestThread extends Thread {
 	 
 	public void run() {
 		DefaultListModel<String> lst = new DefaultListModel<String>();
-		for (String aUser : _username) {
-			lst.addElement(aUser);
-		}
 		
+		if (_username != null) {
+			for (String aUser : _username) {
+				lst.addElement(aUser);
+			}
+		}
 		_listFriendRequest.setModel(lst);
 	}
 }

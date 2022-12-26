@@ -90,14 +90,12 @@ values ("nnquang", "htlam"),
 	("nnquang", "lhminh"),
 	("htlam", "nnquang"),
 	("htlam", "ntphu"),
-	("htlam", "tghuy"),
 	("htlam", "lhminh"),
 	("ntphu", "nnquang"),
 	("ntphu", "htlam"),
 	("ntphu", "tghuy"),
 	("ntphu", "lhminh"),
 	("tghuy", "nnquang"),
-	("tghuy", "htlam"),
 	("tghuy", "ntphu"),
 	("tghuy", "lhminh"),
 	("lhminh", "nnquang"),
@@ -116,6 +114,3 @@ values ("nnquang", "htlam"),
 	("tghuy", "htlam"),
 	("lhminh", "nnquang"),
 	("lhminh", "htlam");*/
-    
-select * from LoiMoiKetBan;
-select sender_username from LoiMoiKetBan where receiver_username = "ntphu";
