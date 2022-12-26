@@ -23,6 +23,12 @@ Create table BanBe (
     primary key (user_username, friend_username)
 );
 
+Create table LoiMoiKetBan (
+	receiver_username varchar(20),
+	sender_username varchar(20),
+    primary key (receiver_username, sender_username)
+);
+
 Create table Nhom (
 	ID_nhom varchar(8),
     tennhom varchar(30) charset utf8mb4,
@@ -60,6 +66,11 @@ Add Foreign Key(username) references TaiKhoan(username);
 Alter Table LichSuDangNhap
 Add Foreign Key(username) references TaiKhoan(username);
 
+Alter Table LoiMoiKetBan
+Add Foreign Key(receiver_username) references TaiKhoan(username),
+Add Foreign Key(sender_username) references TaiKhoan(username);
+
+
 
 -- Tạo dữ liệu mẫu
 insert into TaiKhoan(username, pass, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao)
@@ -69,7 +80,8 @@ values
 ("ntphu", "123", "Nguyễn Thiên Phú", "ntphu20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
 ("tghuy", "123", "Trương Gia Huy", "tghuy20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
 ("lhminh", "123", "Lưu Hoàng Minh", "lhminh20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
-("admin1", "123", "Admin 1", "admin1@gmail.com", "2002-01-01", "227 Nguyễn Văn Cừ", true, true, current_timestamp(), "2022-12-22");
+("admin1", "123", "Admin 1", "admin1@gmail.com", "2002-01-01", "227 Nguyễn Văn Cừ", true, true, current_timestamp(), "2022-12-22"),
+("dmtung", "123", "Dương Minh Tùng", "dmtung20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22");
 
 insert into BanBe(user_username, friend_username)
 values ("nnquang", "htlam"),
@@ -78,17 +90,27 @@ values ("nnquang", "htlam"),
 	("nnquang", "lhminh"),
 	("htlam", "nnquang"),
 	("htlam", "ntphu"),
-	("htlam", "tghuy"),
 	("htlam", "lhminh"),
 	("ntphu", "nnquang"),
 	("ntphu", "htlam"),
 	("ntphu", "tghuy"),
 	("ntphu", "lhminh"),
 	("tghuy", "nnquang"),
-	("tghuy", "htlam"),
 	("tghuy", "ntphu"),
 	("tghuy", "lhminh"),
 	("lhminh", "nnquang"),
 	("lhminh", "htlam"),
 	("lhminh", "ntphu"),
 	("lhminh", "tghuy");
+    
+/*insert into LoiMoiKetBan(sender_username, receiver_username)
+values ("nnquang", "htlam"),
+	("nnquang", "ntphu"),
+	("htlam", "nnquang"),
+	("htlam", "ntphu"),
+	("ntphu", "nnquang"),
+	("ntphu", "htlam"),
+	("tghuy", "nnquang"),
+	("tghuy", "htlam"),
+	("lhminh", "nnquang"),
+	("lhminh", "htlam");*/
