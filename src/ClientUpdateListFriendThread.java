@@ -1,12 +1,14 @@
+import java.util.Arrays;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
-public class ThreadUpdateListFriend extends Thread {
+public class ClientUpdateListFriendThread extends Thread {
 	private JList<String> _listFriend;
 	private String[] _listOnline;
 	private String _username;
 	
-	public ThreadUpdateListFriend(String[] listOnline, JList<String> listFriend, String username) {
+	public ClientUpdateListFriendThread(String[] listOnline, JList<String> listFriend, String username) {
 		this._listFriend = listFriend;
 		this._listOnline = listOnline;
 		this._username = username;
@@ -14,6 +16,11 @@ public class ThreadUpdateListFriend extends Thread {
 	 
 	public void run() {
 		DefaultListModel<String> lst = new DefaultListModel<String>();
+		String indexFriend = "";
+		if (_listFriend.getSelectedValue() != null) {
+			indexFriend = _listFriend.getSelectedValue();
+		}
+		
 		String friend = "";
 		
 		for (String status : _listOnline) {
@@ -28,6 +35,13 @@ public class ThreadUpdateListFriend extends Thread {
 				}
 			}
 		}
+		
 		_listFriend.setModel(lst);
+		//Arrays.asList(lst.toArray());
+		for (int i = 0; i < lst.getSize(); i++) {
+			if (indexFriend.equals(lst.getElementAt(i))) {
+				_listFriend.setSelectedIndex(i);
+			}
+		}
 	}
 }
