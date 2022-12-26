@@ -183,7 +183,7 @@ public class MainScreen extends JFrame {
 							dispose();
 						} else {
 							JOptionPane.showMessageDialog(null, "Login successfully!");
-							UserMainScreen user = new UserMainScreen(clientSocket, usernameInput.getText());
+							UserMainScreen user = new UserMainScreen(clientSocket, pw, usernameInput.getText());
 							user.setLocationRelativeTo(null);
 							user.setVisible(true);
 							dispose();

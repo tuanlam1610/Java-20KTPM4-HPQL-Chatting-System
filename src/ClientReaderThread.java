@@ -3,23 +3,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Arrays;
 
 import javax.swing.JList;
 import javax.swing.JTextArea;
 
 public class ClientReaderThread extends Thread {
-	private ThreadUpdateListFriend _updateThread;
+	private ClientUpdateListFriendThread _updateThread;
+	private ClientReceiveFriendRequestThread _friendRequest;
 	private BufferedReader _reader;
 	private Socket _socket;
 	private JTextArea _textArea;
-	private JList<String> _jList;
+	private JList<String> _listFriend;
+	private JList<String> _listFriendRequest;
 	private String _username;
 	private String _response;
 	
-	public ClientReaderThread(Socket socket, JTextArea textArea, JList<String> jList, String username) {
+	public ClientReaderThread(Socket socket, JTextArea textArea, JList<String> listFriend, JList<String> listFriendRequest, String username) {
 		this._socket = socket;
 		this._textArea = textArea;
-		this._jList = jList;
+		this._listFriend = listFriend;
+		this._listFriendRequest = listFriendRequest;
 		this._username = username;
 		
 		try {
@@ -40,6 +44,15 @@ public class ClientReaderThread extends Thread {
 				case "update_online_list": {
 					_updateThread = new ThreadUpdateListFriend(_socket, message[1].split(","), _jList, _username);
 					_updateThread.start();
+					break;
+				}
+				case "friend_request": {
+					String[] lstReq = null;
+					if (message.length > 1) {
+						lstReq = Arrays.copyOfRange(message[1].split(","), 0, message[1].split(",").length); 
+					}
+					_friendRequest = new ClientReceiveFriendRequestThread(_listFriendRequest, lstReq);
+					_friendRequest.start();
 					break;
 				}
 				case "message": {

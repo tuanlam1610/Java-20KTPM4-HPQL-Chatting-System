@@ -90,14 +90,12 @@ values ("nnquang", "htlam"),
 	("nnquang", "lhminh"),
 	("htlam", "nnquang"),
 	("htlam", "ntphu"),
-	("htlam", "tghuy"),
 	("htlam", "lhminh"),
 	("ntphu", "nnquang"),
 	("ntphu", "htlam"),
 	("ntphu", "tghuy"),
 	("ntphu", "lhminh"),
 	("tghuy", "nnquang"),
-	("tghuy", "htlam"),
 	("tghuy", "ntphu"),
 	("tghuy", "lhminh"),
 	("lhminh", "nnquang"),
@@ -105,7 +103,7 @@ values ("nnquang", "htlam"),
 	("lhminh", "ntphu"),
 	("lhminh", "tghuy");
     
-insert into LoiMoiKetBan(sender_username, receiver_username)
+/*insert into LoiMoiKetBan(sender_username, receiver_username)
 values ("nnquang", "htlam"),
 	("nnquang", "ntphu"),
 	("htlam", "nnquang"),
@@ -115,4 +113,4 @@ values ("nnquang", "htlam"),
 	("tghuy", "nnquang"),
 	("tghuy", "htlam"),
 	("lhminh", "nnquang"),
-	("lhminh", "htlam");
+	("lhminh", "htlam");*/

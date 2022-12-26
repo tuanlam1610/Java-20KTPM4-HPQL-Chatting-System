@@ -47,8 +47,9 @@ public class UserMainScreen extends JFrame {
 	
 	private String _username;
 	private Socket _clientSocket;
-	private PrintWriter _writer;
+	private PrintWriter _pw;
 	private ClientReaderThread _readThread;
+	private ClientWriteThread _writeThread;
 
 	/**
 	 * Launch the application.
@@ -65,12 +66,13 @@ public class UserMainScreen extends JFrame {
 	 * @throws IOException 
 	 * @throws UnknownHostException 
 	 */
-	public UserMainScreen(Socket socket, String username) throws UnknownHostException, IOException {
+	public UserMainScreen(Socket socket, PrintWriter pw, String username) throws UnknownHostException, IOException {
 		
 		this._clientSocket = socket;
 		this._username = username;
 		OutputStream output = socket.getOutputStream();
 		_writer = new PrintWriter(output, true);
+		this._pw = pw;
 		
 		setResizable(false);
 		setTitle("User Main Screen");
@@ -102,14 +104,20 @@ public class UserMainScreen extends JFrame {
 		JButton btnChangeGroupName = new JButton("Đổi tên nhóm chat");
 		JButton btnMakeAdmin = new JButton("Cấp quyền admin");
 		JPanel panel_2_1 = new JPanel();
-		JScrollPane scrollPaneFriend = new JScrollPane();
 		JList<String> listFriend = new JList<>();
+		JList<String> listGroup = new JList<>();
+		JList<String> listFriendRequest = new JList<>();
 		JPanel userInfoPane = new JPanel();
+		JScrollPane scrollPaneFriend = new JScrollPane();
 		JScrollPane scrollPaneGroup = new JScrollPane();
+		JScrollPane scrollPaneFriendRequest = new JScrollPane();
 		JLabel lblUser = new JLabel(_username);
 		JLabel lblOnl = new JLabel("(Online)");
 		JButton userInfoBtn = new JButton("Thông tin cá nhân");
 		JButton btnSENDMSG = new JButton("GỬI");
+		
+		// Container stores message
+		Map<String, String> friendChatMSG = new HashMap<String, String>();
 
 		
 		// Desktop Pane
@@ -153,7 +161,7 @@ public class UserMainScreen extends JFrame {
 		panel.add(msg_field);
 		
 		//////////////////////////////////////////////////////////////////////////////////////
-		Map<String, String> friendChatMSG = new HashMap<String, String>();
+		
 		// tam thoi luu cho ca friend va nhom chat
 		// đang input chat dựa trên tên của chat, cần phải sửa ngay lập tức
 		/*
@@ -229,44 +237,27 @@ public class UserMainScreen extends JFrame {
 		// List Friend
 		listFriend.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listFriend.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		/*
-		 * listFriend.setModel(new AbstractListModel() { String[] values = new String[]
-		 * {"Huy (Online)", "Phú (Offline)"}; public int getSize() { return
-		 * values.length; } public Object getElementAt(int index) { return
-		 * values[index]; } });
-		 */
 		scrollPaneFriend.setViewportView(listFriend);
 
 		
 		// ScrollPane Group
 		scrollPaneGroup.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		tabbedPane.addTab("Nhóm", null, scrollPaneGroup, null);
-
-		/*
-		 * Map<String, Entry<String, Boolean>> userChatList = new HashMap<String,
-		 * Entry<String, Boolean>>(); userChatList.put("Huy", new SimpleEntry("U001",
-		 * true)); userChatList.put("Phu", new SimpleEntry("U002", true));
-		 * 
-		 * Map<String, Entry<String, Boolean>> groupChatList = new HashMap<String,
-		 * Entry<String, Boolean>>(); groupChatList.put("Java", new SimpleEntry("G001",
-		 * true)); groupChatList.put("Web", new SimpleEntry("G002", true));
-		 * 
-		 * //JList listNhom = new JList(groupChatList.keySet().toArray());
-		 */
 		
 		// List Group
-		JList listNhom = new JList();
-		listNhom.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		listNhom.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		/*
-		 * listNhom.setModel(new AbstractListModel() { String[] values = new String[] {
-		 * "Java", "Web" };
-		 * 
-		 * public int getSize() { return values.length; }
-		 * 
-		 * public Object getElementAt(int index) { return values[index]; } });
-		 */
-		scrollPaneGroup.setViewportView(listNhom);
+		listGroup.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		listGroup.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		scrollPaneGroup.setViewportView(listGroup);
+
+		// ScrollPane Friend Request
+		scrollPaneFriendRequest.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		tabbedPane.addTab("Lời mởi kết bạn", null, scrollPaneFriendRequest, null);
+		
+		// List Group
+		listFriendRequest.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		listFriendRequest.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		scrollPaneFriendRequest.setViewportView(listFriendRequest);
+		
 		
 		// UserInfoPane
 		userInfoPane.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -307,13 +298,19 @@ public class UserMainScreen extends JFrame {
 		
 		// ----------------------------------------------------------- EVENT -------------------------------------------------------------
 		
-		_readThread = new ClientReaderThread(socket, msg_area, listFriend, _username);
+		_readThread = new ClientReaderThread(socket, msg_area, listFriend, listFriendRequest, _username);
 		_readThread.start();
 		
 		// Event Add Friend
 		btnAddFriend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showInputDialog("Enter username to add");
+				String usernameFriend = JOptionPane.showInputDialog("Enter username to add");
+				String friendRequest = "friend_request-".concat(_username);
+				friendRequest = friendRequest.concat("-");
+				friendRequest = friendRequest.concat(usernameFriend);
+				
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, friendRequest);
+				_writeThread.start();
 			}
 		});
 		
@@ -369,13 +366,13 @@ public class UserMainScreen extends JFrame {
 			}
 		});
 		
-		// Event Display Button
+		// Event Mouse Click
 		listFriend.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// On Mouse Click
 				String value = listFriend.getSelectedValue().toString();
-
+				
 				btnUnfriend.setVisible(true);
 				btnSearchHistory.setVisible(true);
 				btnDeleteHistory.setVisible(true);
@@ -389,11 +386,11 @@ public class UserMainScreen extends JFrame {
 			}
 		});
 		
-		listNhom.addMouseListener(new MouseAdapter() {
+		listGroup.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// On Mouse Click
-				String value = listNhom.getSelectedValue().toString();
+				String value = listGroup.getSelectedValue().toString();
 
 				btnUnfriend.setVisible(false);
 				btnSearchHistory.setVisible(true);
@@ -407,6 +404,38 @@ public class UserMainScreen extends JFrame {
 
 			}
 
+		});
+		
+		listFriendRequest.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// On Mouse Click
+				String value = listFriendRequest.getSelectedValue().toString();
+				String reply = "";
+				
+				Object[] options = {"OK nè", "Không, nha bé", "Để suy nghĩ"};
+				
+				int click = JOptionPane.showOptionDialog(null, "Hello, kết bạn với mình nè", "Lời mời kết bạn", JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                if (click==JOptionPane.YES_OPTION) {
+                	reply = "reply_friend_request-".concat("YES-");
+                	reply = (reply.concat(value)).concat("-");
+                	reply = reply.concat(_username);
+                	
+                	_writeThread = new ClientWriteThread(_clientSocket, _pw, reply);
+                }
+                else if (click==JOptionPane.NO_OPTION) {
+                	reply = "reply_friend_request-".concat("NO-");
+                	reply = (reply.concat(value)).concat("-");
+                	reply = reply.concat(_username);
+                	
+                	_writeThread = new ClientWriteThread(_clientSocket, _pw, reply);	
+                }
+                _writeThread.start();
+
+				//msg_area.setText(friendChatMSG.get(value));
+
+			}
 		});
 		
 		// Event Input Field != "", Button "Send": Active
@@ -441,7 +470,7 @@ public class UserMainScreen extends JFrame {
 				msg_area.append(username + "(" + dtf.format(now) + "): " + msgOut + "\n");
 				friendChatMSG.put(value, msg_area.getText());
 				sendmsg = "message-" + _username + "-" + value + "-" + _username + "(" + dtf.format(now) + "): " + msgOut;
-				_writer.println(sendmsg);
+				_pw.println(sendmsg);
 				// msg_area.setText(msg_area.getText().trim()+ "\n Server: \t" + msgOut);
 			}
 		});
@@ -454,7 +483,7 @@ public class UserMainScreen extends JFrame {
 					friendChatMSG.put(value, "");
 					msg_area.setText(friendChatMSG.get(value));
 				} else if (tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Nhom")) {
-					value = listNhom.getSelectedValue().toString();
+					value = listGroup.getSelectedValue().toString();
 					friendChatMSG.put(value, "");
 					msg_area.setText(friendChatMSG.get(value));
 				}
