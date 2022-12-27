@@ -241,6 +241,10 @@ public class ThreadServer extends Thread {
 								sendermsgDB = rs.getNString("tinnhan");
 							else
 								sendermsgDB = "";
+
+							if (sendermsgDB.equals(""))
+								sendermsgDB = " ";
+							
 							// sql = "SELECT tinnhan FROM banbe WHERE user_username = '" + receiverName
 							// + "' AND friend_username = '" + senderName + "'";
 							// rs = stmt.executeQuery(sql);

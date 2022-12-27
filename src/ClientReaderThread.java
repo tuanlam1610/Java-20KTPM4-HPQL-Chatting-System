@@ -110,7 +110,7 @@ public class ClientReaderThread extends Thread {
 						selectedName = selectedName.split(" ")[0];
 					}
 					if(selectedName.equals(senderName)) {
-						_textArea.setText("\n" + msg);
+						_textArea.setText(msg);
 					}
 					}
 					break;
