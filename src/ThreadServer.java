@@ -83,6 +83,33 @@ public class ThreadServer extends Thread {
 					}
 					break;
 				}
+				case "register": {
+					try {
+						Statement st = conn.createStatement();
+						String query = "select username from taikhoan where username ='" + data[1] + "';";
+						ResultSet rs = st.executeQuery(query);
+
+						if (rs.next()) {
+							writer.println("Fail-username");
+							break;
+						}
+						query = "select username from taikhoan where email ='" + data[2] + "';";
+						rs = st.executeQuery(query);
+						if (rs.next()) {
+							writer.println("Fail-email");
+							break;
+						}
+						query = "insert into TaiKhoan(username, pass, email, isAdmin, ngaytao)"
+								+ "values ('" + data[1] + "', '" + data[3] + "', '" + data[2] + "', false, current_timestamp());" ;
+						System.out.println(query);
+						st.executeUpdate(query);
+						writer.println("Success");
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
 
 				case "update_list_friend_online": {
 					// updateListFriend();
