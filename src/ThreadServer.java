@@ -213,6 +213,58 @@ public class ThreadServer extends Thread {
 
 					break;
 				}
+				
+				case "get_chat_history": {
+					// Initial Data
+					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+					String senderName = data[1];
+					String friendName = data[2];
+					//String msg = data[3];
+					try {
+						// Update Database
+						// Update 2 row for sender and receiver in DB
+						Statement stmt = conn.createStatement();
+						PreparedStatement pstmt;
+						String sendermsgDB;
+						//String receivermsgDB;
+						// Get msg from sender DB
+						String sql = "SELECT tinnhan FROM banbe WHERE user_username = '" + senderName
+								+ "' AND friend_username = '" + friendName + "'";
+						ResultSet rs = stmt.executeQuery(sql);
+						if (rs.next()) sendermsgDB = rs.getNString("tinnhan");
+						else sendermsgDB = "";
+						//sql = "SELECT tinnhan FROM banbe WHERE user_username = '" + receiverName
+						//		+ "' AND friend_username = '" + senderName + "'";
+						//rs = stmt.executeQuery(sql);
+						//if (rs.next()) receivermsgDB = rs.getNString("tinnhan");
+						//else receivermsgDB = "";
+						//sendermsgDB = sendermsgDB + msg + "\n";
+						//receivermsgDB = receivermsgDB + msg + "\n";
+						//sql = "UPDATE banbe SET tinnhan = ? WHERE user_username = ? AND friend_username = ?";
+						//pstmt = conn.prepareStatement(sql);
+						//pstmt.setString(1, sendermsgDB);
+						//pstmt.setString(2, senderName);
+						//pstmt.setString(3, receiverName);
+						//pstmt.execute();
+						//pstmt.setString(1, receivermsgDB);
+						//pstmt.setString(2, receiverName);
+						//pstmt.setString(3, senderName);
+						//pstmt.execute();
+						//pstmt.close();
+						// Send MSG
+						// When Receiver is online
+						//if (listOnline.containsKey(receiverName)) {
+						
+							ThreadServer senderThread = listOnline.get(senderName);
+							server.sendMessageToAUser(senderThread, "get_chat_history-"+friendName+"-"+sendermsgDB+"\nEndOfString");
+						//}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
+				}
 				default: {
 					System.out.println("Message is invalid!");
 				}
