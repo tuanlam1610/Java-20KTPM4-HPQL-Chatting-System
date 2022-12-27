@@ -322,7 +322,15 @@ public class UserMainScreen extends JFrame {
 		// Event Unfriend
 		btnUnfriend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// remove friend from database
+				String value = listFriend.getSelectedValue().toString();
+				String req = "remove_friend-".concat(_username);
+				value = value.split(" ")[0];
+				req = req.concat("-");
+				req = req.concat(value);
+				
+				// req = remove_friend-username-friend
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, req);
+				_writeThread.start();
 			}
 		});
 		

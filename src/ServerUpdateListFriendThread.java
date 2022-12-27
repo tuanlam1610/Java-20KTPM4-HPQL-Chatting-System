@@ -52,7 +52,7 @@ public class ServerUpdateListFriendThread extends Thread {
 			// Send to client
 			_server.sendMessageToAUser(_listOnline.get(_username), listOnl);
 			
-			// Sleep 2s
+			// Sleep 2s 
 			try {
 				Thread.sleep(8000);
 			} catch (InterruptedException e) {
