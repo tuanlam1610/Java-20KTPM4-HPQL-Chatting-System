@@ -337,12 +337,12 @@ public class ThreadServer extends Thread {
 				st.executeUpdate(query);
 
 				// Insert
-				query = "insert into BanBe(user_username, friend_username) " + "values ('" + sender + "', '" + receiver
-						+ "')";
+				query = "insert into BanBe(user_username, friend_username, tinnhan) " + "values ('" + sender + "', '" + receiver
+						+ "', " + "''" + ")";
 				st.executeUpdate(query);
 
-				query = "insert into BanBe(user_username, friend_username) " + "values ('" + receiver + "', '" + sender
-						+ "')";
+				query = "insert into BanBe(user_username, friend_username, tinnhan) " + "values ('" + receiver + "', '" + sender
+						+ "', " + "''" + ")";
 				st.executeUpdate(query);
 			} else {
 				query = "delete from LoiMoiKetBan where receiver_username = '" + receiver + "'"
