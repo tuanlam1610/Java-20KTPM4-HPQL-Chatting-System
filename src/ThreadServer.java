@@ -48,173 +48,174 @@ public class ThreadServer extends Thread {
 					System.out.println(w);
 				}
 				switch (data[0]) {
-				case "login": {
-					try {
-						Statement st = conn.createStatement();
-						String query = "select username, isAdmin, pass from taikhoan where username ='" + data[1]
-								+ "';";
-						ResultSet rs = st.executeQuery(query);
-						if (rs.next()) {
-							System.out.println(rs.getString(3));
-							System.out.println(data[2]);
-
-							if (data[2].equals(rs.getString(3))) {
-								if (rs.getString(2).equals("1")) {
-									writer.println("logined-1");
+					case "login": {
+						try {
+							Statement st = conn.createStatement();
+							String query = "select username, isAdmin, pass from taikhoan where username ='" + data[1]
+									+ "';";
+							ResultSet rs = st.executeQuery(query);
+							if (rs.next()) {
+								System.out.println(rs.getString(3));
+								System.out.println(data[2]);
+	
+								if (data[2].equals(rs.getString(3))) {
+									if (rs.getString(2).equals("1")) {
+										writer.println("logined-1");
+									} else {
+										server.addUserName(this, data[1]);
+										_username = server.getUserName(this);
+										writer.println("logined-0");
+	
+										// Thread update list friend
+										updateListFriend();
+	
+										updateFriendRequest(this, _username);
+									}
 								} else {
-									server.addUserName(this, data[1]);
-									_username = server.getUserName(this);
-									writer.println("logined-0");
-
-									// Thread update list friend
-									updateListFriend();
-
-									updateFriendRequest(this, _username);
+									writer.println("notlogined");
 								}
 							} else {
 								writer.println("notlogined");
 							}
-						} else {
-							writer.println("notlogined");
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						break;
 					}
-					break;
-				}
-				case "register": {
-					try {
-						Statement st = conn.createStatement();
-						String query = "select username from taikhoan where username ='" + data[1] + "';";
-						ResultSet rs = st.executeQuery(query);
-
-						if (rs.next()) {
-							writer.println("Fail-username");
-							break;
-						}
-						query = "select username from taikhoan where email ='" + data[2] + "';";
-						rs = st.executeQuery(query);
-						if (rs.next()) {
-							writer.println("Fail-email");
-							break;
-						}
-						query = "insert into TaiKhoan(username, pass, email, isAdmin, ngaytao)"
-								+ "values ('" + data[1] + "', '" + data[3] + "', '" + data[2] + "', false, current_timestamp());" ;
-						System.out.println(query);
-						st.executeUpdate(query);
-						writer.println("Success");
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					break;
-				}
-
-				case "update_list_friend_online": {
-					// updateListFriend();
-					break;
-				}
-
-				case "friend_request": {
-					try {
-						Statement st = conn.createStatement();
-						String query = "select username from taikhoan where username ='" + data[2] + "';";
-						ResultSet rs = st.executeQuery(query);
-
-						if (rs.next()) {
-							query = "select * from BanBe where user_username = '" + data[1] + "'"
-									+ "and friend_username = '" + data[2] + "'";
-							rs = st.executeQuery(query);
-
+					case "register": {
+						try {
+							Statement st = conn.createStatement();
+							String query = "select username from taikhoan where username ='" + data[1] + "';";
+							ResultSet rs = st.executeQuery(query);
+	
 							if (rs.next()) {
-								// writer.println("friend");
-							} else {
-								query = "insert into LoiMoiKetBan(sender_username, receiver_username) " + "values ('"
-										+ data[1] + "', '" + data[2] + "')";
-								st.executeUpdate(query);
-								// writer.print("successful");
-
-								// Send friend-request to client if onl
-								if (server.getUserThreads().containsKey(data[2])) {
-									updateFriendRequest(server.getUserThreads().get(data[2]), data[2]);
-								}
+								writer.println("Fail-username");
+								break;
 							}
-
-						} else {
-							writer.println("not_exist");
+							query = "select username from taikhoan where email ='" + data[2] + "';";
+							rs = st.executeQuery(query);
+							if (rs.next()) {
+								writer.println("Fail-email");
+								break;
+							}
+							query = "insert into TaiKhoan(username, pass, email, isAdmin, ngaytao)"
+									+ "values ('" + data[1] + "', '" + data[3] + "', '" + data[2] + "', false, current_timestamp());" ;
+							System.out.println(query);
+							st.executeUpdate(query);
+							writer.println("Success");
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						break;
 					}
-					break;
-				}
-
-				case "reply_friend_request": {
-					// replyFriendRequest(status, sender, receiver);
-					replyFriendRequest(data[1], data[2], data[3]);
-					// updateFriendRequest(Thread_receiver, receiver)
-					updateFriendRequest(server.getUserThreads().get(data[3]), data[3]);
-
-					// Update List Friend
-					updateListFriend();
-					break;
-				}
-
-				case "message": {
-					// Initial Data
-					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
-					String senderName = data[1];
-					String receiverName = data[2];
-					String msg = data[3];
-					try {
-						// Update Database
-						// Update 2 row for sender and receiver in DB
-						Statement stmt = conn.createStatement();
-						PreparedStatement pstmt;
-						String sendermsgDB;
-						String receivermsgDB;
-						// Get msg from sender DB
-						String sql = "SELECT tinnhan FROM banbe WHERE user_username = '" + senderName
-								+ "' AND friend_username = '" + receiverName + "'";
-						ResultSet rs = stmt.executeQuery(sql);
-						if (rs.next()) sendermsgDB = rs.getNString("tinnhan");
-						else sendermsgDB = "";
-						sql = "SELECT tinnhan FROM banbe WHERE user_username = '" + receiverName
-								+ "' AND friend_username = '" + senderName + "'";
-						rs = stmt.executeQuery(sql);
-						if (rs.next()) receivermsgDB = rs.getNString("tinnhan");
-						else receivermsgDB = "";
-						sendermsgDB = sendermsgDB + msg + "\n";
-						receivermsgDB = receivermsgDB + msg + "\n";
-						sql = "UPDATE banbe SET tinnhan = ? WHERE user_username = ? AND friend_username = ?";
-						pstmt = conn.prepareStatement(sql);
-						pstmt.setString(1, sendermsgDB);
-						pstmt.setString(2, senderName);
-						pstmt.setString(3, receiverName);
-						pstmt.execute();
-						pstmt.setString(1, receivermsgDB);
-						pstmt.setString(2, receiverName);
-						pstmt.setString(3, senderName);
-						pstmt.execute();
-						pstmt.close();
-						// Send MSG
-						// When Receiver is online
-						if (listOnline.containsKey(receiverName)) {
-							ThreadServer receiverThread = listOnline.get(receiverName);
-							server.sendMessageToAUser(receiverThread, message);
+	
+					case "friend_request": {
+						try {
+							Statement st = conn.createStatement();
+							String query = "select username from taikhoan where username ='" + data[2] + "';";
+							ResultSet rs = st.executeQuery(query);
+	
+							if (rs.next()) {
+								query = "select * from BanBe where user_username = '" + data[1] + "'"
+										+ "and friend_username = '" + data[2] + "'";
+								rs = st.executeQuery(query);
+	
+								if (rs.next()) {
+									// writer.println("friend");
+								} else {
+									query = "insert into LoiMoiKetBan(sender_username, receiver_username) " + "values ('"
+											+ data[1] + "', '" + data[2] + "')";
+									st.executeUpdate(query);
+									// writer.print("successful");
+	
+									// Send friend-request to client if onl
+									if (server.getUserThreads().containsKey(data[2])) {
+										updateFriendRequest(server.getUserThreads().get(data[2]), data[2]);
+									}
+								}
+	
+							} else {
+								writer.println("not_exist");
+							}
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						break;
 					}
-
-					break;
-				}
-				default: {
-					System.out.println("Message is invalid!");
-				}
+	
+					case "reply_friend_request": {
+						// replyFriendRequest(status, sender, receiver);
+						replyFriendRequest(data[1], data[2], data[3]);
+						// updateFriendRequest(Thread_receiver, receiver)
+						updateFriendRequest(server.getUserThreads().get(data[3]), data[3]);
+	
+						// Update List Friend
+						updateListFriend();
+						break;
+					}
+					
+					case "remove_friend": {
+						removeFriend(data[1], data[2]);
+						
+						break;
+					}
+	
+					case "message": {
+						// Initial Data
+						HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+						String senderName = data[1];
+						String receiverName = data[2];
+						String msg = data[3];
+						try {
+							// Update Database
+							// Update 2 row for sender and receiver in DB
+							Statement stmt = conn.createStatement();
+							PreparedStatement pstmt;
+							String sendermsgDB;
+							String receivermsgDB;
+							// Get msg from sender DB
+							String sql = "SELECT tinnhan FROM banbe WHERE user_username = '" + senderName
+									+ "' AND friend_username = '" + receiverName + "'";
+							ResultSet rs = stmt.executeQuery(sql);
+							if (rs.next()) sendermsgDB = rs.getNString("tinnhan");
+							else sendermsgDB = "";
+							sql = "SELECT tinnhan FROM banbe WHERE user_username = '" + receiverName
+									+ "' AND friend_username = '" + senderName + "'";
+							rs = stmt.executeQuery(sql);
+							if (rs.next()) receivermsgDB = rs.getNString("tinnhan");
+							else receivermsgDB = "";
+							sendermsgDB = sendermsgDB + msg + "\n";
+							receivermsgDB = receivermsgDB + msg + "\n";
+							sql = "UPDATE banbe SET tinnhan = ? WHERE user_username = ? AND friend_username = ?";
+							pstmt = conn.prepareStatement(sql);
+							pstmt.setString(1, sendermsgDB);
+							pstmt.setString(2, senderName);
+							pstmt.setString(3, receiverName);
+							pstmt.execute();
+							pstmt.setString(1, receivermsgDB);
+							pstmt.setString(2, receiverName);
+							pstmt.setString(3, senderName);
+							pstmt.execute();
+							pstmt.close();
+							// Send MSG
+							// When Receiver is online
+							if (listOnline.containsKey(receiverName)) {
+								ThreadServer receiverThread = listOnline.get(receiverName);
+								server.sendMessageToAUser(receiverThread, message);
+							}
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+	
+						break;
+					}
+					default: {
+						System.out.println("Message is invalid!");
+					}
 				}
 			}
 
@@ -259,7 +260,6 @@ public class ThreadServer extends Thread {
 	public void replyFriendRequest(String status, String sender, String receiver) {
 		Statement st;
 		String query = "";
-		ResultSet rs;
 
 		try {
 			st = conn.createStatement();
@@ -290,6 +290,24 @@ public class ThreadServer extends Thread {
 
 	}
 
+	public void removeFriend(String user, String friend) {
+		Statement st;
+		String query = "";
+
+		try {
+			st = conn.createStatement();
+			query = "delete from BanBe where user_username = '" + user + "'"
+					+ "and friend_username = '" + friend + "'";
+			st.executeUpdate(query);
+			
+			query = "delete from BanBe where user_username = '" + friend + "'"
+					+ "and friend_username = '" + user + "'";
+			st.executeUpdate(query);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Sends a message to the client.
 	 */
