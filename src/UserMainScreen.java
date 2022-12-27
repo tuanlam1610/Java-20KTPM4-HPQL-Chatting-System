@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -69,6 +70,8 @@ public class UserMainScreen extends JFrame {
 		
 		this._clientSocket = socket;
 		this._username = username;
+//		OutputStream output = socket.getOutputStream();
+//		_pw = new PrintWriter(output, true);
 		this._pw = pw;
 		
 		setResizable(false);
@@ -461,9 +464,10 @@ public class UserMainScreen extends JFrame {
 				LocalDateTime now = LocalDateTime.now();
 
 				String value = listFriend.getSelectedValue().toString();
-
+				value = value.split(" ")[0];
 				// area
-				msg_area.setText(msg_area.getText().trim() + "\n"+ _username + "(" + dtf.format(now) + "): " + msgOut);
+//				msg_area.setText(msg_area.getText().trim() + "\n"+ _username + "(" + dtf.format(now) + "): " + msgOut);
+				msg_area.append(username + "(" + dtf.format(now) + "): " + msgOut + "\n");
 				friendChatMSG.put(value, msg_area.getText());
 				sendmsg = "message-" + _username + "-" + value + "-" + _username + "(" + dtf.format(now) + "): " + msgOut;
 				_pw.println(sendmsg);

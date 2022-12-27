@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -163,6 +164,52 @@ public class ThreadServer extends Thread {
 				}
 
 				case "message": {
+					// Initial Data
+					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+					String senderName = data[1];
+					String receiverName = data[2];
+					String msg = data[3];
+					try {
+						// Update Database
+						// Update 2 row for sender and receiver in DB
+						Statement stmt = conn.createStatement();
+						PreparedStatement pstmt;
+						String sendermsgDB;
+						String receivermsgDB;
+						// Get msg from sender DB
+						String sql = "SELECT tinnhan FROM banbe WHERE user_username = '" + senderName
+								+ "' AND friend_username = '" + receiverName + "'";
+						ResultSet rs = stmt.executeQuery(sql);
+						if (rs.next()) sendermsgDB = rs.getNString("tinnhan");
+						else sendermsgDB = "";
+						sql = "SELECT tinnhan FROM banbe WHERE user_username = '" + receiverName
+								+ "' AND friend_username = '" + senderName + "'";
+						rs = stmt.executeQuery(sql);
+						if (rs.next()) receivermsgDB = rs.getNString("tinnhan");
+						else receivermsgDB = "";
+						sendermsgDB = sendermsgDB + msg + "\n";
+						receivermsgDB = receivermsgDB + msg + "\n";
+						sql = "UPDATE banbe SET tinnhan = ? WHERE user_username = ? AND friend_username = ?";
+						pstmt = conn.prepareStatement(sql);
+						pstmt.setString(1, sendermsgDB);
+						pstmt.setString(2, senderName);
+						pstmt.setString(3, receiverName);
+						pstmt.execute();
+						pstmt.setString(1, receivermsgDB);
+						pstmt.setString(2, receiverName);
+						pstmt.setString(3, senderName);
+						pstmt.execute();
+						pstmt.close();
+						// Send MSG
+						// When Receiver is online
+						if (listOnline.containsKey(receiverName)) {
+							ThreadServer receiverThread = listOnline.get(receiverName);
+							server.sendMessageToAUser(receiverThread, message);
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
 					break;
 				}
@@ -187,6 +234,17 @@ public class ThreadServer extends Thread {
 	}
 
 	// Update Online List
+	// public void updateListFriend(HashMap<String, ThreadServer> listOnline) {
+	// 	String listOnl = "";
+	// 	for (String friend : _listFriend) {
+	// 		if (listOnline.containsKey(friend)) {
+	// 			listOnl += (friend.concat(" 1")).concat(",");
+	// 		} else {
+	// 			listOnl += (friend.concat(" 0")).concat(",");
+	// 		}
+	// 	}
+	// 	listOnl = "update_online_list-" + listOnl;
+	// }
 
 	public void updateListFriend() {
 		_updateListFriend = new ServerUpdateListFriendThread(server, conn, _username);
