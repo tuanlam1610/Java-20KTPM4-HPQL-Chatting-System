@@ -84,25 +84,25 @@ values
 ("admin1", "123", "Admin 1", "admin1@gmail.com", "2002-01-01", "227 Nguyễn Văn Cừ", true, true, current_timestamp(), "2022-12-22"),
 ("dmtung", "123", "Dương Minh Tùng", "dmtung20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22");
 
-insert into BanBe(user_username, friend_username)
-values ("nnquang", "htlam"),
-	("nnquang", "ntphu"),
-	("nnquang", "tghuy"),
-	("nnquang", "lhminh"),
-	("htlam", "nnquang"),
-	("htlam", "ntphu"),
-	("htlam", "lhminh"),
-	("ntphu", "nnquang"),
-	("ntphu", "htlam"),
-	("ntphu", "tghuy"),
-	("ntphu", "lhminh"),
-	("tghuy", "nnquang"),
-	("tghuy", "ntphu"),
-	("tghuy", "lhminh"),
-	("lhminh", "nnquang"),
-	("lhminh", "htlam"),
-	("lhminh", "ntphu"),
-	("lhminh", "tghuy");
+insert into BanBe(user_username, friend_username, tinnhan)
+values ("nnquang", "htlam", ""),
+	("nnquang", "ntphu", ""),
+	("nnquang", "tghuy", ""),
+	("nnquang", "lhminh", ""),
+	("htlam", "nnquang", ""),
+	("htlam", "ntphu", ""),
+	("htlam", "lhminh", ""),
+	("ntphu", "nnquang", ""),
+	("ntphu", "htlam", ""),
+	("ntphu", "tghuy", ""),
+	("ntphu", "lhminh", ""),
+	("tghuy", "nnquang", ""),
+	("tghuy", "ntphu", ""),
+	("tghuy", "lhminh", ""),
+	("lhminh", "nnquang", ""),
+	("lhminh", "htlam", ""),
+	("lhminh", "ntphu", ""),
+	("lhminh", "tghuy", "");
     
 /*insert into LoiMoiKetBan(sender_username, receiver_username)
 values ("nnquang", "htlam"),

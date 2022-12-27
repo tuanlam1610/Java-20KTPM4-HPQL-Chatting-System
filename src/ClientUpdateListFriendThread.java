@@ -25,7 +25,7 @@ public class ClientUpdateListFriendThread extends Thread {
 		
 		for (String status : _listOnline) {
 			friend = status.substring(0, status.length() - 2);
-			System.out.println(friend);
+//			System.out.println(friend);
 			if (!friend.equals(_username)) {
 				if (status.endsWith("1")) {
 					friend = friend.concat(" (Online)");

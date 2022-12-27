@@ -181,11 +181,13 @@ public class ThreadServer extends Thread {
 						ResultSet rs = stmt.executeQuery(sql);
 						if (rs.next()) sendermsgDB = rs.getNString("tinnhan");
 						else sendermsgDB = "";
+						//System.out.println("Sender MSG DB: " + sendermsgDB);
 						sql = "SELECT tinnhan FROM banbe WHERE user_username = '" + receiverName
 								+ "' AND friend_username = '" + senderName + "'";
 						rs = stmt.executeQuery(sql);
 						if (rs.next()) receivermsgDB = rs.getNString("tinnhan");
 						else receivermsgDB = "";
+						//System.out.println("Receiver MSG DB: " + receivermsgDB);
 						sendermsgDB = sendermsgDB + msg + "\n";
 						receivermsgDB = receivermsgDB + msg + "\n";
 						sql = "UPDATE banbe SET tinnhan = ? WHERE user_username = ? AND friend_username = ?";
@@ -198,6 +200,7 @@ public class ThreadServer extends Thread {
 						pstmt.setString(2, receiverName);
 						pstmt.setString(3, senderName);
 						pstmt.execute();
+						//System.out.println("Updated");
 						pstmt.close();
 						// Send MSG
 						// When Receiver is online
