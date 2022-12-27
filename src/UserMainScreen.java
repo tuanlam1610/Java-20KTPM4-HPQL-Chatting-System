@@ -251,7 +251,7 @@ public class UserMainScreen extends JFrame {
 
 		// ScrollPane Friend Request
 		scrollPaneFriendRequest.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tabbedPane.addTab("Lời mởi kết bạn", null, scrollPaneFriendRequest, null);
+		tabbedPane.addTab("Lời mời kết bạn", null, scrollPaneFriendRequest, null);
 		
 		// List Group
 		listFriendRequest.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -413,9 +413,9 @@ public class UserMainScreen extends JFrame {
 				String value = listFriendRequest.getSelectedValue().toString();
 				String reply = "";
 				
-				Object[] options = {"OK nè", "Không, nha bé", "Để suy nghĩ"};
+				Object[] options = {"Đồng ý", "Từ chối"};
 				
-				int click = JOptionPane.showOptionDialog(null, "Hello, kết bạn với mình nè", "Lời mời kết bạn", JOptionPane.YES_NO_CANCEL_OPTION,
+				int click = JOptionPane.showOptionDialog(null, "Hello, Chào bạn", "Lời mời kết bạn", JOptionPane.YES_NO_CANCEL_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                 if (click==JOptionPane.YES_OPTION) {
                 	reply = "reply_friend_request-".concat("YES-");
