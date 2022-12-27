@@ -189,6 +189,10 @@ public class RegisterScreen extends JFrame {
 							String[] data = msg.split("-");
 							if (data[0].equals("Success")) {
 								JOptionPane.showMessageDialog(null, "Registered successfully!");
+								MainScreen frame = new MainScreen();
+								frame.setLocationRelativeTo(null);
+								frame.setVisible(true);
+								dispose();
 							}
 							else {
 								if (data[1].equals("username")) {
