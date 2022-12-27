@@ -28,7 +28,6 @@ public class ServerUpdateFriendRequestThread extends Thread {
 			String query = "select sender_username from LoiMoiKetBan where receiver_username = '" + _receiver
 					+ "'";
 			ResultSet rs = st.executeQuery(query);
-
 			while (rs.next()) { 
 				listReq = listReq.concat(rs.getString(1).concat(","));
 				System.out.println("--------- " + listReq);
