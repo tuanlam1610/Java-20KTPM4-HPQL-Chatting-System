@@ -42,8 +42,10 @@ public class ClientReaderThread extends Thread {
 				String[] message = _response.split("-");
 				switch (message[0]) {
 				case "update_online_list": {
-					_updateThread = new ClientUpdateListFriendThread(message[1].split(","), _listFriend, _username);
-					_updateThread.start();
+					if (message.length > 1) {
+						_updateThread = new ClientUpdateListFriendThread(message[1].split(","), _listFriend, _username);
+						_updateThread.start();
+					}
 					break;
 				}
 				case "friend_request": {
