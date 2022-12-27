@@ -87,6 +87,7 @@ public class UserMainScreen extends JFrame {
 		JDesktopPane desktopPane = new JDesktopPane();
 		JPanel userBtnPane = new JPanel();
 		JButton btnCreateGroup = new JButton("Tạo Nhóm");
+		
 		JButton btnAddFriend = new JButton("Kết Bạn");
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		JLabel lab = new JLabel();
@@ -296,10 +297,14 @@ public class UserMainScreen extends JFrame {
 		panel.add(btnSENDMSG);
 		
 		
+		
+		
 		// ----------------------------------------------------------- EVENT -------------------------------------------------------------
 		
 		_readThread = new ClientReaderThread(socket, msg_area, listFriend, listFriendRequest, _username);
 		_readThread.start();
+		
+		
 		
 		// Event Add Friend
 		btnAddFriend.addActionListener(new ActionListener() {
@@ -494,6 +499,16 @@ public class UserMainScreen extends JFrame {
 					msg_area.setText(friendChatMSG.get(value));
 				}
 
+			}
+		});
+		
+		//Create group
+		btnCreateGroup.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CreateGroup creategrp_form = new CreateGroup(socket, pw, username);
+				creategrp_form.setLocationRelativeTo(null);
+				creategrp_form.setVisible(true);
+				
 			}
 		});
 

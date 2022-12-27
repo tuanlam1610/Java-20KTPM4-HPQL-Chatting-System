@@ -35,6 +35,22 @@ public class ClientReaderThread extends Thread {
 		}
 	}
 	
+	public ClientReaderThread(Socket socket, JList<String> listFriend, String username) {
+		this._socket = socket;
+//		this._textArea = textArea;
+		this._listFriend = listFriend;
+//		this._listFriendRequest = listFriendRequest;
+		this._username = username;
+		
+		try {
+			InputStream input = this._socket.getInputStream();
+			_reader = new BufferedReader(new InputStreamReader(input));
+		} catch (IOException ex) {
+			System.out.println("Error while getting inputstream: " + ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
 	public void run() {
 		while (true) {
 			try {

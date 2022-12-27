@@ -154,7 +154,6 @@ public class ThreadServer extends Thread {
 				case "reply_friend_request": {
 					// replyFriendRequest(status, sender, receiver);
 					replyFriendRequest(data[1], data[2], data[3]);
-
 					// updateFriendRequest(Thread_receiver, receiver)
 					updateFriendRequest(server.getUserThreads().get(data[3]), data[3]);
 
@@ -319,7 +318,8 @@ public class ThreadServer extends Thread {
 
 			if (status.equals("YES")) {
 				// Xóa 1 dòng trong LoiMoiKetBan va thêm 2 dòng trong BanBe
-				query = "delete from LoiMoiKetBan where receiver_username = '" + receiver + "'";
+				query = "delete from LoiMoiKetBan where receiver_username = '" + receiver + "'"
+						+ "and sender_username = '" + sender + "'";
 				st.executeUpdate(query);
 
 				// Insert
@@ -331,7 +331,8 @@ public class ThreadServer extends Thread {
 						+ "')";
 				st.executeUpdate(query);
 			} else {
-				query = "delete from LoiMoiKetBan where receiver_username = '" + receiver + "'";
+				query = "delete from LoiMoiKetBan where receiver_username = '" + receiver + "'"
+						+ "and sender_username = '" + sender + "'";
 				st.executeUpdate(query);
 			}
 		} catch (SQLException e) {
