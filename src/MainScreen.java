@@ -209,7 +209,7 @@ public class MainScreen extends JFrame {
 		JButton registerBtn = new JButton("Đăng Ký");
 		registerBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RegisterScreen new_register = new RegisterScreen();
+				RegisterScreen new_register = new RegisterScreen(clientSocket);
 				new_register.setLocationRelativeTo(null);
 				new_register.setVisible(true);
 				dispose();

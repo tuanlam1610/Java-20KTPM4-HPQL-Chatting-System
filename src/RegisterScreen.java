@@ -27,6 +27,13 @@ import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import javax.swing.border.LineBorder;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.awt.event.ActionEvent;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -35,25 +42,12 @@ import com.jgoodies.forms.layout.RowSpec;
 public class RegisterScreen extends JFrame {
 	private JTextField txtUser;
 	private JTextField txtMail;
-	private JTextField txtPass;
-	private JTextField txtRePass;
-
+	private JPasswordField passwordField_1;
+	private JPasswordField passwordField_2;
+	private Socket clientSocket;
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					RegisterScreen frame = new RegisterScreen();
-					frame.setLocationRelativeTo(null);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 	
 	public static boolean isValidEmailAddress(String email) {
 		   boolean result = true;
@@ -69,7 +63,8 @@ public class RegisterScreen extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public RegisterScreen() {
+	public RegisterScreen(Socket clientSocket) {
+		this.clientSocket = clientSocket;
 		setTitle("HPQL Chatting System");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -125,24 +120,12 @@ public class RegisterScreen extends JFrame {
 		lblNewLabel.setBounds(39, 160, 172, 28);
 		Panel.add(lblNewLabel);
 		
-		txtPass = new JTextField();
-		txtPass.setHorizontalAlignment(SwingConstants.LEFT);
-		txtPass.setColumns(10);
-		txtPass.setBounds(221, 160, 186, 28);
-		Panel.add(txtPass);
-		
 		JLabel lblNewLabel_2 = new JLabel("Xác nhận mật khẩu:");
 		lblNewLabel_2.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblNewLabel_2.setForeground(new Color(102, 153, 255));
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblNewLabel_2.setBounds(39, 197, 172, 28);
 		Panel.add(lblNewLabel_2);
-		
-		txtRePass = new JTextField();
-		txtRePass.setHorizontalAlignment(SwingConstants.LEFT);
-		txtRePass.setColumns(10);
-		txtRePass.setBounds(221, 197, 186, 28);
-		Panel.add(txtRePass);
 		
 		JButton btnNewButton_2_1 = new JButton("Đã có tài khoản?");
 		btnNewButton_2_1.setForeground(new Color(125, 168, 255));
@@ -168,42 +151,62 @@ public class RegisterScreen extends JFrame {
 		btnRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(txtUser.getText().equals("")||txtMail.getText().equals("")
-						||txtPass.getText().equals("")|| txtRePass.getText().equals("")) {
+						||passwordField_1.getText().equals("")|| passwordField_2.getText().equals("")) {
 							// show message
-							JOptionPane.showMessageDialog(Panel, "Please enter all field in Add/Update Panel");
+							JOptionPane.showMessageDialog(Panel, "Please input all field in Panel.");
 				} else {
+					OutputStream output = null;
+					try {
+						output = clientSocket.getOutputStream();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					PrintWriter pw = new PrintWriter(output, true);
 					String user = txtUser.getText();
 					String mail = txtMail.getText();
-					String password = txtPass.getText();
-					String re_password = txtRePass.getText();
+					String password = passwordField_1.getText();
+					String re_password = passwordField_2.getText();
 					
-					if(user.length() > 15) {
-						JOptionPane.showMessageDialog(Panel, "User name cannot exceed 15 character");
+					if(user.length() > 20) {
+						JOptionPane.showMessageDialog(Panel, "User name cannot exceed 20 character");
 					}
 					else if(!isValidEmailAddress(mail)) {
-						JOptionPane.showMessageDialog(Panel, "'" + mail + "' is not a valid Mail format");
+						JOptionPane.showMessageDialog(Panel, "Your email is not a valid format");
 					}
 					else if(!re_password.equals(password)) {
-						JOptionPane.showMessageDialog(Panel, re_password + " is not the same as " + password);
+						JOptionPane.showMessageDialog(Panel, "Your password is not match.");
 					}
 //					TO DO: Add query to check if account already exists in database.
 					else {
-//						JOptionPane.showMessageDialog(Panel, "Successfully registerd a new account");
-					    String message = "Successfully registerd a new account! Return to log in screen?";
-					    int answer = JOptionPane.showConfirmDialog(desktopPane, message, "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-					    if (answer == JOptionPane.YES_OPTION) {
-					      // User clicked YES.
-					    	MainScreen new_main = new MainScreen();
-							new_main.setLocationRelativeTo(null);
-							new_main.setVisible(true);
-							dispose();
-					    } else if (answer == JOptionPane.NO_OPTION) {
-					      // User clicked NO.
-					    	// Do nothing
-					    }
-					    
-					    
-						
+						pw.println("register-" + user + "-" + mail + "-" + password);
+						BufferedReader reader;
+						InputStream input;
+						try {
+							input = clientSocket.getInputStream();
+							reader = new BufferedReader(new InputStreamReader(input));
+							String msg = reader.readLine();
+							String[] data = msg.split("-");
+							if (data[0].equals("Success")) {
+								JOptionPane.showMessageDialog(null, "Registered successfully!");
+								MainScreen frame = new MainScreen();
+								frame.setLocationRelativeTo(null);
+								frame.setVisible(true);
+								dispose();
+							}
+							else {
+								if (data[1].equals("username")) {
+									JOptionPane.showMessageDialog(null, "Username existed!");
+								}
+								else {
+									JOptionPane.showMessageDialog(null, "Email exists!");
+								}
+								
+							}
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 					
 				}
@@ -213,6 +216,14 @@ public class RegisterScreen extends JFrame {
 		btnRegister.setFont(new Font("Tahoma", Font.BOLD, 16));
 		btnRegister.setBounds(171, 262, 112, 42);
 		Panel.add(btnRegister);
+		
+		passwordField_1 = new JPasswordField();
+		passwordField_1.setBounds(221, 160, 186, 28);
+		Panel.add(passwordField_1);
+		
+		passwordField_2 = new JPasswordField();
+		passwordField_2.setBounds(221, 197, 186, 28);
+		Panel.add(passwordField_2);
 
 
 		

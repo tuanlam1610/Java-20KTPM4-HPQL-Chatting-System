@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -69,6 +70,8 @@ public class UserMainScreen extends JFrame {
 		
 		this._clientSocket = socket;
 		this._username = username;
+//		OutputStream output = socket.getOutputStream();
+//		_pw = new PrintWriter(output, true);
 		this._pw = pw;
 		
 		setResizable(false);
@@ -248,7 +251,7 @@ public class UserMainScreen extends JFrame {
 
 		// ScrollPane Friend Request
 		scrollPaneFriendRequest.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tabbedPane.addTab("Lời mởi kết bạn", null, scrollPaneFriendRequest, null);
+		tabbedPane.addTab("Lời mời kết bạn", null, scrollPaneFriendRequest, null);
 		
 		// List Group
 		listFriendRequest.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -410,9 +413,9 @@ public class UserMainScreen extends JFrame {
 				String value = listFriendRequest.getSelectedValue().toString();
 				String reply = "";
 				
-				Object[] options = {"OK nè", "Không, nha bé", "Để suy nghĩ"};
+				Object[] options = {"Đồng ý", "Từ chối"};
 				
-				int click = JOptionPane.showOptionDialog(null, "Hello, kết bạn với mình nè", "Lời mời kết bạn", JOptionPane.YES_NO_CANCEL_OPTION,
+				int click = JOptionPane.showOptionDialog(null, "Hello, Chào bạn", "Lời mời kết bạn", JOptionPane.YES_NO_CANCEL_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                 if (click==JOptionPane.YES_OPTION) {
                 	reply = "reply_friend_request-".concat("YES-");
@@ -461,9 +464,10 @@ public class UserMainScreen extends JFrame {
 				LocalDateTime now = LocalDateTime.now();
 
 				String value = listFriend.getSelectedValue().toString();
-
+				value = value.split(" ")[0];
 				// area
-				msg_area.setText(msg_area.getText().trim() + "\n"+ _username + "(" + dtf.format(now) + "): " + msgOut);
+//				msg_area.setText(msg_area.getText().trim() + "\n"+ _username + "(" + dtf.format(now) + "): " + msgOut);
+				msg_area.append(username + "(" + dtf.format(now) + "): " + msgOut + "\n");
 				friendChatMSG.put(value, msg_area.getText());
 				sendmsg = "message-" + _username + "-" + value + "-" + _username + "(" + dtf.format(now) + "): " + msgOut;
 				_pw.println(sendmsg);

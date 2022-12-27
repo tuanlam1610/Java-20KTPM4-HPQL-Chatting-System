@@ -20,6 +20,7 @@ Create table TaiKhoan (
 Create table BanBe (
 	user_username varchar(20),
     friend_username varchar(20),
+	tinnhan longtext,
     primary key (user_username, friend_username)
 );
 
