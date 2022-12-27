@@ -86,6 +86,7 @@ public class ClientReaderThread extends Thread {
 						selectedName = selectedName.split(" ")[0];
 					}
 					if(selectedName.equals(senderName)) {
+						//System.out.println("Message before append: " + msg);
 						_textArea.append(msg + "\n");
 					}
 					break;
