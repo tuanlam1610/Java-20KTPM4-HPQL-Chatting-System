@@ -70,8 +70,8 @@ public class UserMainScreen extends JFrame {
 		
 		this._clientSocket = socket;
 		this._username = username;
-		OutputStream output = socket.getOutputStream();
-		_writer = new PrintWriter(output, true);
+//		OutputStream output = socket.getOutputStream();
+//		_pw = new PrintWriter(output, true);
 		this._pw = pw;
 		
 		setResizable(false);
