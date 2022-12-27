@@ -322,7 +322,15 @@ public class UserMainScreen extends JFrame {
 		// Event Unfriend
 		btnUnfriend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// remove friend from database
+				String value = listFriend.getSelectedValue().toString();
+				String req = "remove_friend-".concat(_username);
+				value = value.split(" ")[0];
+				req = req.concat("-");
+				req = req.concat(value);
+				
+				// req = remove_friend-username-friend
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, req);
+				_writeThread.start();
 			}
 		});
 		
@@ -377,6 +385,7 @@ public class UserMainScreen extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				// On Mouse Click
 				String value = listFriend.getSelectedValue().toString();
+				value = value.split(" ")[0];
 				
 				btnUnfriend.setVisible(true);
 				btnSearchHistory.setVisible(true);
@@ -385,8 +394,13 @@ public class UserMainScreen extends JFrame {
 				btnRemoveFromGroup.setVisible(false);
 				btnChangeGroupName.setVisible(false);
 				btnMakeAdmin.setVisible(false);
-
-				msg_area.setText(friendChatMSG.get(value));
+				
+				String message = "get_chat_history-" + _username + "-"+ value;
+				System.out.println(message);
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, message ); 
+				_writeThread.start();
+				
+				//msg_area.setText(friendChatMSG.get(value));
 
 			}
 		});
