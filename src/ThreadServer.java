@@ -118,6 +118,7 @@ public class ThreadServer extends Thread {
 						ResultSet rs = st.executeQuery(query);
 
 						if (rs.next()) {
+							writer.println("Success");
 							int leftLimit = 97; // letter 'a'
 						    int rightLimit = 122; // letter 'z'
 						    int targetStringLength = 10;
@@ -129,10 +130,9 @@ public class ThreadServer extends Thread {
 						        buffer.append((char) randomLimitedInt);
 						    }
 						    String generatedString = buffer.toString();
-						    SendEmail.sendMail(rs.getString(2), generatedString);
+						    SendEmail.sendMail(rs.getString(1), rs.getString(2), generatedString);
 						    query = "update taikhoan set pass = '" + generatedString + "' where username ='" + rs.getString(1) +"';";
 						    st.executeUpdate(query);
-						    writer.println("Success");
 							break;
 						}
 						else {
