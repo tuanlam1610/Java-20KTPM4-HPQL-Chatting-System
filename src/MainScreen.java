@@ -285,8 +285,28 @@ public class MainScreen extends JFrame {
 		// Event Listener
 		btnConfirm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				reset_desktopPane.setVisible(false);
-				login_desktopPane.setVisible(true);
+				pw.println("resetpw-" + textField.getText() + "-" + textField_1.getText());
+				BufferedReader reader;
+				InputStream input;
+				try {
+					input = clientSocket.getInputStream();
+					reader = new BufferedReader(new InputStreamReader(input));
+					String msg = reader.readLine();
+					String[] data = msg.split("-");
+					if (data[0].equals("Success")) {
+						JOptionPane.showMessageDialog(null, "Your new password was sent to your email!");
+						reset_desktopPane.setVisible(false);
+						login_desktopPane.setVisible(true);
+					} else {
+						textField.setText(null);
+						textField_1.setText(null);
+						JOptionPane.showMessageDialog(null, "Your username or email is not match!");
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
 			}
 		});
 

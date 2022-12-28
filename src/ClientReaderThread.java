@@ -35,10 +35,27 @@ public class ClientReaderThread extends Thread {
 		}
 	}
 	
+	public ClientReaderThread(Socket socket, JList<String> listFriend, String username) {
+		this._socket = socket;
+//		this._textArea = textArea;
+		this._listFriend = listFriend;
+//		this._listFriendRequest = listFriendRequest;
+		this._username = username;
+		
+		try {
+			InputStream input = this._socket.getInputStream();
+			_reader = new BufferedReader(new InputStreamReader(input));
+		} catch (IOException ex) {
+			System.out.println("Error while getting inputstream: " + ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
 	public void run() {
 		while (true) {
 			try {
 				_response = _reader.readLine();
+				System.out.println(_response);
 				String[] message = _response.split("-");
 				switch (message[0]) {
 				case "update_online_list": {
@@ -61,6 +78,7 @@ public class ClientReaderThread extends Thread {
 					String senderName = message[1];
 					String receiverName = message[2];
 					String msg = message[3];
+					
 					System.out.println(senderName + " " + receiverName + " " + msg);
 					String selectedName = "";
 					if(!(_listFriend.getSelectedValue() == null)) {
@@ -68,7 +86,32 @@ public class ClientReaderThread extends Thread {
 						selectedName = selectedName.split(" ")[0];
 					}
 					if(selectedName.equals(senderName)) {
+						//System.out.println("Message before append: " + msg);
 						_textArea.append(msg + "\n");
+					}
+					break;
+				}
+				case "get_chat_history": {
+					String msg = message[2];
+					String str = "";
+					while((str = _reader.readLine())!= null) {
+						if(!str.equals("EndOfString"))
+							msg = msg + "\n" + str;
+						else 
+							break;
+					}
+					if(message.length > 2) {
+					String senderName = message[1];
+					//String receiverName = message[2];
+					System.out.println(msg);
+					String selectedName = "";
+					if(!(_listFriend.getSelectedValue() == null)) {
+						selectedName = _listFriend.getSelectedValue().toString();
+						selectedName = selectedName.split(" ")[0];
+					}
+					if(selectedName.equals(senderName)) {
+						_textArea.setText(msg);
+					}
 					}
 					break;
 				}
