@@ -209,24 +209,28 @@ public class CreateGroup extends JFrame {
 		_readThread.start();
 			
 		DefaultListModel model_member = new DefaultListModel<>();
-		DefaultListModel model_friend = new DefaultListModel<>();
+//		DefaultListModel model_friend = new DefaultListModel<>();
 			
-		for(int i = 0;i < list_friend.getModel().getSize();i++) {
-			if(!model_friend.contains(list_friend.getModel().getElementAt(i)))
-			model_friend.addElement(list_friend.getModel().getElementAt(i));
-		}
+//		for(int i = 0;i < list_friend.getModel().getSize();i++) {
+//			if(!model_friend.contains(list_friend.getModel().getElementAt(i)))
+//			model_friend.addElement(list_friend.getModel().getElementAt(i));
+//		}
 		
-		list_friend.setModel(model_friend);
+//		list_friend.setModel(model_friend);
 		
 		btnAddMember.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DefaultListModel temp_model = (DefaultListModel) list_friend.getModel();
 				int selectedIndex = list_friend.getSelectedIndex();
 				String selected_value = list_friend.getSelectedValue();
 				if (selectedIndex != -1) {
-				    temp_model.remove(selectedIndex);
-				    model_member.addElement(selected_value);
-				    list_member.setModel(model_member);
+					if(!model_member.contains(selected_value)) {
+						model_member.addElement(selected_value);
+					    list_member.setModel(model_member);
+					}
+					else {
+						JOptionPane.showMessageDialog(contentPane, "Already added!",
+					               "Warning", JOptionPane.WARNING_MESSAGE);
+					}
 				}
 				else {
 					JOptionPane.showMessageDialog(contentPane, "Please choose someone!",
@@ -239,11 +243,8 @@ public class CreateGroup extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				DefaultListModel temp_model = (DefaultListModel) list_member.getModel();
 				int selectedIndex = list_member.getSelectedIndex();
-				String selected_value = list_member.getSelectedValue();
 				if (selectedIndex != -1) {
 				    temp_model.remove(selectedIndex);    
-				    model_friend.addElement(selected_value);
-				    list_friend.setModel(model_friend);
 				}
 				else {
 					JOptionPane.showMessageDialog(contentPane, "Please choose someone!",
