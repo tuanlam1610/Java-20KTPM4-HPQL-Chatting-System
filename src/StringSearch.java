@@ -56,9 +56,9 @@ public class StringSearch extends JFrame {
 		this._username = username;
 		this._pw = pw;
 		this.textArea = textArea;
-		this._searchUser = searchUser;
+		this._searchUser = searchUser.split(" ")[0];
 		
-		
+		textArea.setText("");
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 831, 500);
 		contentPane = new JPanel();
@@ -76,9 +76,9 @@ public class StringSearch extends JFrame {
 				String stringMsg = "";
 				String targetMsg = "";
 				stringMsg = searchTextField.getText().trim();
-				searchTextField.setText("");
+				//searchTextField.setText("");
 				targetMsg = targetTextField.getText().trim();
-				targetTextField.setText("");
+				//targetTextField.setText("");
 				
 				if(targetMsg.equals(""))
 				{		//do nothing
