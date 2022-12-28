@@ -99,10 +99,11 @@ public class CreateGroup extends JFrame {
 		
 		scrollPane_friendlist.setBounds(20, 161, 238, 302);
 		contentPane.add(scrollPane_friendlist);
+		list_member.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		
 		scrollPane_friendlist.setViewportView(list_member);
-		list_member.setBackground(UIManager.getColor("CheckBox.highlight"));
+		list_member.setBackground(new Color(255, 255, 255));
 		list_member.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		list_member.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		
@@ -150,33 +151,34 @@ public class CreateGroup extends JFrame {
 		scrollPane_friendlist_1.setBounds(300, 161, 238, 302);
 		
 		contentPane.add(scrollPane_friendlist_1);
+		list_friend.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list_friend.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		list_friend.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		list_friend.setBackground(UIManager.getColor("CheckBox.highlight"));
+		list_friend.setBackground(new Color(255, 255, 255));
 		
 		scrollPane_friendlist_1.setViewportView(list_friend);
 		
-		list_friend.setSelectionModel(new DefaultListSelectionModel() {
-		    @Override
-		    public void setSelectionInterval(int index0, int index1) {
-		        if(super.isSelectedIndex(index0)) {
-		            super.removeSelectionInterval(index0, index1);
-		        }
-		        else {
-		            super.addSelectionInterval(index0, index1);
-		        }
-		    }
-		});
+//		list_friend.setSelectionModel(new DefaultListSelectionModel() {
+//		    @Override
+//		    public void setSelectionInterval(int index0, int index1) {
+//		        if(super.isSelectedIndex(index0)) {
+//		            super.removeSelectionInterval(index0, index1);
+//		        }
+//		        else {
+//		            super.addSelectionInterval(index0, index1);
+//		        }
+//		    }
+//		});
 		
-		list_friend.setModel(new AbstractListModel() {
-			String[] values = new String[] {};
-			public int getSize() {
-				return values.length;
-			}
-			public Object getElementAt(int index) {
-				return values[index];
-			}
-		});
+//		list_friend.setModel(new AbstractListModel() {
+//			String[] values = new String[] {};
+//			public int getSize() {
+//				return values.length;
+//			}
+//			public Object getElementAt(int index) {
+//				return values[index];
+//			}
+//		});
 		
 		btnAddMember.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		btnAddMember.setBounds(300, 474, 238, 44);
