@@ -14,7 +14,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class SearchString extends JFrame {
 
@@ -32,7 +35,7 @@ public class SearchString extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -43,7 +46,7 @@ public class SearchString extends JFrame {
 				}
 			}
 		});
-	}
+	}*/
 
 	/**
 	 * Create the frame.
@@ -55,6 +58,7 @@ public class SearchString extends JFrame {
 		this.textArea = textArea;
 		this._searchUser = searchUser;
 		
+		
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 831, 500);
 		contentPane = new JPanel();
@@ -65,13 +69,10 @@ public class SearchString extends JFrame {
 		JButton btnNewButton = new JButton("Search String");
 		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnNewButton.setBounds(650, 35, 134, 33);
+		btnNewButton.setEnabled(false);
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(searchUser);
-				System.out.println("/");
-				System.out.println(_searchUser);
-				if (!_searchUser.equals(""))
-					targetTextField.setText(_searchUser);
+				
 				String stringMsg = "";
 				String targetMsg = "";
 				stringMsg = searchTextField.getText().trim();
@@ -79,9 +80,15 @@ public class SearchString extends JFrame {
 				targetMsg = targetTextField.getText().trim();
 				targetTextField.setText("");
 				
+				if(targetMsg.equals(""))
+				{		//do nothing
+				}	
+				else {
+				
 				String sendMsg = "";
 				sendMsg = "string_search-" + _username + "-" + targetMsg + "-" + stringMsg;
 				_pw.println(sendMsg);
+				}
 			}
 		});
 		contentPane.setLayout(null);
@@ -106,13 +113,26 @@ public class SearchString extends JFrame {
 		contentPane.add(lblNewLabel_1);
 		
 		searchTextField = new JTextField();
+		searchTextField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (!searchTextField.getText().equals("")) {
+					btnNewButton.setEnabled(true);
+				}
+				else {
+					btnNewButton.setEnabled(false);
+				}
+			}
+		});
 		searchTextField.setBounds(31, 35, 609, 33);
 		contentPane.add(searchTextField);
 		searchTextField.setColumns(10);
 		
-		targetTextField = new JTextField();
+		targetTextField = new JTextField(_searchUser);
 		targetTextField.setColumns(10);
 		targetTextField.setBounds(31, 385, 609, 33);
+		
 		contentPane.add(targetTextField);
+		
 	}
 }
