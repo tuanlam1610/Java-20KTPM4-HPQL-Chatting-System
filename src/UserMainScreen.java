@@ -96,6 +96,8 @@ public class UserMainScreen extends JFrame {
 		JPanel panel = new JPanel();
 		JScrollPane scrollPane = new JScrollPane();
 		JTextArea msg_area = new JTextArea();
+		
+		JTextArea stringSearchTextArea = new JTextArea();
 		JPanel SettingPanel = new JPanel();
 		JButton btnUnfriend = new JButton("Hủy kết bạn");
 		JButton btnSearchHistory = new JButton("Tìm kiếm tin nhắn");
@@ -301,7 +303,7 @@ public class UserMainScreen extends JFrame {
 		
 		// ----------------------------------------------------------- EVENT -------------------------------------------------------------
 		
-		_readThread = new ClientReaderThread(socket, msg_area, listFriend, listFriendRequest, _username);
+		_readThread = new ClientReaderThread(socket, msg_area, listFriend, listFriendRequest, _username, stringSearchTextArea);
 		_readThread.start();
 		
 		
@@ -338,6 +340,9 @@ public class UserMainScreen extends JFrame {
 		btnSearchHistory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Extract data and do a string search
+				SearchString searchStringForm = new SearchString(socket, pw, username, stringSearchTextArea, listFriend.getSelectedValue());
+				searchStringForm.setLocationRelativeTo(null);
+				searchStringForm.setVisible(true);
 			}
 		});
 		

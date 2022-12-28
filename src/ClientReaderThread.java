@@ -18,14 +18,15 @@ public class ClientReaderThread extends Thread {
 	private JList<String> _listFriendRequest;
 	private String _username;
 	private String _response;
+	private JTextArea _stringTextArea;
 	
-	public ClientReaderThread(Socket socket, JTextArea textArea, JList<String> listFriend, JList<String> listFriendRequest, String username) {
+	public ClientReaderThread(Socket socket, JTextArea textArea, JList<String> listFriend, JList<String> listFriendRequest, String username, JTextArea stringSearchTextArea) {
 		this._socket = socket;
 		this._textArea = textArea;
 		this._listFriend = listFriend;
 		this._listFriendRequest = listFriendRequest;
 		this._username = username;
-		
+		this._stringTextArea = stringSearchTextArea;
 		try {
 			InputStream input = this._socket.getInputStream();
 			_reader = new BufferedReader(new InputStreamReader(input));
@@ -103,7 +104,7 @@ public class ClientReaderThread extends Thread {
 					if(message.length > 2) {
 					String senderName = message[1];
 					//String receiverName = message[2];
-					System.out.println(msg);
+					//System.out.println(msg);
 					String selectedName = "";
 					if(!(_listFriend.getSelectedValue() == null)) {
 						selectedName = _listFriend.getSelectedValue().toString();
@@ -113,6 +114,27 @@ public class ClientReaderThread extends Thread {
 						_textArea.setText(msg);
 					}
 					}
+					break;
+				}
+				case "string_search": {
+					String targetString = message[1];
+					String msg = message[2];
+					
+					String str = "";
+					while((str = _reader.readLine())!= null) {
+						if(!str.equals("EndOfString"))
+							if(str.contains(targetString)) {
+								msg = msg + "\n" + str;
+							}
+							
+						else 
+							break;
+					}
+					//String senderName = message[1];
+					//String receiverName = message[2];
+					//System.out.println(m
+					
+						_stringTextArea.setText(msg);
 					break;
 				}
 				}
