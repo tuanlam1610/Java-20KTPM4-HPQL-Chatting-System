@@ -241,10 +241,10 @@ public class CreateGroup extends JFrame {
 		
 		btnKickMember.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DefaultListModel temp_model = (DefaultListModel) list_member.getModel();
 				int selectedIndex = list_member.getSelectedIndex();
 				if (selectedIndex != -1) {
-				    temp_model.remove(selectedIndex);    
+				    model_member.remove(selectedIndex);
+				    
 				}
 				else {
 					JOptionPane.showMessageDialog(contentPane, "Please choose someone!",
@@ -252,8 +252,6 @@ public class CreateGroup extends JFrame {
 				}
 			}
 		});
-		
-		
 		
 	}
 	
