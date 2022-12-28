@@ -119,12 +119,22 @@ public class ClientReaderThread extends Thread {
 				case "string_search": {
 					String targetString = message[1];
 					String msg = message[2];
+					int once = 0;
+					if(!msg.contains(targetString)) {
+						msg = "";
+						once = 1;
+					}
 					
 					String str = "";
 					while((str = _reader.readLine())!= null) {
 						if(!str.equals("EndOfString"))
 							if(str.contains(targetString)) {
-								msg = msg + "\n" + str;
+								if(once == 1) {
+									msg = str;
+									once = 0;
+								}
+								else
+								 msg = msg + "\n" + str;
 							}
 							
 						else 

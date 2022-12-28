@@ -340,9 +340,9 @@ public class UserMainScreen extends JFrame {
 		btnSearchHistory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Extract data and do a string search
-				SearchString searchStringForm = new SearchString(socket, pw, username, stringSearchTextArea, listFriend.getSelectedValue());
-				searchStringForm.setLocationRelativeTo(null);
-				searchStringForm.setVisible(true);
+				StringSearch searchNewStringForm = new StringSearch(socket, pw, username, stringSearchTextArea, listFriend.getSelectedValue());
+				searchNewStringForm.setLocationRelativeTo(null);
+				searchNewStringForm.setVisible(true);
 			}
 		});
 		

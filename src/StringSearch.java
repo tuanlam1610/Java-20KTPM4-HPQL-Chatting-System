@@ -19,7 +19,7 @@ import javax.swing.JTextField;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class SearchString extends JFrame {
+public class StringSearch extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField searchTextField;
@@ -51,14 +51,14 @@ public class SearchString extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public SearchString(Socket socket, PrintWriter pw, String username, JTextArea textArea, String searchUser) {
+	public StringSearch(Socket socket, PrintWriter pw, String username, JTextArea textArea, String searchUser) {
 		this._clientSocket = socket;
 		this._username = username;
 		this._pw = pw;
 		this.textArea = textArea;
-		this._searchUser = searchUser;
+		this._searchUser = searchUser.split(" ")[0];
 		
-		
+		textArea.setText("");
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 831, 500);
 		contentPane = new JPanel();
@@ -76,9 +76,9 @@ public class SearchString extends JFrame {
 				String stringMsg = "";
 				String targetMsg = "";
 				stringMsg = searchTextField.getText().trim();
-				searchTextField.setText("");
+				//searchTextField.setText("");
 				targetMsg = targetTextField.getText().trim();
-				targetTextField.setText("");
+				//targetTextField.setText("");
 				
 				if(targetMsg.equals(""))
 				{		//do nothing
