@@ -19,7 +19,7 @@ import javax.swing.JTextField;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class SearchString extends JFrame {
+public class StringSearch extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField searchTextField;
@@ -51,7 +51,7 @@ public class SearchString extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public SearchString(Socket socket, PrintWriter pw, String username, JTextArea textArea, String searchUser) {
+	public StringSearch(Socket socket, PrintWriter pw, String username, JTextArea textArea, String searchUser) {
 		this._clientSocket = socket;
 		this._username = username;
 		this._pw = pw;
