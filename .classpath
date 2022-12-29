@@ -12,7 +12,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/mysql-connector-j-8.0.31/mysql-connector-j-8.0.31/mysql-connector-j-8.0.31.jar">
+	<classpathentry kind="lib" path="D:/###NAM_3/LT_JAVA/DACK/Java-20KTPM4-HPQL-Chatting-System/mysql-connector-j-8.0.31.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
