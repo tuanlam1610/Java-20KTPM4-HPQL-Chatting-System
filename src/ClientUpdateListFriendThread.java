@@ -37,7 +37,7 @@ public class ClientUpdateListFriendThread extends Thread {
 				}
 			}
 		}
-		System.out.println("A_A_A_A_A");	
+	
 		_listFriend.setModel(lst);
 		
 		//Arrays.asList(lst.toArray());
