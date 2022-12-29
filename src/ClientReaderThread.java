@@ -67,7 +67,7 @@ public class ClientReaderThread extends Thread {
 					String[] lstFriend = null;
 					String[] lstGroup = null;
 					
-					if (message[1].split(",").length > 0) {
+					if (message.length > 1 && message[1].split(",").length > 0) {
 						lstFriend = Arrays.copyOfRange(message[1].split(","), 0, message[1].split(",").length);
 					}
 					
