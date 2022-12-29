@@ -518,9 +518,10 @@ public class UserMainScreen extends JFrame {
 		//Create group
 		btnCreateGroup.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CreateGroup creategrp_form = new CreateGroup(_clientSocket, _pw, _username);
+				CreateGroup creategrp_form = new CreateGroup(_clientSocket, _pw, _username, listFriend);
 				creategrp_form.setLocationRelativeTo(null);
 				creategrp_form.setVisible(true);
+				
 				
 			}
 		});

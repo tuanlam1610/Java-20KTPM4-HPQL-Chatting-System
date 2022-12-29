@@ -79,13 +79,12 @@ public class CreateGroup extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public CreateGroup(Socket socket, PrintWriter pw, String username) {
+	public CreateGroup(Socket socket, PrintWriter pw, String username, JList<String> listFriend) {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		this._clientSocket = socket;
 		this._username = username;
 		this._pw = pw;
-		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 572, 660);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -210,8 +209,23 @@ public class CreateGroup extends JFrame {
 		
 		
 		//--------------------EVENT--------------------
-		_readThread = new ClientReaderThread(_clientSocket, list_friend, _username);
-		_readThread.start();
+//		_readThread = new ClientReaderThread(_clientSocket, list_friend, _username);
+//		_readThread.start();
+		
+		DefaultListModel org_list = (DefaultListModel) listFriend.getModel();
+		
+		DefaultListModel new_list = new DefaultListModel();
+		
+		for(int i =0; i < org_list.getSize(); i++) {
+			String temp = (String) org_list.getElementAt(i);
+			int index = temp.indexOf(" ");
+			if(index != -1) {
+				temp = temp.substring(0, index);	
+			}	
+			new_list.addElement(temp);
+		}
+		
+		list_friend.setModel(new_list);;
 			
 		DefaultListModel model_member = new DefaultListModel<>();
 //		DefaultListModel model_friend = new DefaultListModel<>();
@@ -249,7 +263,6 @@ public class CreateGroup extends JFrame {
 				int selectedIndex = list_member.getSelectedIndex();
 				if (selectedIndex != -1) {
 				    model_member.remove(selectedIndex);
-				    
 				}
 				else {
 					JOptionPane.showMessageDialog(contentPane, "Please choose someone!",
@@ -278,6 +291,7 @@ public class CreateGroup extends JFrame {
 						sendmsg += "-" + dateandtime;
 //						System.out.println(sendmsg);
 						_pw.println(sendmsg);
+						dispose();
 					}
 					else {
 						JOptionPane.showMessageDialog(contentPane, "Must add 2 or more people to the chat",
