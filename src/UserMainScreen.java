@@ -303,7 +303,7 @@ public class UserMainScreen extends JFrame {
 		
 		// ----------------------------------------------------------- EVENT -------------------------------------------------------------
 		
-		_readThread = new ClientReaderThread(socket, msg_area, listFriend, listFriendRequest, _username, stringSearchTextArea);
+		_readThread = new ClientReaderThread(socket, msg_area, listFriend, listGroup, listFriendRequest, _username, stringSearchTextArea);
 		_readThread.start();
 		
 		
