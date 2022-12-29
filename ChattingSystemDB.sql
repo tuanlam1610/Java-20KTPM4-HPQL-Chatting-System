@@ -31,7 +31,7 @@ Create table LoiMoiKetBan (
 );
 
 Create table Nhom (
-	ID_nhom varchar(8),
+	ID_nhom int auto_increment,
     tennhom varchar(30) charset utf8mb4,
     tinnhan longtext,
     ngaytaonhom datetime,
@@ -39,7 +39,7 @@ Create table Nhom (
 );
 
 Create table ThanhVienNhom (
-	ID_nhom varchar(8),
+	ID_nhom int,
     username varchar(20),
     isGroupAdmin bool,
     primary key (ID_nhom, username)
@@ -70,8 +70,6 @@ Add Foreign Key(username) references TaiKhoan(username);
 Alter Table LoiMoiKetBan
 Add Foreign Key(receiver_username) references TaiKhoan(username),
 Add Foreign Key(sender_username) references TaiKhoan(username);
-
-
 
 -- Tạo dữ liệu mẫu
 insert into TaiKhoan(username, pass, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao)

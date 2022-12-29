@@ -203,6 +203,7 @@ public class ThreadServer extends Thread {
 					String receiverName = data[2];
 					String msg = data[3];
 					try {
+						msg.split(" ,");
 						// Update Database
 						// Update 2 row for sender and receiver in DB
 						Statement stmt = conn.createStatement();
@@ -366,6 +367,83 @@ public class ThreadServer extends Thread {
 						ThreadServer senderThread = listOnline.get(senderName);
 						server.sendMessageToAUser(senderThread,
 								"string_search-" + targetString  +"-"+sendermsgDB + "\nEndOfString");
+						// }
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					break;
+				}
+				case "create_group": {
+					// Initial Data
+					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+					String group_admin = data[1];
+					String group_name = data[2];
+					String[] members = data[3].split(" ,");
+					String date_created = data[4];
+					
+					try {
+						// Update Database
+						// Update 2 row for sender and receiver in DB
+						Statement stmt = conn.createStatement();
+//						PreparedStatement pstmt;
+//						String sendermsgDB;
+						// String receivermsgDB;
+						// Get msg from sender DB
+						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n"
+								+ "values \r\n"
+								+ "('"+group_name+"', 'CREATION', '"+date_created+"');";
+						stmt.executeUpdate(sql);
+						
+						sql = "select ID_nhom from nhom where tennhom = '"+group_name+"';";
+						ResultSet rs = stmt.executeQuery(sql);
+						
+						int ID_nhom ;
+
+						if (rs.next())
+							ID_nhom = rs.getInt("ID_nhom");
+						else
+							ID_nhom = 0;
+						
+						sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n"
+								+ "values \r\n"
+								+ "("+ID_nhom+", '"+group_admin+"', 1);";
+						stmt.executeUpdate(sql);
+						
+						for(int i = 0; i < members.length; i++) {
+							sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n"
+									+ "values \r\n"
+									+ "("+ID_nhom+", '"+members[i]+"', 0);";
+							stmt.executeUpdate(sql);
+						}
+						
+						// sql = "SELECT tinnhan FROM banbe WHERE user_username = '" + receiverName
+						// + "' AND friend_username = '" + senderName + "'";
+						// rs = stmt.executeQuery(sql);
+						// if (rs.next()) receivermsgDB = rs.getNString("tinnhan");
+						// else receivermsgDB = "";
+						// sendermsgDB = sendermsgDB + msg + "\n";
+						// receivermsgDB = receivermsgDB + msg + "\n";
+						// sql = "UPDATE banbe SET tinnhan = ? WHERE user_username = ? AND
+						// friend_username = ?";
+						// pstmt = conn.prepareStatement(sql);
+						// pstmt.setString(1, sendermsgDB);
+						// pstmt.setString(2, senderName);
+						// pstmt.setString(3, receiverName);
+						// pstmt.execute();
+						// pstmt.setString(1, receivermsgDB);
+						// pstmt.setString(2, receiverName);
+						// pstmt.setString(3, senderName);
+						// pstmt.execute();
+						// pstmt.close();
+						// Send MSG
+						// When Receiver is online
+						// if (listOnline.containsKey(receiverName)) {
+
+//						ThreadServer senderThread = listOnline.get(senderName);
+//						server.sendMessageToAUser(senderThread,
+//								"get_chat_history-" + friendName + "-" + sendermsgDB + "\nEndOfString");
 						// }
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
