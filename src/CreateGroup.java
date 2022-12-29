@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -38,7 +40,7 @@ import java.awt.Color;
 public class CreateGroup extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField textField;
+	private JTextField text_groupname;
 	
 	private String _username;
 	private Socket _clientSocket;
@@ -108,27 +110,28 @@ public class CreateGroup extends JFrame {
 		list_member.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		
 		
-		list_member.setSelectionModel(new DefaultListSelectionModel() {
-		    @Override
-		    public void setSelectionInterval(int index0, int index1) {
-		        if(super.isSelectedIndex(index0)) {
-		            super.removeSelectionInterval(index0, index1);
-		        }
-		        else {
-		            super.addSelectionInterval(index0, index1);
-		        }
-		    }
-		});
+//		list_member.setSelectionModel(new DefaultListSelectionModel() {
+//		    @Override
+//		    public void setSelectionInterval(int index0, int index1) {
+//		        if(super.isSelectedIndex(index0)) {
+//		            super.removeSelectionInterval(index0, index1);
+//		        }
+//		        else {
+//		            super.addSelectionInterval(index0, index1);
+//		        }
+//		    }
+//		});
+//		
+//		list_member.setModel(new AbstractListModel() {
+//			String[] values = new String[] {};
+//			public int getSize() {
+//				return values.length;
+//			}
+//			public Object getElementAt(int index) {
+//				return values[index];
+//			}
+//		});
 		
-		list_member.setModel(new AbstractListModel() {
-			String[] values = new String[] {};
-			public int getSize() {
-				return values.length;
-			}
-			public Object getElementAt(int index) {
-				return values[index];
-			}
-		});
 		
 		btnCreateGroup.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		btnCreateGroup.setBounds(178, 568, 202, 44);
@@ -138,10 +141,10 @@ public class CreateGroup extends JFrame {
 		btnKickMember.setBounds(20, 474, 238, 44);
 		contentPane.add(btnKickMember);
 		
-		textField = new JTextField();
-		textField.setBounds(20, 85, 200, 25);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		text_groupname = new JTextField();
+		text_groupname.setBounds(20, 85, 200, 25);
+		contentPane.add(text_groupname);
+		text_groupname.setColumns(10);
 		
 		JLabel lblNewLabel_1 = new JLabel("Group name:");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -207,7 +210,7 @@ public class CreateGroup extends JFrame {
 		
 		
 		//--------------------EVENT--------------------
-		_readThread = new ClientReaderThread(socket, list_friend, username);
+		_readThread = new ClientReaderThread(_clientSocket, list_friend, _username);
 		_readThread.start();
 			
 		DefaultListModel model_member = new DefaultListModel<>();
@@ -250,6 +253,38 @@ public class CreateGroup extends JFrame {
 				}
 				else {
 					JOptionPane.showMessageDialog(contentPane, "Please choose someone!",
+				               "Warning", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
+
+		btnCreateGroup.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Creating group");
+				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy ");
+				LocalDateTime now = LocalDateTime.now();
+				if(!text_groupname.getText().equals("")) {
+					
+					if(list_member.getModel().getSize()>= 2) {
+						String grp_name = text_groupname.getText();
+//						String members = list_member.getNam
+						String sendmsg = "create_group-" + _username + "-" + grp_name
+								+ "-";
+						for(int i = 0; i < list_member.getModel().getSize();i++) {
+							sendmsg += list_member.getModel().getElementAt(i)+ " ,";
+						}
+						
+						sendmsg += "-" + dtf.format(now);
+						System.out.println(sendmsg);
+						_pw.println(sendmsg);
+					}
+					else {
+						JOptionPane.showMessageDialog(contentPane, "Must add 2 or more people to the chat",
+					               "Warning", JOptionPane.WARNING_MESSAGE);
+					}
+				}
+				else {
+					JOptionPane.showMessageDialog(contentPane, "Group name cannot be blank",
 				               "Warning", JOptionPane.WARNING_MESSAGE);
 				}
 			}
