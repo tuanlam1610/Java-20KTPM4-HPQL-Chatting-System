@@ -393,29 +393,29 @@ public class ThreadServer extends Thread {
 						// Get msg from sender DB
 						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n"
 								+ "values \r\n"
-								+ "("+group_name+", \"CREATION\", "+date_created+");";
-						stmt.executeQuery(sql);
+								+ "('"+group_name+"', 'CREATION', '"+date_created+"');";
+						stmt.executeUpdate(sql);
 						
-						sql = "select ID_nhom from nhom where tennhom = "+group_name+";";
+						sql = "select ID_nhom from nhom where tennhom = '"+group_name+"';";
 						ResultSet rs = stmt.executeQuery(sql);
 						
-						String ID_nhom = "";
-						
+						int ID_nhom ;
+
 						if (rs.next())
-							ID_nhom = rs.getNString("ID_nhom");
+							ID_nhom = rs.getInt("ID_nhom");
 						else
-							ID_nhom = "0";
+							ID_nhom = 0;
 						
 						sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n"
 								+ "values \r\n"
-								+ "("+ID_nhom+", "+group_admin+", 1);";
-						stmt.executeQuery(sql);
+								+ "("+ID_nhom+", '"+group_admin+"', 1);";
+						stmt.executeUpdate(sql);
 						
 						for(int i = 0; i < members.length; i++) {
 							sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n"
 									+ "values \r\n"
-									+ "("+ID_nhom+", "+members[i]+", 0);";
-							stmt.executeQuery(sql);
+									+ "("+ID_nhom+", '"+members[i]+"', 0);";
+							stmt.executeUpdate(sql);
 						}
 						
 						// sql = "SELECT tinnhan FROM banbe WHERE user_username = '" + receiverName

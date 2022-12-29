@@ -260,8 +260,8 @@ public class CreateGroup extends JFrame {
 
 		btnCreateGroup.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Creating group");
-				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy ");
+//				System.out.println("Creating group");
+				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 				LocalDateTime now = LocalDateTime.now();
 				if(!text_groupname.getText().equals("")) {
 					
@@ -273,9 +273,10 @@ public class CreateGroup extends JFrame {
 						for(int i = 0; i < list_member.getModel().getSize();i++) {
 							sendmsg += list_member.getModel().getElementAt(i)+ " ,";
 						}
-						
-						sendmsg += "-" + dtf.format(now);
-						System.out.println(sendmsg);
+						String dateandtime = dtf.format(now);
+//						String[] spliteddatetime = dateandtime.split(".");
+						sendmsg += "-" + dateandtime;
+//						System.out.println(sendmsg);
 						_pw.println(sendmsg);
 					}
 					else {
