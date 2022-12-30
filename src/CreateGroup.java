@@ -229,7 +229,6 @@ public class CreateGroup extends JFrame {
 			
 		DefaultListModel model_member = new DefaultListModel<>();
 //		DefaultListModel model_friend = new DefaultListModel<>();
-			
 //		for(int i = 0;i < list_friend.getModel().getSize();i++) {
 //			if(!model_friend.contains(list_friend.getModel().getElementAt(i)))
 //			model_friend.addElement(list_friend.getModel().getElementAt(i));
@@ -278,7 +277,7 @@ public class CreateGroup extends JFrame {
 				LocalDateTime now = LocalDateTime.now();
 				if(!text_groupname.getText().equals("")) {
 					
-					if(list_member.getModel().getSize()>= 2) {
+					if(list_member.getModel().getSize()>= 1) {
 						String grp_name = text_groupname.getText();
 //						String members = list_member.getNam
 						String sendmsg = "create_group-" + _username + "-" + grp_name
@@ -291,10 +290,12 @@ public class CreateGroup extends JFrame {
 						sendmsg += "-" + dateandtime;
 //						System.out.println(sendmsg);
 						_pw.println(sendmsg);
+						JOptionPane.showMessageDialog(contentPane, "Successfully created group chat: "+grp_name+"!",
+					               "Warning", JOptionPane.WARNING_MESSAGE);
 						dispose();
 					}
 					else {
-						JOptionPane.showMessageDialog(contentPane, "Must add 2 or more people to the chat",
+						JOptionPane.showMessageDialog(contentPane, "Must add 1 or more people to the chat",
 					               "Warning", JOptionPane.WARNING_MESSAGE);
 					}
 				}
