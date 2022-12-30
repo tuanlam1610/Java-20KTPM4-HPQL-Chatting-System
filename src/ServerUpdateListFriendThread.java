@@ -21,36 +21,54 @@ public class ServerUpdateListFriendThread extends Thread {
 	
 	public void run() {
 		Statement st;
-		String listOnl = "";
+		ResultSet rs;
+		String listFriendOnlAndGroup = "";
 		String query = "";
 		String friend = "";
+		String group = "";
 		
 		while (true) {
 			_listOnline = _server.getUserThreads();
-			listOnl = "update_online_list-";
+			listFriendOnlAndGroup = "update_friend_group_list-";
 			query = "";
 			
 			try {
 				st = _conn.createStatement();
-				query = "select friend_username from BanBe where user_username = '" + _username + "'";
-				ResultSet rs = st.executeQuery(query);
+				
+				// List Of Friend -----------------------------------------------------------------------
+				query = "SELECT friend_username FROM BanBe WHERE user_username = '" + _username + "'";
+				rs = st.executeQuery(query);
 				
 				// Update online - offline and send to client
 				while (rs.next()) {
 					friend = rs.getString(1);
 					if (_listOnline.containsKey(friend)) {
-						listOnl += (friend.concat(" 1")).concat(",");
+						listFriendOnlAndGroup += (friend.concat(" 1")).concat(",");
 					} else {
-						listOnl += (friend.concat(" 0")).concat(",");
+						listFriendOnlAndGroup += (friend.concat(" 0")).concat(",");
 					}
 				}
+				
+				listFriendOnlAndGroup = listFriendOnlAndGroup.concat("-");
+				
+				// List Of Group -----------------------------------------------------------------------
+				query = "SELECT N.tennhom FROM Nhom as N JOIN ThanhVienNhom as TV "
+						+ "ON N.ID_nhom = TV.ID_nhom "
+						+ "WHERE TV.username = '" + _username + "'";
+				rs = st.executeQuery(query);
+				
+				while (rs.next()) {
+					group = rs.getString(1).concat(",");
+					listFriendOnlAndGroup = listFriendOnlAndGroup.concat(group);
+				}
+				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();			
 			}
 			
 			// Send to client
-			_server.sendMessageToAUser(_listOnline.get(_username), listOnl);
+			_server.sendMessageToAUser(_listOnline.get(_username), listFriendOnlAndGroup);
 			
 			// Sleep 2s 
 			try {

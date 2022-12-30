@@ -9,24 +9,28 @@ import javax.swing.JList;
 import javax.swing.JTextArea;
 
 public class ClientReaderThread extends Thread {
-	private ClientUpdateListFriendThread _updateThread;
+	private ClientUpdateListFriendThread _updateListFriend;
+	private ClientUpdateListGroupThread _updateListGroup;
 	private ClientReceiveFriendRequestThread _friendRequest;
 	private BufferedReader _reader;
 	private Socket _socket;
 	private JTextArea _textArea;
 	private JList<String> _listFriend;
+	private JList<String> _listGroup;
 	private JList<String> _listFriendRequest;
 	private String _username;
 	private String _response;
 	private JTextArea _stringTextArea;
 	
-	public ClientReaderThread(Socket socket, JTextArea textArea, JList<String> listFriend, JList<String> listFriendRequest, String username, JTextArea stringSearchTextArea) {
+	public ClientReaderThread(Socket socket, JTextArea textArea, JList<String> listFriend, JList<String> listGroup, JList<String> listFriendRequest, String username, JTextArea stringSearchTextArea) {
 		this._socket = socket;
 		this._textArea = textArea;
 		this._listFriend = listFriend;
+		this._listGroup = listGroup;
 		this._listFriendRequest = listFriendRequest;
 		this._username = username;
 		this._stringTextArea = stringSearchTextArea;
+		
 		try {
 			InputStream input = this._socket.getInputStream();
 			_reader = new BufferedReader(new InputStreamReader(input));
@@ -59,11 +63,22 @@ public class ClientReaderThread extends Thread {
 				System.out.println(_response);
 				String[] message = _response.split("-");
 				switch (message[0]) {
-				case "update_online_list": {
-					if (message.length > 1) {
-						_updateThread = new ClientUpdateListFriendThread(message[1].split(","), _listFriend, _username);
-						_updateThread.start();
+				case "update_friend_group_list": {
+					String[] lstFriend = null;
+					String[] lstGroup = null;
+					
+					if (message.length > 1 && message[1].split(",").length > 0) {
+						lstFriend = Arrays.copyOfRange(message[1].split(","), 0, message[1].split(",").length);
 					}
+					
+					if (message.length > 2 && message[2].split(",").length > 0) {
+						lstGroup = Arrays.copyOfRange(message[2].split(","), 0, message[2].split(",").length);
+					}
+					_updateListFriend = new ClientUpdateListFriendThread(lstFriend, _listFriend, _username);
+					_updateListGroup = new ClientUpdateListGroupThread(lstGroup, _listGroup, _username);
+					_updateListFriend.start();
+					_updateListGroup.start();
+					
 					break;
 				}
 				case "friend_request": {
