@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.time.LocalDateTime;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -39,12 +40,11 @@ import javax.swing.BoxLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-
 public class UserMainScreen extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField msg_field;
-	
+
 	private String _username;
 	private Socket _clientSocket;
 	private PrintWriter _pw;
@@ -63,17 +63,18 @@ public class UserMainScreen extends JFrame {
 
 	/**
 	 * Create the frame.
-	 * @throws IOException 
-	 * @throws UnknownHostException 
+	 * 
+	 * @throws IOException
+	 * @throws UnknownHostException
 	 */
 	public UserMainScreen(Socket socket, PrintWriter pw, String username) throws UnknownHostException, IOException {
-		
+
 		this._clientSocket = socket;
 		this._username = username;
 //		OutputStream output = socket.getOutputStream();
 //		_pw = new PrintWriter(output, true);
 		this._pw = pw;
-		
+
 		setResizable(false);
 		setTitle("User Main Screen");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -87,7 +88,7 @@ public class UserMainScreen extends JFrame {
 		JDesktopPane desktopPane = new JDesktopPane();
 		JPanel userBtnPane = new JPanel();
 		JButton btnCreateGroup = new JButton("Tạo Nhóm");
-		
+
 		JButton btnAddFriend = new JButton("Kết Bạn");
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		JLabel lab = new JLabel();
@@ -96,7 +97,7 @@ public class UserMainScreen extends JFrame {
 		JPanel panel = new JPanel();
 		JScrollPane scrollPane = new JScrollPane();
 		JTextArea msg_area = new JTextArea();
-		
+
 		JTextArea stringSearchTextArea = new JTextArea();
 		JPanel SettingPanel = new JPanel();
 		JButton btnUnfriend = new JButton("Hủy kết bạn");
@@ -118,11 +119,9 @@ public class UserMainScreen extends JFrame {
 		JLabel lblOnl = new JLabel("(Online)");
 		JButton userInfoBtn = new JButton("Thông tin cá nhân");
 		JButton btnSENDMSG = new JButton("GỬI");
-		
+
 		// Container stores message
 		Map<String, String> friendChatMSG = new HashMap<String, String>();
-
-		
 		// Desktop Pane
 		desktopPane.setBackground(new Color(255, 255, 255));
 		desktopPane.setBounds(0, 0, 350, 690);
@@ -149,22 +148,22 @@ public class UserMainScreen extends JFrame {
 		tabbedPane.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		tabbedPane.setBounds(0, 150, 350, 530);
 		desktopPane.add(tabbedPane);
-		
+
 		// Panel
 		panel.setBackground(new Color(102, 153, 255));
 		panel.setBounds(350, 0, 720, 690);
 		contentPane.add(panel);
 		panel.setLayout(null);
-		
+
 		// Msg Field
 		msg_field = new JTextField();
 		msg_field.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		msg_field.setBounds(10, 584, 558, 77);
 		msg_field.setColumns(10);
 		panel.add(msg_field);
-		
+
 		//////////////////////////////////////////////////////////////////////////////////////
-		
+
 		// tam thoi luu cho ca friend va nhom chat
 		// đang input chat dựa trên tên của chat, cần phải sửa ngay lập tức
 		/*
@@ -175,8 +174,7 @@ public class UserMainScreen extends JFrame {
 		 * " User1: Hello \n User3: Web is really hard to work on");
 		 */
 		///////////////////////////////////////////////////////////////////////////////////////
-		
-		
+
 		// ScorllPane and Text Area
 		scrollPane.setBounds(10, 83, 689, 491);
 		panel.add(scrollPane);
@@ -242,11 +240,10 @@ public class UserMainScreen extends JFrame {
 		listFriend.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		scrollPaneFriend.setViewportView(listFriend);
 
-		
 		// ScrollPane Group
 		scrollPaneGroup.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		tabbedPane.addTab("Nhóm", null, scrollPaneGroup, null);
-		
+
 		// List Group
 		listGroup.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listGroup.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -255,37 +252,33 @@ public class UserMainScreen extends JFrame {
 		// ScrollPane Friend Request
 		scrollPaneFriendRequest.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		tabbedPane.addTab("Lời mời kết bạn", null, scrollPaneFriendRequest, null);
-		
+
 		// List Group
 		listFriendRequest.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		listFriendRequest.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		scrollPaneFriendRequest.setViewportView(listFriendRequest);
-		
-		
+
 		// UserInfoPane
 		userInfoPane.setBorder(new LineBorder(new Color(0, 0, 0)));
 		userInfoPane.setBackground(new Color(255, 255, 255));
 		userInfoPane.setBounds(0, 0, 350, 72);
 		desktopPane.add(userInfoPane);
 		userInfoPane.setLayout(null);
-		
+
 		// Label
 		lblUser.setFont(new Font("Tahoma", Font.BOLD, 20));
 		lblUser.setBounds(10, 10, 175, 24);
 		userInfoPane.add(lblUser);
-		
-		
+
 		lblOnl.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblOnl.setBounds(10, 42, 60, 16);
 		userInfoPane.add(lblOnl);
-		
-		
+
 		JButton btnDangXuat = new JButton("Đăng xuất");
 		btnDangXuat.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btnDangXuat.setBounds(243, 34, 97, 32);
 		userInfoPane.add(btnDangXuat);
-		 
-		
+
 		// Button View Personal Information
 		userInfoBtn.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		userInfoBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -297,17 +290,14 @@ public class UserMainScreen extends JFrame {
 		btnSENDMSG.setBounds(578, 595, 121, 52);
 		btnSENDMSG.setEnabled(false);
 		panel.add(btnSENDMSG);
-		
-		
-		
-		
-		// ----------------------------------------------------------- EVENT -------------------------------------------------------------
-		
-		_readThread = new ClientReaderThread(socket, msg_area, listFriend, listGroup, listFriendRequest, _username, stringSearchTextArea);
+
+		// ----------------------------------------------------------- EVENT
+		// -------------------------------------------------------------
+
+		_readThread = new ClientReaderThread(socket, msg_area, listFriend, listGroup, listFriendRequest, _username,
+				stringSearchTextArea, tabbedPane);
 		_readThread.start();
-		
-		
-		
+
 		// Event Add Friend
 		btnAddFriend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -315,12 +305,12 @@ public class UserMainScreen extends JFrame {
 				String friendRequest = "friend_request-".concat(_username);
 				friendRequest = friendRequest.concat("-");
 				friendRequest = friendRequest.concat(usernameFriend);
-				
+
 				_writeThread = new ClientWriteThread(_clientSocket, _pw, friendRequest);
 				_writeThread.start();
 			}
 		});
-		
+
 		// Event Unfriend
 		btnUnfriend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -329,51 +319,52 @@ public class UserMainScreen extends JFrame {
 				value = value.split(" ")[0];
 				req = req.concat("-");
 				req = req.concat(value);
-				
+
 				// req = remove_friend-username-friend
 				_writeThread = new ClientWriteThread(_clientSocket, _pw, req);
 				_writeThread.start();
 			}
 		});
-		
+
 		// Event Search History
 		btnSearchHistory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Extract data and do a string search
-				StringSearch searchNewStringForm = new StringSearch(socket, pw, username, stringSearchTextArea, listFriend.getSelectedValue());
+				StringSearch searchNewStringForm = new StringSearch(socket, pw, username, stringSearchTextArea,
+						listFriend.getSelectedValue());
 				searchNewStringForm.setLocationRelativeTo(null);
 				searchNewStringForm.setVisible(true);
 			}
 		});
-		
+
 		// Event Add To Group
 		btnAddToGroup.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showInputDialog("Enter username to add");
 			}
 		});
-		
+
 		// Event Remove User From Group
 		btnRemoveFromGroup.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showInputDialog("Enter username to remove");
 			}
 		});
-		
+
 		// Event Change Group Name
 		btnChangeGroupName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showInputDialog("Enter new name for group");
 			}
 		});
-		
+
 		// Event Make Admin
 		btnMakeAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showInputDialog("Enter username to make admin");
 			}
 		});
-		
+
 		// Event Logout
 		btnDangXuat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -383,7 +374,7 @@ public class UserMainScreen extends JFrame {
 				dispose();
 			}
 		});
-		
+
 		// Event Mouse Click
 		listFriend.addMouseListener(new MouseAdapter() {
 			@Override
@@ -391,7 +382,7 @@ public class UserMainScreen extends JFrame {
 				// On Mouse Click
 				String value = listFriend.getSelectedValue().toString();
 				value = value.split(" ")[0];
-				
+
 				btnUnfriend.setVisible(true);
 				btnSearchHistory.setVisible(true);
 				btnDeleteHistory.setVisible(true);
@@ -399,17 +390,17 @@ public class UserMainScreen extends JFrame {
 				btnRemoveFromGroup.setVisible(false);
 				btnChangeGroupName.setVisible(false);
 				btnMakeAdmin.setVisible(false);
-				
-				String message = "get_chat_history-" + _username + "-"+ value;
+
+				String message = "get_chat_history-" + _username + "-" + value;
 				System.out.println(message);
-				_writeThread = new ClientWriteThread(_clientSocket, _pw, message ); 
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
 				_writeThread.start();
-				
-				//msg_area.setText(friendChatMSG.get(value));
+
+				// msg_area.setText(friendChatMSG.get(value));
 
 			}
 		});
-		
+
 		listGroup.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -429,52 +420,50 @@ public class UserMainScreen extends JFrame {
 			}
 
 		});
-		
+
 		listFriendRequest.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// On Mouse Click
 				String value = listFriendRequest.getSelectedValue().toString();
 				String reply = "";
-				
-				Object[] options = {"Đồng ý", "Từ chối"};
-				
-				int click = JOptionPane.showOptionDialog(null, "Hello, Chào bạn", "Lời mời kết bạn", JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-                if (click==JOptionPane.YES_OPTION) {
-                	reply = "reply_friend_request-".concat("YES-");
-                	reply = (reply.concat(value)).concat("-");
-                	reply = reply.concat(_username);
-                	
-                	_writeThread = new ClientWriteThread(_clientSocket, _pw, reply);
-                }
-                else if (click==JOptionPane.NO_OPTION) {
-                	reply = "reply_friend_request-".concat("NO-");
-                	reply = (reply.concat(value)).concat("-");
-                	reply = reply.concat(_username);
-                	
-                	_writeThread = new ClientWriteThread(_clientSocket, _pw, reply);	
-                }
-                _writeThread.start();
 
-				//msg_area.setText(friendChatMSG.get(value));
+				Object[] options = { "Đồng ý", "Từ chối" };
+
+				int click = JOptionPane.showOptionDialog(null, "Hello, Chào bạn", "Lời mời kết bạn",
+						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+				if (click == JOptionPane.YES_OPTION) {
+					reply = "reply_friend_request-".concat("YES-");
+					reply = (reply.concat(value)).concat("-");
+					reply = reply.concat(_username);
+
+					_writeThread = new ClientWriteThread(_clientSocket, _pw, reply);
+				} else if (click == JOptionPane.NO_OPTION) {
+					reply = "reply_friend_request-".concat("NO-");
+					reply = (reply.concat(value)).concat("-");
+					reply = reply.concat(_username);
+
+					_writeThread = new ClientWriteThread(_clientSocket, _pw, reply);
+				}
+				_writeThread.start();
+
+				// msg_area.setText(friendChatMSG.get(value));
 
 			}
 		});
-		
+
 		// Event Input Field != "", Button "Send": Active
 		msg_field.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if (!msg_field.getText().equals("")) {
 					btnSENDMSG.setEnabled(true);
-				}
-				else {
+				} else {
 					btnSENDMSG.setEnabled(false);
 				}
 			}
 		});
-		
+
 		// SEND MESSAGE ON CLICK BUTTON
 		btnSENDMSG.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -483,19 +472,25 @@ public class UserMainScreen extends JFrame {
 				msgOut = msg_field.getText().trim();
 				msg_field.setText("");
 				btnSENDMSG.setEnabled(false);
-				
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy ");
 				LocalDateTime now = LocalDateTime.now();
-
-				String value = listFriend.getSelectedValue().toString();
-				value = value.split(" ")[0];
-				// area
-//				msg_area.setText(msg_area.getText().trim() + "\n"+ _username + "(" + dtf.format(now) + "): " + msgOut);
-				msg_area.append(username + "(" + dtf.format(now) + "): " + msgOut + "\n");
-				friendChatMSG.put(value, msg_area.getText());
-				sendmsg = "message-" + _username + "-" + value + "-" + _username + "(" + dtf.format(now) + "): " + msgOut;
-				_pw.println(sendmsg);
-				// msg_area.setText(msg_area.getText().trim()+ "\n Server: \t" + msgOut);
+				String currentTab = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).toString();
+				System.out.println(currentTab);
+				System.out.println(listGroup.getSelectedValue());
+				if (currentTab.equals("Bạn bè") && !Objects.isNull(listFriend.getSelectedValue())) {
+					String value = listFriend.getSelectedValue().toString();
+					value = value.split(" ")[0];
+					msg_area.append(username + "(" + dtf.format(now) + "): " + msgOut + "\n");
+					sendmsg = "message-user-" + _username + "-" + value + "-" + _username + "(" + dtf.format(now) + "): "+ msgOut;
+					_pw.println(sendmsg);
+				}
+				else if (currentTab.equals("Nhóm") && !Objects.isNull(listGroup.getSelectedValue())) {
+					String value = listGroup.getSelectedValue().toString();
+//					value = value.split(" ")[0];
+					msg_area.append(username + "(" + dtf.format(now) + "): " + msgOut + "\n");
+					sendmsg = "message-group-" + _username + "-" + value + "-" + _username + "(" + dtf.format(now) + "): "+ msgOut;
+					_pw.println(sendmsg);
+				}
 			}
 		});
 
@@ -514,15 +509,14 @@ public class UserMainScreen extends JFrame {
 
 			}
 		});
-		
-		//Create group
+
+		// Create group
 		btnCreateGroup.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CreateGroup creategrp_form = new CreateGroup(_clientSocket, _pw, _username, listFriend);
 				creategrp_form.setLocationRelativeTo(null);
 				creategrp_form.setVisible(true);
-				
-				
+
 			}
 		});
 
