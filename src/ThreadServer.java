@@ -49,6 +49,58 @@ public class ThreadServer extends Thread {
 					System.out.println(w);
 				}
 				switch (data[0]) {
+				case "them_tai_khoan":{
+					try {
+						Statement st = conn.createStatement();
+						String query = "select username from taikhoan where username ='" + data[1] + "';";
+						ResultSet rs = st.executeQuery(query);
+
+						if (rs.next()) {
+							writer.println("Fail-username");
+							break;
+						}
+						query = "select username from taikhoan where email ='" + data[4] + "';";
+						rs = st.executeQuery(query);
+						if (rs.next()) {
+							writer.println("Fail-email");
+							break;
+						}
+//						for (int i = 3; i < data.length; i++) {
+//							if (data[i].equals("")) {
+//								data[i] = null;
+//							}
+//						}
+						query = "insert into TaiKhoan(username, pass, hoten, email, dob, diachi, gioitinh, isAdmin, ngaytao)" + "values ('" + data[1]
+								+ "', '" + data[2] + "', '" + data[3] + "', '" + data[4] + "', '"  + data[5] + "', '" + data[6] + 
+									"', '"  + data[7] + "', false, current_timestamp());";
+						System.out.println(query);
+						st.executeUpdate(query);
+						writer.println("Success");
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
+				case "xoa_tai_khoan":{
+					try {
+						Statement st = conn.createStatement();
+						String query = "delete from banbe where user_username = '" + data[1] + "' or friend_username = '"+ data[1] + "';";
+						st.executeUpdate(query);
+						query = "delete from lichsudangnhap where username = '" + data[1] + "';";
+						st.executeUpdate(query);
+						query = "delete from loimoiketban where receiver_username = '" + data[1] + "' or sender_username = '"+ data[1] + "';";
+						st.executeUpdate(query);
+						query = "delete from thanhviennhom where username = '" + data[1] + "';";
+						st.executeUpdate(query);
+						query = "delete from taikhoan where username = '" + data[1] +"';";
+						st.executeUpdate(query);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
 				case "login": {
 					try {
 						Statement st = conn.createStatement();
@@ -60,6 +112,9 @@ public class ThreadServer extends Thread {
 							System.out.println(data[2]);
 
 							if (data[2].equals(rs.getString(3))) {
+								Statement stmt = conn.createStatement();
+								query = "update taikhoan set thoigiandangnhap = current_timestamp() where username = '" + data[1] +"';";
+								stmt.executeUpdate(query);
 								if (rs.getString(2).equals("1")) {
 									writer.println("logined-1");
 								} else {
@@ -72,6 +127,7 @@ public class ThreadServer extends Thread {
 
 									updateFriendRequest(this, _username);
 								}
+								break;
 							} else {
 								writer.println("notlogined");
 							}
