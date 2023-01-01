@@ -135,7 +135,6 @@ public class ThreadServer extends Thread {
 							query = "update taikhoan set pass = '" + generatedString + "' where username ='"
 									+ rs.getString(1) + "';";
 							st.executeUpdate(query);
-							writer.println("Success");
 							break;
 						} else {
 							writer.println("Fail");
