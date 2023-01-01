@@ -392,7 +392,41 @@ public class ThreadServer extends Thread {
 
 					break;
 				}
+				case "get_group_chat_history": {
+					// Initial Data
+					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+					String senderName = data[1];
+					String groupName = data[2];
+					// String msg = data[3];
+					try {
+						// Update Database
+						// Update 2 row for sender and receiver in DB
+						Statement stmt = conn.createStatement();
+						PreparedStatement pstmt;
+						String sendermsgDB;
+						// String receivermsgDB;
+						// Get msg from sender DB
+						String sql = "SELECT tinnhan FROM nhom WHERE tennhom = '" + groupName+ "'";
+						ResultSet rs = stmt.executeQuery(sql);
+						if (rs.next())
+							sendermsgDB = rs.getNString("tinnhan");
+						else
+							sendermsgDB = "";
 
+						if (sendermsgDB.equals(""))
+							sendermsgDB = " ";
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread,
+								"get_group_chat_history-" + groupName + "-" + sendermsgDB + "\nEndOfString");
+						// }
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
+				}
+				
 				case "string_search": {
 					// Initial Data
 					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
