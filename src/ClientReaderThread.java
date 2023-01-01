@@ -67,7 +67,7 @@ public class ClientReaderThread extends Thread {
 		while (true) {
 			try {
 				_response = _reader.readLine();
-//				System.out.println(_response);
+                //System.out.println(_response);
 				String[] message = _response.split("-");
 				switch (message[0]) {
 				case "update_friend_group_list": {
@@ -142,6 +142,30 @@ public class ClientReaderThread extends Thread {
 					if(!(_listFriend.getSelectedValue() == null)) {
 						selectedName = _listFriend.getSelectedValue().toString();
 						selectedName = selectedName.split(" ")[0];
+					}
+					if(selectedName.equals(senderName)) {
+						_textArea.setText(msg);
+					}
+					}
+					break;
+				}
+				case "get_group_chat_history": {
+					String msg = message[2];
+					String str = "";
+					while((str = _reader.readLine())!= null) {
+						if(!str.equals("EndOfString"))
+							msg = msg + "\n" + str;
+						else 
+							break;
+					}
+					if(message.length > 2) {
+					String senderName = message[1];
+					//String receiverName = message[2];
+					//System.out.println(msg);
+					String selectedName = "";
+					if(!(_listGroup.getSelectedValue() == null)) {
+						selectedName = _listGroup.getSelectedValue().toString();
+						//selectedName = selectedName.split(" ")[0];
 					}
 					if(selectedName.equals(senderName)) {
 						_textArea.setText(msg);
