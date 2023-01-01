@@ -497,7 +497,7 @@ public class UserMainScreen extends JFrame {
 		btnDeleteHistory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int dialogButton = JOptionPane.YES_NO_OPTION;
-				int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Save your Previous Note First?","Warning",dialogButton);
+				int dialogResult = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn xóa tất cả tin nhắn chứ?","Warning",dialogButton);
 				if (dialogResult == JOptionPane.YES_OPTION) {					
 					if (tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Bạn bè")) {
 						String value = listFriend.getSelectedValue().toString();
