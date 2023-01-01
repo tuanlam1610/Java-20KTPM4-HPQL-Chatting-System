@@ -3,11 +3,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import javax.swing.JList;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
 
 public class ClientReaderThread extends Thread {
 	private ClientUpdateListFriendThread _updateListFriend;
@@ -177,6 +180,39 @@ public class ClientReaderThread extends Thread {
 					//System.out.println(m
 					
 						_stringTextArea.setText(msg);
+					break;
+				}
+				//admin get login history case:
+				case "get_login_history": {
+					ArrayList<String[]> tableData = new ArrayList<String[]>();
+					for (int i = 1; i < message.length; i++) {
+						String msg = message[i];
+						String[] rowData = msg.split(",");
+						tableData.add(rowData);
+					}
+					String[] columnNames2 = { "Thời gian đăng nhập", "Username", "Họ tên" };
+					//loginTable.setModel(new DefaultTableModel(tableData, columnNames2));
+					String msg = message[2];
+					String str = "";
+					while((str = _reader.readLine())!= null) {
+						if(!str.equals("EndOfString"))
+							msg = msg + "\n" + str;
+						else 
+							break;
+					}
+					if(message.length > 2) {
+					String senderName = message[1];
+					//String receiverName = message[2];
+					//System.out.println(msg);
+					String selectedName = "";
+					if(!(_listFriend.getSelectedValue() == null)) {
+						selectedName = _listFriend.getSelectedValue().toString();
+						selectedName = selectedName.split(" ")[0];
+					}
+					if(selectedName.equals(senderName)) {
+						_textArea.setText(msg);
+					}
+					}
 					break;
 				}
 				}

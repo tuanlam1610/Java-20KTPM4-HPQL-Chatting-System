@@ -7,10 +7,12 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -115,7 +117,12 @@ public class ThreadServer extends Thread {
 								Statement stmt = conn.createStatement();
 								query = "update taikhoan set thoigiandangnhap = current_timestamp() where username = '" + data[1] +"';";
 								stmt.executeUpdate(query);
+								//add to login history
+								query = "insert into lichsudangnhap (username, thoigiandangnhap) values ('"+ data[1] + "', current_timestamp());";
+								stmt.executeUpdate(query);
 								if (rs.getString(2).equals("1")) {
+									server.addUserName(this, data[1]); 
+									_username = server.getUserName(this); //them login cho admin
 									writer.println("logined-1");
 								} else {
 									server.addUserName(this, data[1]);
@@ -412,7 +419,7 @@ public class ThreadServer extends Thread {
 								+ "' AND friend_username = '" + friendName + "'";
 						ResultSet rs = stmt.executeQuery(sql);
 						if (rs.next())
-							sendermsgDB = rs.getNString("tinnhan");
+							sendermsgDB = rs.getString("tinnhan");
 						else
 							sendermsgDB = "";
 
@@ -421,6 +428,51 @@ public class ThreadServer extends Thread {
 						ThreadServer senderThread = listOnline.get(senderName);
 						server.sendMessageToAUser(senderThread,
 								"string_search-" + targetString + "-" + sendermsgDB + "\nEndOfString");
+						// }
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
+				}
+				case "get_login_history": {
+					// Initial Data
+					//System.out.println("access_login_history");
+					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+					String senderName = data[1];
+					//String friendName = data[2];
+					// String msg = data[3];
+					try {
+						// Update Database
+						// Update 2 row for sender and receiver in DB
+						Statement stmt = conn.createStatement();
+						PreparedStatement pstmt;
+						String sendermsgDB = "";
+						// String receivermsgDB;
+						// Get msg from sender DB
+						String sql = "SELECT lichsudangnhap.thoigiandangnhap, lichsudangnhap.username, taikhoan.hoten  FROM lichsudangnhap Join taikhoan ON (lichsudangnhap.username = taikhoan.username);";
+						System.out.println(0);
+						ResultSet rs = stmt.executeQuery(sql);
+						System.out.println(1);
+						while(rs.next()) {
+							Timestamp dateCol = rs.getTimestamp("thoigiandangnhap");
+							//System.out.println(dateCol.toString());
+							String usernameCol = rs.getNString("username");
+							//System.out.println(usernameCol);
+							String nameCol = rs.getNString("hoten");
+							//System.out.println(nameCol);
+							
+							sendermsgDB= sendermsgDB +"|" + dateCol.toString() + "," + usernameCol + "," + nameCol;
+							//System.out.println(sendermsgDB);
+						}
+
+						if (sendermsgDB.equals(""))
+							sendermsgDB = " ";
+						
+						System.out.println(sendermsgDB);
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread,"get_login_history" + sendermsgDB);
 						// }
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block

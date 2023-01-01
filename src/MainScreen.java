@@ -181,7 +181,7 @@ public class MainScreen extends JFrame {
 					if (data[0].equals("logined")) {
 						if (data[1].equals("1")) {
 							JOptionPane.showMessageDialog(null, "Login successfully!");
-							AdminMainScreen admin = new AdminMainScreen(clientSocket, pw);
+							AdminMainScreen admin = new AdminMainScreen(clientSocket, pw, usernameInput.getText());
 							admin.setLocationRelativeTo(null);
 							admin.setVisible(true);
 							dispose();
