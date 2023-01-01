@@ -190,7 +190,10 @@ public class ThreadServer extends Thread {
 					updateListFriend();
 					break;
 				}
-
+				case "delete_chat": {
+					deleteChat(data[1],data[2]);
+					break;
+				}
 				case "remove_friend": {
 					removeFriend(data[1], data[2]);
 
@@ -510,6 +513,19 @@ public class ThreadServer extends Thread {
 		}
 	}
 
+	public void deleteChat(String user, String friend) {
+		Statement st;
+		String query = "";
+		try {
+			st = conn.createStatement();
+			query = "update banbe set tinnhan = '' where user_username ='"
+					+ user + "' and friend_username = '" + friend + "';";
+			st.executeUpdate(query);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Sends a message to the client.
 	 */
