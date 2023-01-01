@@ -415,7 +415,10 @@ public class UserMainScreen extends JFrame {
 				btnChangeGroupName.setVisible(true);
 				btnMakeAdmin.setVisible(true);
 
-				msg_area.setText(friendChatMSG.get(value));
+				String message = "get_group_chat_history-" + _username + "-" + value;
+				System.out.println(message);
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+				_writeThread.start();
 
 			}
 
