@@ -499,17 +499,15 @@ public class UserMainScreen extends JFrame {
 
 		btnDeleteHistory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String value = "";
-				if (tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Ban be")) {
-					value = listFriend.getSelectedValue().toString();
-					friendChatMSG.put(value, "");
-					msg_area.setText(friendChatMSG.get(value));
-				} else if (tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Nhom")) {
-					value = listGroup.getSelectedValue().toString();
-					friendChatMSG.put(value, "");
-					msg_area.setText(friendChatMSG.get(value));
+				int dialogButton = JOptionPane.YES_NO_OPTION;
+				int dialogResult = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn xóa tất cả tin nhắn chứ?","Warning",dialogButton);
+				if (dialogResult == JOptionPane.YES_OPTION) {					
+					if (tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Bạn bè")) {
+						String value = listFriend.getSelectedValue().toString();
+						_pw.println("delete_chat-" + lblUser.getText() + "-"+ value);
+						msg_area.setText("");
+					}
 				}
-
 			}
 		});
 

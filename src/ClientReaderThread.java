@@ -181,15 +181,17 @@ public class ClientReaderThread extends Thread {
 					
 					String str = "";
 					while((str = _reader.readLine())!= null) {
-						if(!str.equals("EndOfString"))
+						if(!str.equals("EndOfString")) {
 							if(str.contains(targetString)) {
 								if(once == 1) {
 									msg = str;
 									once = 0;
 								}
-								else
+								else {
 								 msg = msg + "\n" + str;
+								}
 							}
+						}
 							
 						else 
 							break;

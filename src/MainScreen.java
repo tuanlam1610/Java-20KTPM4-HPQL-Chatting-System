@@ -166,6 +166,10 @@ public class MainScreen extends JFrame {
 		loginBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if (usernameInput.getText().equals("") || passInput.getText().equals("")){
+					JOptionPane.showMessageDialog(null, "Bạn phải nhập tài khoản và mật khẩu!");
+					return;
+				}
 				pw.println("login-" + usernameInput.getText() + "-" + passInput.getText());
 				BufferedReader reader;
 				InputStream input;
@@ -177,7 +181,7 @@ public class MainScreen extends JFrame {
 					if (data[0].equals("logined")) {
 						if (data[1].equals("1")) {
 							JOptionPane.showMessageDialog(null, "Login successfully!");
-							AdminMainScreen admin = new AdminMainScreen();
+							AdminMainScreen admin = new AdminMainScreen(clientSocket, pw);
 							admin.setLocationRelativeTo(null);
 							admin.setVisible(true);
 							dispose();
@@ -285,6 +289,10 @@ public class MainScreen extends JFrame {
 		// Event Listener
 		btnConfirm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (textField.getText().equals("") || textField_1.getText().equals("")){
+					JOptionPane.showMessageDialog(null, "Bạn phải nhập tài khoản và email!");
+					return;
+				}
 				pw.println("resetpw-" + textField.getText() + "-" + textField_1.getText());
 				BufferedReader reader;
 				InputStream input;
