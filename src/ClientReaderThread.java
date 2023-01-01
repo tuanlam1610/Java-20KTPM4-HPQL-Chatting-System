@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.Arrays;
 
 import javax.swing.JList;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
 public class ClientReaderThread extends Thread {
@@ -15,14 +16,16 @@ public class ClientReaderThread extends Thread {
 	private BufferedReader _reader;
 	private Socket _socket;
 	private JTextArea _textArea;
+	private JTabbedPane _tabbedPane;
 	private JList<String> _listFriend;
 	private JList<String> _listGroup;
 	private JList<String> _listFriendRequest;
 	private String _username;
 	private String _response;
 	private JTextArea _stringTextArea;
-	
-	public ClientReaderThread(Socket socket, JTextArea textArea, JList<String> listFriend, JList<String> listGroup, JList<String> listFriendRequest, String username, JTextArea stringSearchTextArea) {
+
+	public ClientReaderThread(Socket socket, JTextArea textArea, JList<String> listFriend, JList<String> listGroup,
+			JList<String> listFriendRequest, String username, JTextArea stringSearchTextArea, JTabbedPane tabbedPane) {
 		this._socket = socket;
 		this._textArea = textArea;
 		this._listFriend = listFriend;
@@ -30,6 +33,7 @@ public class ClientReaderThread extends Thread {
 		this._listFriendRequest = listFriendRequest;
 		this._username = username;
 		this._stringTextArea = stringSearchTextArea;
+		this._tabbedPane = tabbedPane;
 		
 		try {
 			InputStream input = this._socket.getInputStream();
@@ -39,14 +43,14 @@ public class ClientReaderThread extends Thread {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	public ClientReaderThread(Socket socket, JList<String> listFriend, String username) {
 		this._socket = socket;
 //		this._textArea = textArea;
 		this._listFriend = listFriend;
 //		this._listFriendRequest = listFriendRequest;
 		this._username = username;
-		
+
 		try {
 			InputStream input = this._socket.getInputStream();
 			_reader = new BufferedReader(new InputStreamReader(input));
@@ -55,12 +59,12 @@ public class ClientReaderThread extends Thread {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	public void run() {
 		while (true) {
 			try {
 				_response = _reader.readLine();
-				System.out.println(_response);
+//				System.out.println(_response);
 				String[] message = _response.split("-");
 				switch (message[0]) {
 				case "update_friend_group_list": {
@@ -91,19 +95,30 @@ public class ClientReaderThread extends Thread {
 					break;
 				}
 				case "message": {
-					String senderName = message[1];
-					String receiverName = message[2];
-					String msg = message[3];
-					
-					System.out.println(senderName + " " + receiverName + " " + msg);
-					String selectedName = "";
-					if(!(_listFriend.getSelectedValue() == null)) {
-						selectedName = _listFriend.getSelectedValue().toString();
-						selectedName = selectedName.split(" ")[0];
+					String msgType = message[1];
+					String senderName = message[2];
+					String receiverName = message[3];
+					String msg = message[4];
+					if (!msgType.equals("user") && !msgType.equals("group")) {
+						System.out.println("Can't read message type (Must be 'user' or 'group')");
+						break;
 					}
-					if(selectedName.equals(senderName)) {
-						//System.out.println("Message before append: " + msg);
-						_textArea.append(msg + "\n");
+					System.out.println(msg + " " + senderName + " " + receiverName + " " + msg);
+					String currentTab = this._tabbedPane.getTitleAt(this._tabbedPane.getSelectedIndex()).toString();
+					String selectedName = "";
+					if(msgType.equals("user") && currentTab.equals("Bạn bè")) {
+						if(!(_listFriend.getSelectedValue() == null)) {
+							selectedName = _listFriend.getSelectedValue().toString();
+							selectedName = selectedName.split(" ")[0];
+						}
+						if(selectedName.equals(senderName)) {
+							_textArea.append(msg + "\n");
+						}
+					}
+					else if(msgType.equals("group") && currentTab.equals("Nhóm")) {
+						if(!(_listGroup.getSelectedValue() == null) && _listGroup.getSelectedValue().toString().equals(receiverName)) {
+							_textArea.append(msg + "\n");
+						}
 					}
 					break;
 				}
