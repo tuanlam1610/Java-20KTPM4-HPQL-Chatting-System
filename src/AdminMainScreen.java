@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.awt.Font;
 
 public class AdminMainScreen extends JFrame {
@@ -14,9 +16,12 @@ public class AdminMainScreen extends JFrame {
 	private JTextField textField;
 	private JTable table2;
 	private JTable table3;
-	
+	private Socket _clientSocket;
+	private PrintWriter _pw;
 
-	public AdminMainScreen() {
+	public AdminMainScreen(Socket clientSocket, PrintWriter pw) {
+		this._clientSocket = clientSocket;
+		this._pw = pw;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Admin Main Screen");
 		getContentPane().setBackground(new Color(255, 255, 255));
@@ -29,7 +34,7 @@ public class AdminMainScreen extends JFrame {
 		tp.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		tp.setBounds(0, 0, 1066, 683);
 		String[][] data = {
-				{ "lama123", "Hà Tuấn Lâm", "227 NVC", "16-10-2002", "Nam", "20127677@student.hcmus.edu.vn" }
+				{ "ntphu", "Hà Tuấn Lâm", "227 NVC", "16-10-2002", "Nam", "20127677@student.hcmus.edu.vn" }
 
 		};
 		// Column Names
@@ -48,7 +53,7 @@ public class AdminMainScreen extends JFrame {
 				int row = table.getSelectedRow();
 				for (int i = 0; i < 6; i++)
 					data[i] = table.getModel().getValueAt(row, i).toString();
-				InteractAccount new_frame = new InteractAccount(data[0], data[1], data[2], data[3], data[4], data[5]);
+				InteractAccount new_frame = new InteractAccount(clientSocket, pw, data[0], data[1], data[2], data[3], data[4], data[5]);
 				new_frame.setVisible(true);
 			}
 		});
@@ -69,7 +74,7 @@ public class AdminMainScreen extends JFrame {
 		btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				AddScreen addFrame = new AddScreen();
+				AddScreen addFrame = new AddScreen(clientSocket, pw);
 				addFrame.setVisible(true);
 			}
 		});
@@ -148,9 +153,5 @@ public class AdminMainScreen extends JFrame {
 		setSize(1080, 720);
 		getContentPane().setLayout(null);
 		setVisible(true);
-	}
-
-	public static void main(String[] args) {
-		new AdminMainScreen();
 	}
 }
