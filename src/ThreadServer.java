@@ -131,7 +131,7 @@ public class ThreadServer extends Thread {
 								buffer.append((char) randomLimitedInt);
 							}
 							String generatedString = buffer.toString();
-							SendEmail.sendMail(rs.getString(2), generatedString);
+							SendEmail.sendMail(rs.getString(1), rs.getString(2), generatedString);
 							query = "update taikhoan set pass = '" + generatedString + "' where username ='"
 									+ rs.getString(1) + "';";
 							st.executeUpdate(query);
