@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.Color;
@@ -10,6 +11,8 @@ import java.awt.event.MouseEvent;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.awt.Font;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class AdminMainScreen extends JFrame {
 	private JPanel contentPane;
@@ -45,6 +48,30 @@ public class AdminMainScreen extends JFrame {
 		JPanel p3 = new JPanel();
 		p3.setBackground(new Color(255, 255, 255));
 		JTabbedPane tp = new JTabbedPane();
+		tp.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int currentTab = tp.getSelectedIndex();
+				switch (currentTab) {
+				case 0: {
+					System.out.println("Current tab is 'Danh sách người dùng'");
+					String request = "(admin)_display_list_of_users-" + _username + "-";
+					_pw.println(request);
+					break;
+				}
+				case 1: {
+					System.out.println("Current tab is 'Lịch sử đăng nhập'");
+					String message = "get_login_history-" + _username;
+					_pw.println(message);
+					break;
+				}
+				case 2: {
+					System.out.println("Current tab is 'Danh sách nhóm chat'");
+					_pw.println("admin_updateGroup-" + _username);
+					break;
+				}
+				}
+			}
+		});
 		tp.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		tp.setBounds(0, 0, 1066, 683);
 		String[][] data = {
@@ -59,6 +86,9 @@ public class AdminMainScreen extends JFrame {
 		p1.setLayout(null);
 		// Initializing the JTable
 		userTable = new JTable(data, columnNames);
+		DefaultTableCellRenderer userTableRenderer = (DefaultTableCellRenderer) userTable.getDefaultRenderer(String.class);
+		userTableRenderer.setHorizontalAlignment( SwingConstants.CENTER );
+		userTable.setRowHeight(24);
 		userTable.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		userTable.addMouseListener(new MouseAdapter() {
 			@Override
@@ -136,7 +166,7 @@ public class AdminMainScreen extends JFrame {
 		bg.add(rdbtnHoTen);
 		bg.add(rdbtnNgayTao);
 
-		tp.add("Danh sách đăng nhập", p2);
+		tp.add("Lịch sử đăng nhập", p2);
 		p2.setLayout(null);
 		// Initializing the JTable
 		
@@ -149,21 +179,23 @@ public class AdminMainScreen extends JFrame {
 		
 		
 		loginTable = new JTable(data2, columnNames2);
+		DefaultTableCellRenderer loginTableRenderer = (DefaultTableCellRenderer) loginTable.getDefaultRenderer(String.class);
+		loginTableRenderer.setHorizontalAlignment( SwingConstants.CENTER );
+		loginTable.setRowHeight(24);
 		loginTable.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		loginTable.setEnabled(false);
-		
 		loginTable.setDefaultEditor(Object.class, null);
 		loginTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
 		JScrollPane sp2 = new JScrollPane();
-		sp2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				String message = "get_login_history-" + _username;
-				System.out.println(message);
-				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
-				_writeThread.start();
-			}
-		});
+//		sp2.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseClicked(MouseEvent e) {
+//				String message = "get_login_history-" + _username;
+//				System.out.println(message);
+//				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+//				_writeThread.start();
+//			}
+//		});
 		sp2.setLocation(0, 0);
 		sp2.setSize(1061, 649);
 		sp2.setViewportView(loginTable);
@@ -175,10 +207,15 @@ public class AdminMainScreen extends JFrame {
 		JScrollPane sp3 = new JScrollPane();
 		sp3.setBounds(0, 46, 1061, 603);
 		p3.add(sp3);
-		String[][] data3 = { { "Project Java", "2022-11-02", "lam123" }, { "Project Web", "2022-11-01", "quang123" },
-				{ "Project SE", "2022-11-01", "huy123" }, };
-		String[] columnNames3 = { "Tên nhóm", "Thời gian tạo", "Admin" };
-		groupTable = new JTable(data3, columnNames3);
+		String[][] dataGroupchat = {};
+//		= { { "Project Java", "2022-11-02", "lam123" }, { "Project Web", "2022-11-01", "quang123" },
+//				{ "Project SE", "2022-11-01", "huy123" }, };
+		DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
+		String[] columnNames3 = { "Tên nhóm", "Thời gian tạo"};
+		groupTable = new JTable(dataGroupchat, columnNames3);
+		DefaultTableCellRenderer groupTableRenderer = (DefaultTableCellRenderer)groupTable.getDefaultRenderer(String.class);
+		groupTableRenderer.setHorizontalAlignment( SwingConstants.CENTER );
+		groupTable.setRowHeight(24);
 		groupTable.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		groupTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
 		groupTable.addMouseListener(new MouseAdapter() {
@@ -212,7 +249,7 @@ public class AdminMainScreen extends JFrame {
 		// ----------------------------------------------------------- EVENT
 		// -------------------------------------------------------------
 
-		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable);
+		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable);
 		_readThread.start();
 		
 		// Button Refresh
