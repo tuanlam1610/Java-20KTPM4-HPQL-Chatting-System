@@ -213,6 +213,172 @@ public class ThreadServer extends Thread {
 
 					break;
 				}
+				case "create_group": {
+					// Initial Data
+					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+					String group_admin = data[1];
+					String group_name = data[2];
+					String[] members = data[3].split(" ,");
+					String date_created = data[4];
+
+					try {
+						// Update Database
+						// Update 2 row for sender and receiver in DB
+						Statement stmt = conn.createStatement();
+
+						String sql = "select ID_nhom from nhom;";
+						ResultSet rs = stmt.executeQuery(sql);
+						
+						List<String> list = new ArrayList<>();
+
+						while(rs.next()){
+						   list.add(rs.getString("ID_nhom"));
+						}
+						
+						int ID_nhom;
+						
+						do {
+							ID_nhom = Rndmbtwn(100, 999);
+						}
+						while(list.contains(Integer.toString(ID_nhom)));
+						
+						
+//						PreparedStatement pstmt;
+//						String sendermsgDB;
+						// String receivermsgDB;
+						// Get msg from sender DB
+//						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n" + "values \r\n" + 
+//								"('"+ID_nhom+"', '" + group_name + "', 'CREATION', '" + date_created + "');";
+//						stmt.executeUpdate(sql);
+						
+						 sql = "insert into nhom(Id_nhom, tennhom, tinnhan, ngaytaonhom)\r\n"
+								+ "values('"+ID_nhom+"', '" + group_name + "', '', '" + date_created + "');";
+						stmt.executeUpdate(sql);
+						
+						
+
+//						sql = "select ID_nhom from nhom where tennhom = '" + group_name + "';";
+//						ResultSet rs = stmt.executeQuery(sql);
+//
+//						int ID_nhom;
+//
+//						if (rs.next())
+//							ID_nhom = rs.getInt("ID_nhom");
+//						else
+//							ID_nhom = 0;
+
+						sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
+								+ ID_nhom + ", '" + group_admin + "', 1);";
+						stmt.executeUpdate(sql);
+
+						for (int i = 0; i < members.length; i++) {
+							sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
+									+ ID_nhom + ", '" + members[i] + "', 0);";
+							stmt.executeUpdate(sql);
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
+				}
+				case "admin_updateGroup": {
+					try {
+						HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+						String senderName = data[1];
+						String sortValue = data[2];
+						Statement stmt = conn.createStatement();
+						String sql = "SELECT tennhom, ngaytaonhom FROM Nhom ORDER BY " + sortValue + " ASC";
+						String msg = "admin_updateGroup|";
+						ResultSet rs = stmt.executeQuery(sql);
+						SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/YYYY");
+						while(rs.next()) {
+							msg = msg + rs.getNString("tennhom") + "," + dateformat.format(rs.getDate("ngaytaonhom")) + "_";
+						}
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread, msg);
+						stmt.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
+				case "admin_getGroupMemberList":{
+					try {
+						HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+						String senderName = data[1];
+						String selectedGroupName = data[2];
+						System.out.println("Sender:" + senderName);
+						Statement stmt = conn.createStatement();
+						String sql = "SELECT t2.username, t2.hoten, t2.email, t2.dob "
+									+ "FROM nhom AS n JOIN thanhviennhom t ON (n.ID_nhom = t.ID_nhom AND n.tennhom = '"
+									+ selectedGroupName +"') JOIN taikhoan t2 on (t.username = t2.username)";
+						String msg = "admin_getGroupMemberList|" + selectedGroupName + "|";
+						ResultSet rs = stmt.executeQuery(sql);
+						SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/YYYY");
+						while(rs.next()) {
+							msg = msg + rs.getNString("username") + "," + rs.getNString("hoten") + "," 
+									  + rs.getNString("email") + "," + dateformat.format(rs.getDate("dob")) + "_";
+						}
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread, msg);
+						stmt.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
+				case "admin_getGroupAdminList":{
+					try {
+						HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+						String senderName = data[1];
+						String selectedGroupName = data[2];
+						System.out.println("Sender:" + senderName);
+						Statement stmt = conn.createStatement();
+						String sql = "SELECT tk.username, tk.hoten, tk.email, tk.dob "
+									+ "FROM nhom AS n JOIN thanhviennhom AS t ON (n.ID_nhom = t.ID_nhom and n.tennhom = '"
+									+ selectedGroupName +"') JOIN taikhoan AS tk on (t.username = tk.username and t.isGroupAdmin = 1)";
+						String msg = "admin_getGroupAdminList|" + selectedGroupName + "|";
+						ResultSet rs = stmt.executeQuery(sql);
+						SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/YYYY");
+						while(rs.next()) {
+							msg = msg + rs.getNString("username") + "," + rs.getNString("hoten") + "," 
+									  + rs.getNString("email") + "," + dateformat.format(rs.getDate("dob")) + "_";
+						}
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread, msg);
+						stmt.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
+				// -------------------------------- ADMIN -------------------------------
+				case "(admin)_display_list_of_users": {
+					
+					displayListOfUsers(server.getUserThreads().get(data[1]));
+					
+					break;
+				}
+				
+				case "(admin)_search_user": {
+					
+					searchUserbyUsernameAndName(server.getUserThreads().get(data[1]), data[2]);
+					
+					break;
+				}
+				
+				case "(admin)_sort_user": {
+					
+					// sort (threadServer, filter)
+					sortUserByFilter(server.getUserThreads().get(data[1]), data[2]);
+					
+					break;
+				}
 				default: {
 					System.out.println("Message is invalid!");
 				}

@@ -15,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 
 public class InteractAccount extends JFrame {
-
 	private JPanel contentPane;
 	private JTextField textFieldFullname;
 	private JTextField textFieldAddress;
