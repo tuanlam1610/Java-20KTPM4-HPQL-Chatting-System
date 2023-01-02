@@ -14,6 +14,7 @@ Create table TaiKhoan (
     isAdmin bool,
     thoigiandangnhap datetime,
     ngaytao datetime,
+    isLocked bool,
     primary key (username)
 );
 
@@ -31,7 +32,7 @@ Create table LoiMoiKetBan (
 );
 
 Create table Nhom (
-	ID_nhom varchar(8),
+	ID_nhom char(3) ,
     tennhom varchar(30) charset utf8mb4,
     tinnhan longtext,
     ngaytaonhom datetime,
@@ -39,7 +40,7 @@ Create table Nhom (
 );
 
 Create table ThanhVienNhom (
-	ID_nhom varchar(8),
+	ID_nhom char(3),
     username varchar(20),
     isGroupAdmin bool,
     primary key (ID_nhom, username)
@@ -71,39 +72,49 @@ Alter Table LoiMoiKetBan
 Add Foreign Key(receiver_username) references TaiKhoan(username),
 Add Foreign Key(sender_username) references TaiKhoan(username);
 
-
-
 -- Tạo dữ liệu mẫu
-insert into TaiKhoan(username, pass, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao)
+insert into TaiKhoan(username, pass, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao, isLocked)
 values 
-("nnquang", "123", "Nguyễn Ngọc Quang", "nnquang20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
-("htlam", "123", "Hà Tuấn Lâm", "htlam20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
-("ntphu", "123", "Nguyễn Thiên Phú", "ntphu20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
-("tghuy", "123", "Trương Gia Huy", "tghuy20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
-("lhminh", "123", "Lưu Hoàng Minh", "lhminh20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22"),
-("admin1", "123", "Admin 1", "admin1@gmail.com", "2002-01-01", "227 Nguyễn Văn Cừ", true, true, current_timestamp(), "2022-12-22"),
-("dmtung", "123", "Dương Minh Tùng", "dmtung20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22");
+("nnquang", "123", "Nguyễn Ngọc Quang", "nnquang20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-24", false),
+("htlam", "123", "Hà Tuấn Lâm", "htlam20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22", false),
+("ntphu", "123", "Nguyễn Thiên Phú", "ntphu20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-23", false),
+("tghuy", "123", "Trương Gia Huy", "tghuy20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22", false),
+("lhminh", "123", "Lưu Hoàng Minh", "lhminh20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22", false),
+("admin1", "123", "Admin 1", "admin1@gmail.com", "2002-01-01", "227 Nguyễn Văn Cừ", true, true, current_timestamp(), "2022-12-22", false),
+("dmtung", "123", "Dương Minh Tùng", "dmtung20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22", false);
 
-insert into BanBe(user_username, friend_username)
-values ("nnquang", "htlam"),
-	("nnquang", "ntphu"),
-	("nnquang", "tghuy"),
-	("nnquang", "lhminh"),
-	("htlam", "nnquang"),
-	("htlam", "ntphu"),
-	("htlam", "lhminh"),
-	("ntphu", "nnquang"),
-	("ntphu", "htlam"),
-	("ntphu", "tghuy"),
-	("ntphu", "lhminh"),
-	("tghuy", "nnquang"),
-	("tghuy", "ntphu"),
-	("tghuy", "lhminh"),
-	("lhminh", "nnquang"),
-	("lhminh", "htlam"),
-	("lhminh", "ntphu"),
-	("lhminh", "tghuy");
+insert into BanBe(user_username, friend_username, tinnhan)
+values ("nnquang", "htlam", ""),
+	("nnquang", "ntphu", ""),
+	("nnquang", "tghuy", ""),
+	("nnquang", "lhminh", ""),
+	("htlam", "nnquang", ""),
+	("htlam", "ntphu", ""),
+	("htlam", "lhminh", ""),
+	("ntphu", "nnquang", ""),
+	("ntphu", "htlam", ""),
+	("ntphu", "tghuy", ""),
+	("ntphu", "lhminh", ""),
+	("tghuy", "nnquang", ""),
+	("tghuy", "ntphu", ""),
+	("tghuy", "lhminh", ""),
+	("lhminh", "nnquang", ""),
+	("lhminh", "htlam", ""),
+	("lhminh", "ntphu", ""),
+	("lhminh", "tghuy", "");
     
+-- insert into Nhom(tennhom, ngaytaonhom, tinnhan)
+-- values ("Nhóm 1", current_timestamp(), ""),
+-- 	   ("Nhóm 2", current_timestamp(), ""),
+--        ("Nhóm 3", current_timestamp(), "");
+
+-- insert into ThanhVienNhom(ID_nhom, username, isGroupAdmin)
+-- values (1, "nnquang", true),
+-- 	   (1, "htlam", false),
+--        (1, "tghuy", false),
+--        (1, "ntphu", false),
+--        (1, "lhminh", false);
+
 /*insert into LoiMoiKetBan(sender_username, receiver_username)
 values ("nnquang", "htlam"),
 	("nnquang", "ntphu"),
@@ -115,3 +126,6 @@ values ("nnquang", "htlam"),
 	("tghuy", "htlam"),
 	("lhminh", "nnquang"),
 	("lhminh", "htlam");*/
+Select username, hoten from Taikhoan
+where username in (
+select BB.friend_username from taikhoan as TK JOIN BanBe as BB ON TK.username = BB.user_username WHERE TK.username = "ntphu");

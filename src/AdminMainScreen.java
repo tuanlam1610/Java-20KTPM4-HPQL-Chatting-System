@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -10,6 +12,8 @@ import java.awt.event.MouseListener;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.awt.Font;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class AdminMainScreen extends JFrame {
 	private JPanel contentPane;
@@ -24,25 +28,86 @@ public class AdminMainScreen extends JFrame {
 	private String _username;
 	private String[][] groupMembers;
 	private String[][] groupAdmins;
-
+	private JTable _tableListFriend;
+	private JTable _loginUserTable;
+	private AddScreen addFrame;
+	
 	public AdminMainScreen(Socket clientSocket, PrintWriter pw, String username) {
 		this._clientSocket = clientSocket;
 		this._pw = pw;
 		this._username = username;
+		this.addFrame = new AddScreen(clientSocket, pw);
+		String[] columnB = { "Username", "Thời Gian Đăng Nhập" };
+		String[][] dataB = { { "", "" }};
+		_loginUserTable = new JTable(dataB, columnB);
+		_loginUserTable.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		_loginUserTable.setEnabled(false);
+		_loginUserTable.setDefaultEditor(Object.class, null);
+		_loginUserTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Admin Main Screen");
 		getContentPane().setBackground(new Color(255, 255, 255));
 		setResizable(false);
 		JPanel p2 = new JPanel();
+		p2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String message = "get_login_history-" + _username;
+				System.out.println(message);
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+				_writeThread.start();
+			}
+		});
 		p2.setBackground(new Color(255, 255, 255));
 		JPanel p3 = new JPanel();
 		p3.setBackground(new Color(255, 255, 255));
 		JTabbedPane tp = new JTabbedPane();
+		tp.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int currentTab = tp.getSelectedIndex();
+				switch (currentTab) {
+				case 0: {
+					System.out.println("Current tab is 'Danh sách người dùng'");
+					String request = "(admin)_display_list_of_users-" + _username + "-";
+					_pw.println(request);
+					break;
+				}
+				case 1: {
+					System.out.println("Current tab is 'Lịch sử đăng nhập'");
+					String message = "get_login_history-" + _username;
+					_pw.println(message);
+					break;
+				}
+				case 2: {
+					System.out.println("Current tab is 'Danh sách nhóm chat'");
+					_pw.println("admin_updateGroup-" + _username);
+					break;
+				}
+				}
+			}
+		});
 		tp.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		tp.setBounds(0, 0, 1066, 683);
-		String[][] data = { { "", "", "", "", "", "" }};
+		
+		// Table List Of Friend
+		String[] columnTableListFriend = { "Username", "Họ tên" };
+		String[][] dataListFriend = { { "", "" }
+
+		};
+		_tableListFriend = new JTable(dataListFriend, columnTableListFriend);
+		_tableListFriend.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		_tableListFriend.setEnabled(false);
+		_tableListFriend.setDefaultEditor(Object.class, null);
+		_tableListFriend.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
+		
+		
+		String[][] data = {
+				{ "", "", "", "", "", "", "" }
+
+		};
 		// Column Names
-		String[] columnNames = { "Username", "Họ tên", "Địa chỉ", "Ngày sinh", "Giới tính", "Email" };
+		String[] columnNames = { "Username", "Họ tên", "Địa chỉ", "Ngày sinh", "Giới tính", "Email", "Trạng thái"};
 		JPanel p1 = new JPanel();
 		p1.setBackground(new Color(255, 255, 255));
 		tp.add("Danh sách người dùng", p1);
@@ -62,8 +127,8 @@ public class AdminMainScreen extends JFrame {
 		sp.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		sp.setLocation(0, 127);
 		sp.setSize(1061, 529);
-		sp.setViewportView(table);
-		table.setBounds(0, 0, 880, 400);
+		sp.setViewportView(userTable);
+		userTable.setBounds(0, 0, 880, 400);
 		p1.add(sp);
 		JButton btnAdd = new JButton("Thêm tài khoản");
 		btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -72,19 +137,44 @@ public class AdminMainScreen extends JFrame {
 
 		JButton btnSearch = new JButton("Tìm kiếm");
 		btnSearch.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnSearch.setBounds(496, 35, 100, 35);
+		btnSearch.setBounds(377, 35, 100, 35);
 		p1.add(btnSearch);
 
-		textField = new JTextField();
-		textField.setBounds(596, 35, 150, 35);
-		p1.add(textField);
-		textField.setColumns(10);
+		textFieldSearch = new JTextField();
+		textFieldSearch.setBounds(478, 35, 150, 35);
+		p1.add(textFieldSearch);
+		textFieldSearch.setColumns(10);
 
 		JLabel lblNewLabel = new JLabel("Chọn tài khoản để tương tác");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setBounds(337, 104, 259, 13);
 		p1.add(lblNewLabel);
+		
+		JButton btnRefresh = new JButton("Refresh");
+		btnRefresh.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnRefresh.setBounds(26, 35, 150, 35);
+		p1.add(btnRefresh);
+		
+		JButton btnSort = new JButton("Sắp xếp");
+		btnSort.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnSort.setBounds(650, 35, 150, 35);
+		p1.add(btnSort);
+		
+		JRadioButton rdbtnHoTen = new JRadioButton("Họ tên");
+		rdbtnHoTen.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		rdbtnHoTen.setSelected(true);
+		rdbtnHoTen.setBounds(650, 76, 72, 21);
+		p1.add(rdbtnHoTen);
+		
+		JRadioButton rdbtnNgayTao = new JRadioButton("Ngày tạo");
+		rdbtnNgayTao.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		rdbtnNgayTao.setBounds(737, 76, 83, 21);
+		p1.add(rdbtnNgayTao);
+		
+		ButtonGroup bg=new ButtonGroup();
+		bg.add(rdbtnHoTen);
+		bg.add(rdbtnNgayTao);
 
 		JButton btnRefresh = new JButton("Refresh");
 		btnRefresh.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -126,10 +216,19 @@ public class AdminMainScreen extends JFrame {
 		loginTable.setDefaultEditor(Object.class, null);
 		loginTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
 		JScrollPane sp2 = new JScrollPane();
+//		sp2.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseClicked(MouseEvent e) {
+//				String message = "get_login_history-" + _username;
+//				System.out.println(message);
+//				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+//				_writeThread.start();
+//			}
+//		});
 		sp2.setLocation(0, 0);
 		sp2.setSize(1061, 649);
-		sp2.setViewportView(table2);
-		table2.setBounds(0, 0, 880, 400);
+		sp2.setViewportView(loginTable);
+		loginTable.setBounds(0, 0, 880, 400);
 		p2.add(sp2);
 		tp.add("Danh sách nhóm chat", p3);
 		p3.setLayout(null);
@@ -237,7 +336,6 @@ public class AdminMainScreen extends JFrame {
 				_writeThread.start();
 			}
 		});
-
 		// Button Search
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -252,7 +350,6 @@ public class AdminMainScreen extends JFrame {
 				}
 			}
 		});
-
 		// Button Sort
 		btnSort.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

@@ -166,6 +166,10 @@ public class MainScreen extends JFrame {
 		loginBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if (usernameInput.getText().equals("") || passInput.getText().equals("")){
+					JOptionPane.showMessageDialog(null, "Bạn phải nhập tài khoản và mật khẩu!");
+					return;
+				}
 				pw.println("login-" + usernameInput.getText() + "-" + passInput.getText());
 				BufferedReader reader;
 				InputStream input;
@@ -177,7 +181,7 @@ public class MainScreen extends JFrame {
 					if (data[0].equals("logined")) {
 						if (data[1].equals("1")) {
 							JOptionPane.showMessageDialog(null, "Login successfully!");
-							AdminMainScreen admin = new AdminMainScreen();
+							AdminMainScreen admin = new AdminMainScreen(clientSocket, pw, usernameInput.getText());
 							admin.setLocationRelativeTo(null);
 							admin.setVisible(true);
 							dispose();
@@ -285,8 +289,32 @@ public class MainScreen extends JFrame {
 		// Event Listener
 		btnConfirm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				reset_desktopPane.setVisible(false);
-				login_desktopPane.setVisible(true);
+				if (textField.getText().equals("") || textField_1.getText().equals("")){
+					JOptionPane.showMessageDialog(null, "Bạn phải nhập tài khoản và email!");
+					return;
+				}
+				pw.println("resetpw-" + textField.getText() + "-" + textField_1.getText());
+				BufferedReader reader;
+				InputStream input;
+				try {
+					input = clientSocket.getInputStream();
+					reader = new BufferedReader(new InputStreamReader(input));
+					String msg = reader.readLine();
+					String[] data = msg.split("-");
+					if (data[0].equals("Success")) {
+						JOptionPane.showMessageDialog(null, "Your new password was sent to your email!");
+						reset_desktopPane.setVisible(false);
+						login_desktopPane.setVisible(true);
+					} else {
+						textField.setText(null);
+						textField_1.setText(null);
+						JOptionPane.showMessageDialog(null, "Your username or email is not match!");
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
 			}
 		});
 

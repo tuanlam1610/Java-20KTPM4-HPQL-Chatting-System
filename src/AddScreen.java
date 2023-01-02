@@ -10,9 +10,25 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
 import java.awt.event.ActionEvent;
+import javax.swing.JRadioButton;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class AddScreen extends JFrame {
 
@@ -24,27 +40,63 @@ public class AddScreen extends JFrame {
 	private JTextField textField_5;
 	private JPasswordField passwordField;
 	private JButton btnAdd;
-
+	private String gender = "1";
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AddScreen frame = new AddScreen();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
 	 */
-	public AddScreen() {
+	public void setNull__textField_1() {
+		textField.setText("");
+	}
+	public void setNull__textField_2() {
+		textField_2.setText("");
+	}
+	public void setNull__textField_3() {
+		textField_3.setText("");
+	}
+	public void setNull__textField_4() {
+		textField_4.setText("");
+	}
+	public void setNull__textField_5() {
+		textField_5.setText("");
+	}
+	public void setNull_password() {
+		passwordField.setText("");
+	}
+	
+	public static boolean isValidFormat(String format, String value, Locale locale) {
+	    LocalDateTime ldt = null;
+	    DateTimeFormatter fomatter = DateTimeFormatter.ofPattern(format, locale);
+
+	    try {
+	        ldt = LocalDateTime.parse(value, fomatter);
+	        String result = ldt.format(fomatter);
+	        return result.equals(value);
+	    } catch (DateTimeParseException e) {
+	        try {
+	            LocalDate ld = LocalDate.parse(value, fomatter);
+	            String result = ld.format(fomatter);
+	            return result.equals(value);
+	        } catch (DateTimeParseException exp) {
+	            try {
+	                LocalTime lt = LocalTime.parse(value, fomatter);
+	                String result = lt.format(fomatter);
+	                return result.equals(value);
+	            } catch (DateTimeParseException e2) {
+	                // Debugging purposes
+	                //e2.printStackTrace();
+	            }
+	        }
+	    }
+
+	    return false;
+	}
+	
+	public AddScreen(Socket clientSocket, PrintWriter pw) {
+
 		setResizable(false);
 		setTitle("Add new account");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -132,15 +184,87 @@ public class AddScreen extends JFrame {
 		passwordField.setBounds(96, 75, 186, 19);
 		contentPane.add(passwordField);
 		
+		JLabel lblID_5_1 = new JLabel("Giới tính:");
+		lblID_5_1.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblID_5_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblID_5_1.setAlignmentX(1.0f);
+		lblID_5_1.setBounds(0, 231, 86, 22);
+		contentPane.add(lblID_5_1);
+        
+		JRadioButton radioBtn1 = new JRadioButton("Nam");
+		radioBtn1.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				gender = (e.getStateChange() == 1 ? "1" : "0");
+			}
+		});
+		radioBtn1.setSelected(true);
+		radioBtn1.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		radioBtn1.setBounds(96, 234, 73, 21);
+		contentPane.add(radioBtn1);
+		
+		JRadioButton radioBtn2 = new JRadioButton("Nữ");
+		radioBtn2.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				gender = (e.getStateChange() == 1 ? "0" : "1");
+			}
+		});
+		radioBtn2.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		radioBtn2.setBounds(171, 234, 103, 21);
+		contentPane.add(radioBtn2);
+		
+		ButtonGroup bg = new ButtonGroup();
+        bg.add(radioBtn1);
+        bg.add(radioBtn2);
+        
 		btnAdd = new JButton("Thêm tài khoản");
 		btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Add succesfully!");
-				dispose();
+				if (textField.getText().equals("") || textField_2.getText().equals("") || textField_5.getText().equals("") || passwordField.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Bạn phải nhập đầy đủ username, password, họ tên, email!");
+					return;
+				}
+				if (textField_4.getText().equals("") == false) {
+					if (isValidFormat("yyyy/MM/dd", textField_4.getText(), Locale.ENGLISH) == false || isValidFormat("yyyy-MM-dd", textField_4.getText(), Locale.ENGLISH) == false ) {
+						JOptionPane.showMessageDialog(null, "Bạn phải ngày sinh có dạng 'yyyy/MM/dd' hoặc 'yyyy-MM-dd'!");
+						return;
+					}
+				}
+				pw.println("them_tai_khoan-" + textField.getText() + "-" + passwordField.getText() + "-" + textField_2.getText() + "-" +
+						 textField_5.getText() + "-" + textField_4.getText() + "-" + textField_3.getText() + "-" + gender);
+				BufferedReader reader;
+				InputStream input;
+				try {
+					input = clientSocket.getInputStream();
+					reader = new BufferedReader(new InputStreamReader(input));
+					String msg = reader.readLine();
+					System.out.println(msg);
+					String[] data = msg.split("-");
+					System.out.println(data);
+					if (data[0].equals("Success")) {
+						JOptionPane.showMessageDialog(null, "Add successfully!");
+						dispose();
+					}
+					else {
+						if (data[1].equals("username")) {
+							JOptionPane.showMessageDialog(null, "Username existed!");
+							textField.setText("");
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "Email existed!");
+							textField_5.setText("");
+						}
+						
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
-		btnAdd.setBounds(84, 248, 168, 21);
+		btnAdd.setBounds(84, 269, 168, 21);
 		contentPane.add(btnAdd);
+		
+		
 	}
 }

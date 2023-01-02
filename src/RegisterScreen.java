@@ -199,7 +199,7 @@ public class RegisterScreen extends JFrame {
 									JOptionPane.showMessageDialog(null, "Username existed!");
 								}
 								else {
-									JOptionPane.showMessageDialog(null, "Email exists!");
+									JOptionPane.showMessageDialog(null, "Email existed!");
 								}
 								
 							}

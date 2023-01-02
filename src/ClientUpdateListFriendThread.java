@@ -23,20 +23,23 @@ public class ClientUpdateListFriendThread extends Thread {
 		
 		String friend = "";
 		
-		for (String status : _listOnline) {
-			friend = status.substring(0, status.length() - 2);
-			System.out.println(friend);
-			if (!friend.equals(_username)) {
-				if (status.endsWith("1")) {
-					friend = friend.concat(" (Online)");
-					lst.addElement(friend);
-				} else {
-					lst.addElement(friend);
+		if (_listOnline != null) {
+			for (String status : _listOnline) {
+				friend = status.substring(0, status.length() - 2);
+//				System.out.println(friend);
+				if (!friend.equals(_username)) {
+					if (status.endsWith("1")) {
+						friend = friend.concat(" (Online)");
+						lst.addElement(friend);
+					} else {
+						lst.addElement(friend);
+					}
 				}
 			}
 		}
-		
+	
 		_listFriend.setModel(lst);
+		
 		//Arrays.asList(lst.toArray());
 		for (int i = 0; i < lst.getSize(); i++) {
 			if (indexFriend.equals(lst.getElementAt(i))) {
