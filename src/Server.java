@@ -35,7 +35,7 @@ public class Server {
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/chattingsystem","root","ShadowWarrior2");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/chattingsystem","root","thienphu1206");
 //				JOptionPane.showMessageDialog(null, "Connected to database successfully...");
 				final JOptionPane pane = new JOptionPane();
 

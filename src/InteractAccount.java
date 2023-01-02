@@ -18,13 +18,13 @@ import java.awt.Font;
 
 public class InteractAccount extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private ClientWriteThread  _writeThread;
-	private ClientReaderThreadAdmin _readThread;
+	private ClientWriteThread _writeThread;
 	private JPanel contentPane;
 	private JTextField textFieldFullname;
 	private JTextField textFieldAddress;
 	private JTextField textFieldDOB;
 	private JTextField textFieldGender;
+	private JTable _tableListFriend;
 	private JTable table;
 	private JTable _loginUserTable;
 
@@ -35,8 +35,10 @@ public class InteractAccount extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public InteractAccount(Socket clientSocket, PrintWriter pw, String admin, String username, String Fullname, String Address,
-			String DOB, String Gender, String Email, String status, JTable LoginUserTable) {
+	public InteractAccount(Socket clientSocket, PrintWriter pw, JTable tableListFriend, String admin, String username,
+			String Fullname, String Address, String DOB, String Gender, String Email, String status, JTable LoginUserTable) {
+
+		this._tableListFriend = tableListFriend;
 		this._loginUserTable = LoginUserTable;
 		
 		setResizable(false);
@@ -118,16 +120,8 @@ public class InteractAccount extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(15, 203, 405, 138);
 		contentPane.add(scrollPane);
-		String[] columnNames = { "Username", "Họ tên" };
-		String[][] data = { { "quang123", "Ngọc Quang" }
 
-		};
-		table = new JTable(data, columnNames);
-		table.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		table.setEnabled(false);
-		table.setDefaultEditor(Object.class, null);
-		table.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
-		scrollPane.setViewportView(table);
+		scrollPane.setViewportView(_tableListFriend);
 
 		JLabel lblDanhSchBn = new JLabel("Danh sách bạn bè");
 		lblDanhSchBn.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -166,13 +160,12 @@ public class InteractAccount extends JFrame {
 		btnDelete.setBounds(20, 382, 100, 21);
 		contentPane.add(btnDelete);
 
-		JButton btnBlock = new JButton("Chặn");
+		JButton btnBlock = new JButton("Khóa");
 		btnBlock.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnBlock.setBounds(290, 382, 100, 21);
 		contentPane.add(btnBlock);
-		
-		
-		JButton btnUnBlock = new JButton("Bỏ chặn");
+
+		JButton btnUnBlock = new JButton("Mở khóa");
 		btnUnBlock.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnUnBlock.setBounds(290, 382, 100, 21);
 		contentPane.add(btnUnBlock);
@@ -217,33 +210,42 @@ public class InteractAccount extends JFrame {
 		if (status.equals("Bị khóa")) {
 			btnBlock.setVisible(false);
 			btnUnBlock.setVisible(true);
-		}
-		else {
+		} else {
 			btnBlock.setVisible(true);
 			btnUnBlock.setVisible(false);
 		}
-		
+
 		// ---------------------------------------------------------------------------------
-		
+
+		// Update friend-list
+
+		String requestUpdateListFriend = "(admin)_diplay_list_friends-" + admin + "-" + username + "-";
+
+		_writeThread = new ClientWriteThread(clientSocket, pw, requestUpdateListFriend);
+
+		_writeThread.start();
+
+		// Button Lock And Unlock
+
 		btnBlock.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String request = "(admin)_lock_user-" + username + "-1-";
-				
+				String request = "(admin)_lock_user-" + admin + "-" + username + "-1-";
+
 				_writeThread = new ClientWriteThread(clientSocket, pw, request);
 				_writeThread.start();
-				
+
 				JOptionPane.showMessageDialog(null, "Lock succesfully!");
 				dispose();
 			}
 		});
-		
+
 		btnUnBlock.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String request = "(admin)_lock_user-" + username + "-0-";
-				
+				String request = "(admin)_lock_user-" + admin + "-" + username + "-0-";
+
 				_writeThread = new ClientWriteThread(clientSocket, pw, request);
 				_writeThread.start();
-				
+
 				JOptionPane.showMessageDialog(null, "Unlock succesfully!");
 				dispose();
 			}
