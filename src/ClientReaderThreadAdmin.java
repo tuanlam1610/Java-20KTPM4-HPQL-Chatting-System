@@ -27,8 +27,6 @@ public class ClientReaderThreadAdmin extends Thread {
 	private String _response;
 	private JTable _loginHistoryTable;
 	private JTable _userTable;
-	private JButton _btnBlock;
-	private JButton _btnUnBlock;
 	private JTable _groupChatTable;
 	
 	public ClientReaderThreadAdmin(Socket socket, String username, JTable loginHTable, JTable userTable, JTable groupTable) {
@@ -37,21 +35,6 @@ public class ClientReaderThreadAdmin extends Thread {
 		this._loginHistoryTable = loginHTable;
 		this._userTable = userTable;
 		this._groupChatTable = groupTable;
-		
-		try {
-			InputStream input = this._socket.getInputStream();
-			_reader = new BufferedReader(new InputStreamReader(input));
-		} catch (IOException ex) {
-			System.out.println("Error while getting inputstream: " + ex.getMessage());
-			ex.printStackTrace();
-		}
-	}
-
-	public ClientReaderThreadAdmin(Socket socket, JButton btnBlock, JButton btnUnBlock, String username) {
-		this._socket = socket;
-		this._btnBlock = btnBlock;
-		this._username = username;
-		this._btnUnBlock = btnUnBlock;
 		
 		try {
 			InputStream input = this._socket.getInputStream();
@@ -100,20 +83,21 @@ public class ClientReaderThreadAdmin extends Thread {
 						}
 					
 						break;
-				case "admin_updateGroup": {
-					String msg = message[1];
-					ArrayList<String[]> tableData = new ArrayList<String[]>();
-					String[] rows = msg.split("_");
-					for(int i = 0; i < rows.length; i++) {
-						 String[] cols = rows[i].split(",");
-						 tableData.add(cols);
-						 System.out.println("Row " + i + ": " + cols[0] + cols[1]);
 					}
-					String[] columnNames3 = { "Tên nhóm", "Thời gian tạo"};
-					String[][] tableValue = tableData.toArray(String[][]::new);
-					_groupChatTable.setModel(new DefaultTableModel(tableValue, columnNames3));
-					break;
-				}
+					case "admin_updateGroup": {
+						String msg = message[1];
+						ArrayList<String[]> tableData = new ArrayList<String[]>();
+						String[] rows = msg.split("_");
+						for(int i = 0; i < rows.length; i++) {
+							 String[] cols = rows[i].split(",");
+							 tableData.add(cols);
+							 System.out.println("Row " + i + ": " + cols[0] + cols[1]);
+						}
+						String[] columnNames3 = { "Tên nhóm", "Thời gian tạo"};
+						String[][] tableValue = tableData.toArray(String[][]::new);
+						_groupChatTable.setModel(new DefaultTableModel(tableValue, columnNames3));
+						break;
+					}
 				}
 			} catch (IOException ex) {
 				System.out.println("Error reading from server: " + ex.getMessage());
