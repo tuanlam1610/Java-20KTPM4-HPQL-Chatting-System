@@ -395,7 +395,6 @@ public class UserMainScreen extends JFrame {
 				System.out.println(message);
 				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
 				_writeThread.start();
-
 				// msg_area.setText(friendChatMSG.get(value));
 
 			}

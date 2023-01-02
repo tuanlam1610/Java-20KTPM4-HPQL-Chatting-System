@@ -35,14 +35,14 @@ public class Server {
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/chattingsystem","root","thienphu1206");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/chattingsystem","root","Iuuhoangminh11");
 //				JOptionPane.showMessageDialog(null, "Connected to database successfully...");
 				final JOptionPane pane = new JOptionPane();
 
 		        Thread t1 = new Thread(new Runnable() {
 		            public void run() {
 		                try {
-		                    Thread.sleep(1000);
+		                    Thread.sleep(500);
 		                } catch (InterruptedException e) {
 		                    e.printStackTrace();
 		                }

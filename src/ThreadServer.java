@@ -419,7 +419,7 @@ public class ThreadServer extends Thread {
 							sendermsgDB = rs.getNString("tinnhan");
 						else
 							sendermsgDB = "";
-
+						
 						if (sendermsgDB.equals(""))
 							sendermsgDB = " ";
 						ThreadServer senderThread = listOnline.get(senderName);
@@ -554,7 +554,7 @@ public class ThreadServer extends Thread {
 //						stmt.executeUpdate(sql);
 						
 						 sql = "insert into nhom(Id_nhom, tennhom, tinnhan, ngaytaonhom)\r\n"
-								+ "values('"+ID_nhom+"', '" + group_name + "', 'CREATION', '" + date_created + "');";
+								+ "values('"+ID_nhom+"', '" + group_name + "', '', '" + date_created + "');";
 						stmt.executeUpdate(sql);
 						
 						
