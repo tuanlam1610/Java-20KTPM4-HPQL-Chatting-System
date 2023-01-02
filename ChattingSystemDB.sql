@@ -14,7 +14,7 @@ Create table TaiKhoan (
     isAdmin bool,
     thoigiandangnhap datetime,
     ngaytao datetime,
-    isBlocked bool,
+    isLocked bool,
     primary key (username)
 );
 
@@ -73,7 +73,7 @@ Add Foreign Key(receiver_username) references TaiKhoan(username),
 Add Foreign Key(sender_username) references TaiKhoan(username);
 
 -- Tạo dữ liệu mẫu
-insert into TaiKhoan(username, pass, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao, isBlocked)
+insert into TaiKhoan(username, pass, hoten, email, dob, diachi, gioitinh, isAdmin, thoigiandangnhap, ngaytao, isLocked)
 values 
 ("nnquang", "123", "Nguyễn Ngọc Quang", "nnquang20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-24", false),
 ("htlam", "123", "Hà Tuấn Lâm", "htlam20@clc.fitus.edu.vn", "2002-01-01", "227 Nguyễn Văn Cừ", true, false, current_timestamp(), "2022-12-22", false),
@@ -126,3 +126,5 @@ values ("nnquang", "htlam"),
 	("tghuy", "htlam"),
 	("lhminh", "nnquang"),
 	("lhminh", "htlam");*/
+    
+select * from taikhoan;

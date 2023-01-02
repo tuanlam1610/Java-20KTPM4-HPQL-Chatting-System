@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -31,6 +32,8 @@ public class ClientReaderThreadAdmin extends Thread {
 	private JTextArea _stringTextArea;
 	private JTable _loginHistoryTable;
 	private JTable _userTable;
+	private JButton _btnBlock;
+	private JButton _btnUnBlock;
 	
 	public ClientReaderThreadAdmin(Socket socket, String username, JTable loginHTable, JTable userTable) {
 		this._socket = socket;
@@ -47,13 +50,12 @@ public class ClientReaderThreadAdmin extends Thread {
 		}
 	}
 
-	public ClientReaderThreadAdmin(Socket socket, JList<String> listFriend, String username) {
+	public ClientReaderThreadAdmin(Socket socket, JButton btnBlock, JButton btnUnBlock, String username) {
 		this._socket = socket;
-//		this._textArea = textArea;
-		this._listFriend = listFriend;
-//		this._listFriendRequest = listFriendRequest;
+		this._btnBlock = btnBlock;
 		this._username = username;
-
+		this._btnUnBlock = btnUnBlock;
+		
 		try {
 			InputStream input = this._socket.getInputStream();
 			_reader = new BufferedReader(new InputStreamReader(input));
@@ -90,7 +92,7 @@ public class ClientReaderThreadAdmin extends Thread {
 						break;
 					}
 					
-					case "(admin)_display_list_of_users":
+					case "(admin)_display_list_of_users":{
 						if (message.length > 1) {
 							String[] listOfUser = Arrays.copyOfRange(message, 1, message.length);
 							_displayListOfUser = new AdminDisplayListOfUsers(listOfUser, _userTable);
@@ -101,6 +103,8 @@ public class ClientReaderThreadAdmin extends Thread {
 						}
 					
 						break;
+					}
+						
 				}
 //				if (message[0].equals("update_online_list") && message.length > 1) {
 //					_updateThread = new ThreadUpdateListFriend(_socket, message[1].split(","), _jList, _username);

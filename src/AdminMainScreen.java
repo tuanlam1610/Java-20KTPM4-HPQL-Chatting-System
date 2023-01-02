@@ -48,11 +48,11 @@ public class AdminMainScreen extends JFrame {
 		tp.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		tp.setBounds(0, 0, 1066, 683);
 		String[][] data = {
-				{ "", "", "", "", "", "" }
+				{ "", "", "", "", "", "", "" }
 
 		};
 		// Column Names
-		String[] columnNames = { "Username", "Họ tên", "Địa chỉ", "Ngày sinh", "Giới tính", "Email" };
+		String[] columnNames = { "Username", "Họ tên", "Địa chỉ", "Ngày sinh", "Giới tính", "Email", "Trạng thái"};
 		JPanel p1 = new JPanel();
 		p1.setBackground(new Color(255, 255, 255));
 		tp.add("Danh sách người dùng", p1);
@@ -63,11 +63,13 @@ public class AdminMainScreen extends JFrame {
 		userTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				String[] data = new String[6];
+				String[] data = new String[7];
 				int row = userTable.getSelectedRow();
-				for (int i = 0; i < 6; i++)
+				for (int i = 0; i < 7; i++) {
 					data[i] = userTable.getModel().getValueAt(row, i).toString();
-				InteractAccount new_frame = new InteractAccount(clientSocket, pw, data[0], data[1], data[2], data[3], data[4], data[5]);
+					System.out.println(data[i]);
+				}
+				InteractAccount new_frame = new InteractAccount(clientSocket, pw, _username, data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
 				new_frame.setVisible(true);
 			}
 		});

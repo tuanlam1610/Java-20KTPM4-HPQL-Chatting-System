@@ -585,6 +585,14 @@ public class ThreadServer extends Thread {
 					break;
 				}
 				
+				case "(admin)_lock_user": {
+					
+					// block (threadServer, LockedUser, status)
+					LockAndUnlockUser(server.getUserThreads().get(data[1]), data[1], data[2]);
+					
+					break;
+				}
+				
 				default: {
 					System.out.println("Message is invalid!");
 				}
@@ -698,32 +706,37 @@ public class ThreadServer extends Thread {
 	public void displayListOfUsers(ThreadServer threadSender) {
 		Statement st;
 		String query ="";
-		String respond = "";
+		String respond = "|";
 		
 		try {
 			st = conn.createStatement();
-			query = "SELECT username, hoten, diachi, dob, gioitinh, email "
+			query = "SELECT username, hoten, diachi, dob, gioitinh, email, isLocked "
 					+ "FROM TaiKhoan";
 			ResultSet rs = st.executeQuery(query);
 			
 			while(rs.next()) {
-				
 				String usernameCol = rs.getString("username");
 				String nameCol = rs.getString("hoten");
 				String addressCol = rs.getString("diachi");
 				String dobCol = rs.getString("dob");
 				String gender = rs.getString("gioitinh");
 				String emailCol = rs.getString("email");
+				String isLocked = rs.getString("isLocked");
 				
 				String genderCol = "";
-				if (gender.equals("1")) {
+				if (gender.equals("1")) 
 					genderCol = "Nam";
-				}
-				else {
+				else 
 					genderCol = "Nữ";
-				}
 				
-				respond = respond +"|" + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol;
+				String isLockedCol = "";
+				if (isLocked.equals("1")) 
+					isLockedCol = "Bị khóa";
+				else 
+					isLockedCol = "Hoạt động";
+
+				
+				respond = respond + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol + "," + isLockedCol + "|";
 				//System.out.println(sendermsgDB);
 			}
 			
@@ -743,7 +756,7 @@ public class ThreadServer extends Thread {
 		
 		try {
 			st = conn.createStatement();
-			query = "SELECT username, hoten, diachi, dob, gioitinh, email "
+			query = "SELECT username, hoten, diachi, dob, gioitinh, email, isLocked "
 					+ "FROM TaiKhoan "
 					+ "WHERE username = '" + inputUser + "' OR hoten = '" + inputUser + "'";
 			ResultSet rs = st.executeQuery(query);
@@ -755,16 +768,22 @@ public class ThreadServer extends Thread {
 				String dobCol = rs.getString("dob");
 				String gender = rs.getString("gioitinh");
 				String emailCol = rs.getString("email");
+				String isLocked = rs.getString("isLocked");
 				
 				String genderCol = "";
-				if (gender.equals("1")) {
+				if (gender.equals("1")) 
 					genderCol = "Nam";
-				}
-				else {
+				else 
 					genderCol = "Nữ";
-				}
 				
-				respond = respond + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol + "|";
+				String isLockedCol = "";
+				if (isLocked.equals("1")) 
+					isLockedCol = "Bị khóa";
+				else 
+					isLockedCol = "Hoạt động";
+
+				
+				respond = respond + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol + "," + isLockedCol + "|";
 				//System.out.println(sendermsgDB);
 			}
 			
@@ -784,7 +803,7 @@ public class ThreadServer extends Thread {
 		
 		try {
 			st = conn.createStatement();
-			query = "SELECT username, hoten, diachi, dob, gioitinh, email "
+			query = "SELECT username, hoten, diachi, dob, gioitinh, email, isLocked "
 					+ "FROM TaiKhoan "
 					+ "ORDER BY "+ filter + " ASC"; 
 			ResultSet rs = st.executeQuery(query);
@@ -796,22 +815,50 @@ public class ThreadServer extends Thread {
 				String dobCol = rs.getString("dob");
 				String gender = rs.getString("gioitinh");
 				String emailCol = rs.getString("email");
+				String isLocked = rs.getString("isLocked");
 				
 				String genderCol = "";
-				if (gender.equals("1")) {
+				if (gender.equals("1")) 
 					genderCol = "Nam";
-				}
-				else {
+				else 
 					genderCol = "Nữ";
-				}
 				
-				respond = respond + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol + "|";
+				String isLockedCol = "";
+				if (isLocked.equals("1")) 
+					isLockedCol = "Bị khóa";
+				else 
+					isLockedCol = "Hoạt động";
+
+				
+				respond = respond + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol + "," + isLockedCol + "|";
 				//System.out.println(sendermsgDB);
 			}
 			
 			System.out.println(respond);
 			server.sendMessageToAUser(threadSender, "(admin)_display_list_of_users" + respond);
 			// }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void LockAndUnlockUser(ThreadServer threadBlockedUser, String username, String status) {
+		Statement st;
+		String query = "";
+		String sts = "TRUE";
+		
+		if (status.equals("0")) {
+			sts = "FALSE";
+		}
+
+		try {
+			st = conn.createStatement();
+			query = "UPDATE TaiKhoan "
+					+ "SET isLocked = " + sts
+					+ " WHERE username = '" + username + "'";
+					
+			st.executeUpdate(query);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
