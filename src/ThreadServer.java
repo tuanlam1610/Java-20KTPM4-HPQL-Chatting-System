@@ -613,7 +613,49 @@ public class ThreadServer extends Thread {
 					}
 					break;
 				}
-				
+				case "get_specific_login_history": {
+					// Initial Data
+					//System.out.println("access_login_history");
+					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+					String senderName = data[1];
+					String targetName = data[2];
+					// String msg = data[3];
+					try {
+						// Update Database
+						// Update 2 row for sender and receiver in DB
+						Statement stmt = conn.createStatement();
+						PreparedStatement pstmt;
+						String sendermsgDB = "";
+						// String receivermsgDB;
+						// Get msg from sender DB
+						String sql = "SELECT  lichsudangnhap.username, lichsudangnhap.thoigiandangnhap  FROM lichsudangnhap where (lichsudangnhap.username = '" + targetName  + "');";
+						System.out.println(0);
+						ResultSet rs = stmt.executeQuery(sql);
+						System.out.println(1);
+						while(rs.next()) {
+							String usernameCol = rs.getNString("username");
+							//System.out.println(usernameCol);
+							Timestamp dateCol = rs.getTimestamp("thoigiandangnhap");
+							//System.out.println(dateCol.toString());
+							sendermsgDB= sendermsgDB +"|"  + usernameCol + "," + dateCol.toString();
+							//System.out.println(sendermsgDB);
+						}
+
+						if (sendermsgDB.equals(""))
+							sendermsgDB = " ";
+						
+						System.out.println(sendermsgDB);
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread,"get_specific_login_history" + sendermsgDB);
+						
+						// }
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
+				}
 				// -------------------------------- ADMIN -------------------------------
 				case "(admin)_display_list_of_users": {
 					
