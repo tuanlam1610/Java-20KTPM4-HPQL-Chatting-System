@@ -14,7 +14,7 @@ import java.awt.Font;
 public class AdminMainScreen extends JFrame {
 	private JPanel contentPane;
 	private JTable userTable;
-	private JTextField textField;
+	private JTextField textFieldSearch;
 	private JTable loginTable;
 	private JTable groupTable;
 	private Socket _clientSocket;
@@ -100,10 +100,10 @@ public class AdminMainScreen extends JFrame {
 		btnSearch.setBounds(377, 35, 100, 35);
 		p1.add(btnSearch);
 
-		textField = new JTextField();
-		textField.setBounds(478, 35, 150, 35);
-		p1.add(textField);
-		textField.setColumns(10);
+		textFieldSearch = new JTextField();
+		textFieldSearch.setBounds(478, 35, 150, 35);
+		p1.add(textFieldSearch);
+		textFieldSearch.setColumns(10);
 
 		JLabel lblNewLabel = new JLabel("Chọn tài khoản để tương tác");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -121,14 +121,20 @@ public class AdminMainScreen extends JFrame {
 		btnSort.setBounds(650, 35, 150, 35);
 		p1.add(btnSort);
 		
-		JRadioButton rdbtnNewRadioButton = new JRadioButton("New radio button");
-		rdbtnNewRadioButton.setSelected(true);
-		rdbtnNewRadioButton.setBounds(650, 76, 103, 21);
-		p1.add(rdbtnNewRadioButton);
+		JRadioButton rdbtnHoTen = new JRadioButton("Họ tên");
+		rdbtnHoTen.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		rdbtnHoTen.setSelected(true);
+		rdbtnHoTen.setBounds(650, 76, 72, 21);
+		p1.add(rdbtnHoTen);
 		
-		JRadioButton rdbtnNewRadioButton_1 = new JRadioButton("New radio button");
-		rdbtnNewRadioButton_1.setBounds(763, 76, 103, 21);
-		p1.add(rdbtnNewRadioButton_1);
+		JRadioButton rdbtnNgayTao = new JRadioButton("Ngày tạo");
+		rdbtnNgayTao.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		rdbtnNgayTao.setBounds(737, 76, 83, 21);
+		p1.add(rdbtnNgayTao);
+		
+		ButtonGroup bg=new ButtonGroup();
+		bg.add(rdbtnHoTen);
+		bg.add(rdbtnNgayTao);
 
 		tp.add("Danh sách đăng nhập", p2);
 		p2.setLayout(null);
@@ -213,6 +219,39 @@ public class AdminMainScreen extends JFrame {
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String request = "(admin)_display_list_of_users-" + _username + "-";
+				textFieldSearch.setText("");
+				
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, request);
+				_writeThread.start();
+			}
+		});
+		
+		// Button Search
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String inputUser = textFieldSearch.getText().trim();
+
+				if(!inputUser.equals("")) {
+					String request = "(admin)_search_user-" + _username + "-" + inputUser + "-";
+					System.out.println(request);
+					
+					_writeThread = new ClientWriteThread(_clientSocket, _pw, request);
+					_writeThread.start();
+				}
+			}
+		});
+		
+		// Button Sort
+		btnSort.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String filter = "";
+				if (rdbtnHoTen.isSelected()) {
+					filter = "hoten";
+				}
+				else {
+					filter = "ngaytao";
+				}
+				String request = "(admin)_sort_user-" + _username + "-" + filter + "-";
 				
 				_writeThread = new ClientWriteThread(_clientSocket, _pw, request);
 				_writeThread.start();

@@ -91,9 +91,15 @@ public class ClientReaderThreadAdmin extends Thread {
 					}
 					
 					case "(admin)_display_list_of_users":
-						String[] listOfUser = Arrays.copyOfRange(message, 1, message.length);
-						_displayListOfUser = new AdminDisplayListOfUsers(listOfUser, _userTable);
-						
+						if (message.length > 1) {
+							String[] listOfUser = Arrays.copyOfRange(message, 1, message.length);
+							_displayListOfUser = new AdminDisplayListOfUsers(listOfUser, _userTable);
+						}
+						else {
+							DefaultTableModel model = (DefaultTableModel) _userTable.getModel();
+							model.setRowCount(0);
+						}
+					
 						break;
 				}
 //				if (message[0].equals("update_online_list") && message.length > 1) {
