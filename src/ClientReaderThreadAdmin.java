@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -31,9 +32,10 @@ public class ClientReaderThreadAdmin extends Thread {
 	private JTable _groupChatTable;
 	private JTable _tableListFriend;
 	private JTable _loginUserTable;
+	private AddScreen _addFrame;
 
 	public ClientReaderThreadAdmin(Socket socket, String username, JTable loginHTable, JTable userTable,
-			JTable groupTable, JTable tableListFriend, JTable loginUserTable) {
+			JTable groupTable, JTable tableListFriend, JTable loginUserTable, AddScreen addFrame) {
 
 		this._socket = socket;
 		this._username = username;
@@ -42,7 +44,7 @@ public class ClientReaderThreadAdmin extends Thread {
 		this._groupChatTable = groupTable;
 		this._tableListFriend = tableListFriend;
 		this._loginUserTable = loginUserTable;
-
+		this._addFrame = addFrame;
 		try {
 			InputStream input = this._socket.getInputStream();
 			_reader = new BufferedReader(new InputStreamReader(input));
@@ -129,7 +131,29 @@ public class ClientReaderThreadAdmin extends Thread {
 					_groupChatTable.setModel(new DefaultTableModel(tableValue, columnNames3));
 					break;
 				}
-
+				case "admin_add_user":{
+					if (message[1].equals("Success")) {
+						JOptionPane.showMessageDialog(null, "Add successfully!");
+						_addFrame.setNull__textField_1();
+						_addFrame.setNull__textField_2();
+						_addFrame.setNull__textField_3();
+						_addFrame.setNull__textField_4();
+						_addFrame.setNull__textField_5();
+						_addFrame.setNull_password();
+						_addFrame.setVisible(false);
+					}
+					else {
+						if (message[2].equals("username")) {
+							JOptionPane.showMessageDialog(null, "Username existed!");
+							_addFrame.setNull__textField_1();
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "Email existed!");
+							_addFrame.setNull__textField_5();
+						}
+						
+					}
+				}
 				}
 			} catch (
 

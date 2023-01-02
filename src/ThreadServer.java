@@ -60,13 +60,13 @@ public class ThreadServer extends Thread {
 						ResultSet rs = st.executeQuery(query);
 
 						if (rs.next()) {
-							writer.println("Fail-username");
+							writer.println("admin_add_user|Fail|username");
 							break;
 						}
 						query = "select username from taikhoan where email ='" + data[4] + "';";
 						rs = st.executeQuery(query);
 						if (rs.next()) {
-							writer.println("Fail-email");
+							writer.println("admin_add_user|Fail|email");
 							break;
 						}
 //						for (int i = 3; i < data.length; i++) {
@@ -74,12 +74,49 @@ public class ThreadServer extends Thread {
 //								data[i] = null;
 //							}
 //						}
-						query = "insert into TaiKhoan(username, pass, hoten, email, dob, diachi, gioitinh, isAdmin, ngaytao)" + "values ('" + data[1]
-								+ "', '" + data[2] + "', '" + data[3] + "', '" + data[4] + "', '"  + data[5] + "', '" + data[6] + 
-									"', '"  + data[7] + "', false, current_timestamp());";
-						System.out.println(query);
+						query = "insert into TaiKhoan(username, pass, hoten, email, gioitinh, isAdmin, ngaytao)" + "values ('" + data[1]
+								+ "', '" + data[2] + "', '" + data[3] + "', '" + data[4] + "', '"  + data[7] + "', false, current_timestamp());";
 						st.executeUpdate(query);
-						writer.println("Success");
+						if (data[5].equals("") == false) {
+							query = "update taikhoan set diachi ='" + data[5] +"' where username ='" + data[1] + "';";
+							st.executeUpdate(query);
+						}
+						if (data[6].equals("") == false) {
+							query = "update taikhoan set diachi ='" + data[6] +"' where username ='" + data[1] + "';";
+							st.executeUpdate(query);
+						}
+						writer.println("admin_add_user|Success");
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
+				case "doi_mat_khau_tai_khoan":{
+					try {
+						Statement st = conn.createStatement();
+						String query = "select username,email from taikhoan where username ='" + data[1]
+								+ "' AND email ='" + data[2] + "';";
+						ResultSet rs = st.executeQuery(query);
+						
+						if (rs.next()) {
+							int leftLimit = 97; // letter 'a'
+							int rightLimit = 122; // letter 'z'
+							int targetStringLength = 10;
+							Random random = new Random();
+							StringBuilder buffer = new StringBuilder(targetStringLength);
+							for (int i = 0; i < targetStringLength; i++) {
+								int randomLimitedInt = leftLimit
+										+ (int) (random.nextFloat() * (rightLimit - leftLimit + 1));
+								buffer.append((char) randomLimitedInt);
+							}
+							String generatedString = buffer.toString();
+							SendEmail.sendMail(rs.getString(1), rs.getString(2), generatedString);
+							query = "update taikhoan set pass = '" + generatedString + "' where username ='"
+									+ rs.getString(1) + "';";
+							st.executeUpdate(query);
+							break;
+						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -99,6 +136,31 @@ public class ThreadServer extends Thread {
 						st.executeUpdate(query);
 						query = "delete from taikhoan where username = '" + data[1] +"';";
 						st.executeUpdate(query);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
+				case "cap_nhat_tai_khoan":{
+					try {
+						Statement st = conn.createStatement();
+						if (data[2].equals("") == false) {
+							String query = "update taikhoan set hoten ='" + data[2] +"';";
+							st.executeUpdate(query);
+						}
+						if (data[3].equals("") == false) {
+							String query = "update taikhoan set diachi ='" + data[3] +"';";
+							st.executeUpdate(query);
+						}
+						if (data[4].equals("") == false) {
+							String query = "update taikhoan set dob ='" + data[4] +"';";
+							st.executeUpdate(query);
+						}
+						if (data[5].equals("") == false) {
+							String query = "update taikhoan set gioitinh ='" + data[5] +"';";
+							st.executeUpdate(query);
+						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

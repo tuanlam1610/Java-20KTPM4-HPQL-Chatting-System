@@ -27,11 +27,13 @@ public class AdminMainScreen extends JFrame {
 	private String _username;
 	private JTable _tableListFriend;
 	private JTable _loginUserTable;
+	private AddScreen addFrame;
 	
 	public AdminMainScreen(Socket clientSocket, PrintWriter pw, String username) {
 		this._clientSocket = clientSocket;
 		this._pw = pw;
 		this._username = username;
+		this.addFrame = new AddScreen(clientSocket, pw);
 		
 		String[] columnB = { "Username", "Thời Gian Đăng Nhập" };
 		String[][] dataB = { { "", "" }};
@@ -144,7 +146,6 @@ public class AdminMainScreen extends JFrame {
 		btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				AddScreen addFrame = new AddScreen(clientSocket, pw);
 				addFrame.setVisible(true);
 			}
 		});
@@ -275,7 +276,7 @@ public class AdminMainScreen extends JFrame {
 		// ----------------------------------------------------------- EVENT
 		// -------------------------------------------------------------
 
-		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable, _tableListFriend, _loginUserTable);
+		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable, _tableListFriend, _loginUserTable, addFrame);
 		_readThread.start();
 		
 		// Button Refresh
