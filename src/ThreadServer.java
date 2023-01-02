@@ -561,6 +561,30 @@ public class ThreadServer extends Thread {
 
 					break;
 				}
+				
+				// -------------------------------- ADMIN -------------------------------
+				case "(admin)_display_list_of_users": {
+					
+					displayListOfUsers(server.getUserThreads().get(data[1]));
+					
+					break;
+				}
+				
+				case "(admin)_search_user": {
+					
+					searchUserbyUsernameAndName(server.getUserThreads().get(data[1]), data[2]);
+					
+					break;
+				}
+				
+				case "(admin)_sort_user": {
+					
+					// sort (threadServer, filter)
+					sortUserByFilter(server.getUserThreads().get(data[1]), data[2]);
+					
+					break;
+				}
+				
 				default: {
 					System.out.println("Message is invalid!");
 				}
@@ -668,6 +692,134 @@ public class ThreadServer extends Thread {
 			e.printStackTrace();
 		}
 	}
+	
+	// ------------------------------ ADMIN -------------------------------
+	
+	public void displayListOfUsers(ThreadServer threadSender) {
+		Statement st;
+		String query ="";
+		String respond = "";
+		
+		try {
+			st = conn.createStatement();
+			query = "SELECT username, hoten, diachi, dob, gioitinh, email "
+					+ "FROM TaiKhoan";
+			ResultSet rs = st.executeQuery(query);
+			
+			while(rs.next()) {
+				
+				String usernameCol = rs.getString("username");
+				String nameCol = rs.getString("hoten");
+				String addressCol = rs.getString("diachi");
+				String dobCol = rs.getString("dob");
+				String gender = rs.getString("gioitinh");
+				String emailCol = rs.getString("email");
+				
+				String genderCol = "";
+				if (gender.equals("1")) {
+					genderCol = "Nam";
+				}
+				else {
+					genderCol = "Nữ";
+				}
+				
+				respond = respond +"|" + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol;
+				//System.out.println(sendermsgDB);
+			}
+			
+			System.out.println(respond);
+			server.sendMessageToAUser(threadSender, "(admin)_display_list_of_users" + respond);
+			// }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void searchUserbyUsernameAndName(ThreadServer threadSender, String inputUser) {
+		Statement st;
+		String query ="";
+		String respond = "|";
+		
+		try {
+			st = conn.createStatement();
+			query = "SELECT username, hoten, diachi, dob, gioitinh, email "
+					+ "FROM TaiKhoan "
+					+ "WHERE username = '" + inputUser + "' OR hoten = '" + inputUser + "'";
+			ResultSet rs = st.executeQuery(query);
+			
+			while(rs.next()) {
+				String usernameCol = rs.getString("username");
+				String nameCol = rs.getString("hoten");
+				String addressCol = rs.getString("diachi");
+				String dobCol = rs.getString("dob");
+				String gender = rs.getString("gioitinh");
+				String emailCol = rs.getString("email");
+				
+				String genderCol = "";
+				if (gender.equals("1")) {
+					genderCol = "Nam";
+				}
+				else {
+					genderCol = "Nữ";
+				}
+				
+				respond = respond + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol + "|";
+				//System.out.println(sendermsgDB);
+			}
+			
+			System.out.println(respond);
+			server.sendMessageToAUser(threadSender, "(admin)_display_list_of_users" + respond);
+			// }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void sortUserByFilter(ThreadServer threadSender, String filter) {
+		Statement st;
+		String query ="";
+		String respond = "|";
+		
+		try {
+			st = conn.createStatement();
+			query = "SELECT username, hoten, diachi, dob, gioitinh, email "
+					+ "FROM TaiKhoan "
+					+ "ORDER BY "+ filter + " ASC"; 
+			ResultSet rs = st.executeQuery(query);
+			
+			while(rs.next()) {
+				String usernameCol = rs.getString("username");
+				String nameCol = rs.getString("hoten");
+				String addressCol = rs.getString("diachi");
+				String dobCol = rs.getString("dob");
+				String gender = rs.getString("gioitinh");
+				String emailCol = rs.getString("email");
+				
+				String genderCol = "";
+				if (gender.equals("1")) {
+					genderCol = "Nam";
+				}
+				else {
+					genderCol = "Nữ";
+				}
+				
+				respond = respond + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol + "|";
+				//System.out.println(sendermsgDB);
+			}
+			
+			System.out.println(respond);
+			server.sendMessageToAUser(threadSender, "(admin)_display_list_of_users" + respond);
+			// }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	// --------------------------------------------------------------------
+	
 	/**
 	 * Sends a message to the client.
 	 */

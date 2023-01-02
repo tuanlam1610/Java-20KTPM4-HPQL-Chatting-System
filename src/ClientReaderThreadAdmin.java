@@ -18,6 +18,7 @@ public class ClientReaderThreadAdmin extends Thread {
 	private ClientUpdateListFriendThread _updateListFriend;
 	private ClientUpdateListGroupThread _updateListGroup;
 	private ClientReceiveFriendRequestThread _friendRequest;
+	private AdminDisplayListOfUsers _displayListOfUser;
 	private BufferedReader _reader;
 	private Socket _socket;
 	private JTextArea _textArea;
@@ -29,11 +30,13 @@ public class ClientReaderThreadAdmin extends Thread {
 	private String _response;
 	private JTextArea _stringTextArea;
 	private JTable _loginHistoryTable;
+	private JTable _userTable;
 	
-	public ClientReaderThreadAdmin(Socket socket, String username, JTable loginHTable) {
+	public ClientReaderThreadAdmin(Socket socket, String username, JTable loginHTable, JTable userTable) {
 		this._socket = socket;
 		this._username = username;
 		this._loginHistoryTable = loginHTable;
+		this._userTable = userTable;
 		
 		try {
 			InputStream input = this._socket.getInputStream();
@@ -69,23 +72,35 @@ public class ClientReaderThreadAdmin extends Thread {
 				//System.out.println(message[0]);
 				switch (message[0]) {
 				//admin get login history case:
-				case "get_login_history": {
-					System.out.println("data received");
-					ArrayList<String[]> tableData = new ArrayList<String[]>();
-					for (int i = 1; i < message.length; i++) {
-						String msg = message[i];
-						String[] rowData = msg.split(",");
-						tableData.add(rowData);
-						
-						System.out.println("row" + i);
+					case "get_login_history": {
+						System.out.println("data received");
+						ArrayList<String[]> tableData = new ArrayList<String[]>();
+						for (int i = 1; i < message.length; i++) {
+							String msg = message[i];
+							String[] rowData = msg.split(",");
+							tableData.add(rowData);
+							
+							System.out.println("row" + i);
+						}
+	
+						String[] columnNames2 = { "Thời gian đăng nhập", "Username", "Họ tên" };
+						String[][] tableDataArray = tableData.toArray(String[][]::new);
+						_loginHistoryTable.setModel(new DefaultTableModel(tableDataArray, columnNames2));
+						System.out.println("finish");
+						break;
 					}
-
-					String[] columnNames2 = { "Thời gian đăng nhập", "Username", "Họ tên" };
-					String[][] tableDataArray = tableData.toArray(String[][]::new);
-					_loginHistoryTable.setModel(new DefaultTableModel(tableDataArray, columnNames2));
-					System.out.println("finish");
-					break;
-				}
+					
+					case "(admin)_display_list_of_users":
+						if (message.length > 1) {
+							String[] listOfUser = Arrays.copyOfRange(message, 1, message.length);
+							_displayListOfUser = new AdminDisplayListOfUsers(listOfUser, _userTable);
+						}
+						else {
+							DefaultTableModel model = (DefaultTableModel) _userTable.getModel();
+							model.setRowCount(0);
+						}
+					
+						break;
 				}
 //				if (message[0].equals("update_online_list") && message.length > 1) {
 //					_updateThread = new ThreadUpdateListFriend(_socket, message[1].split(","), _jList, _username);

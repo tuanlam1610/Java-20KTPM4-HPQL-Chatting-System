@@ -14,7 +14,7 @@ import java.awt.Font;
 public class AdminMainScreen extends JFrame {
 	private JPanel contentPane;
 	private JTable userTable;
-	private JTextField textField;
+	private JTextField textFieldSearch;
 	private JTable loginTable;
 	private JTable groupTable;
 	private Socket _clientSocket;
@@ -48,7 +48,7 @@ public class AdminMainScreen extends JFrame {
 		tp.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		tp.setBounds(0, 0, 1066, 683);
 		String[][] data = {
-				{ "ntphu", "Hà Tuấn Lâm", "227 NVC", "16-10-2002", "Nam", "20127677@student.hcmus.edu.vn" }
+				{ "", "", "", "", "", "" }
 
 		};
 		// Column Names
@@ -92,24 +92,49 @@ public class AdminMainScreen extends JFrame {
 				addFrame.setVisible(true);
 			}
 		});
-		btnAdd.setBounds(131, 35, 150, 35);
+		btnAdd.setBounds(203, 35, 150, 35);
 		p1.add(btnAdd);
 
 		JButton btnSearch = new JButton("Tìm kiếm");
 		btnSearch.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnSearch.setBounds(496, 35, 100, 35);
+		btnSearch.setBounds(377, 35, 100, 35);
 		p1.add(btnSearch);
 
-		textField = new JTextField();
-		textField.setBounds(596, 35, 150, 35);
-		p1.add(textField);
-		textField.setColumns(10);
+		textFieldSearch = new JTextField();
+		textFieldSearch.setBounds(478, 35, 150, 35);
+		p1.add(textFieldSearch);
+		textFieldSearch.setColumns(10);
 
 		JLabel lblNewLabel = new JLabel("Chọn tài khoản để tương tác");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setBounds(337, 104, 259, 13);
 		p1.add(lblNewLabel);
+		
+		JButton btnRefresh = new JButton("Refresh");
+		btnRefresh.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnRefresh.setBounds(26, 35, 150, 35);
+		p1.add(btnRefresh);
+		
+		JButton btnSort = new JButton("Sắp xếp");
+		btnSort.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnSort.setBounds(650, 35, 150, 35);
+		p1.add(btnSort);
+		
+		JRadioButton rdbtnHoTen = new JRadioButton("Họ tên");
+		rdbtnHoTen.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		rdbtnHoTen.setSelected(true);
+		rdbtnHoTen.setBounds(650, 76, 72, 21);
+		p1.add(rdbtnHoTen);
+		
+		JRadioButton rdbtnNgayTao = new JRadioButton("Ngày tạo");
+		rdbtnNgayTao.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		rdbtnNgayTao.setBounds(737, 76, 83, 21);
+		p1.add(rdbtnNgayTao);
+		
+		ButtonGroup bg=new ButtonGroup();
+		bg.add(rdbtnHoTen);
+		bg.add(rdbtnNgayTao);
 
 		tp.add("Danh sách đăng nhập", p2);
 		p2.setLayout(null);
@@ -187,7 +212,50 @@ public class AdminMainScreen extends JFrame {
 		// ----------------------------------------------------------- EVENT
 		// -------------------------------------------------------------
 
-		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable);
+		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable);
 		_readThread.start();
+		
+		// Button Refresh
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String request = "(admin)_display_list_of_users-" + _username + "-";
+				textFieldSearch.setText("");
+				
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, request);
+				_writeThread.start();
+			}
+		});
+		
+		// Button Search
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String inputUser = textFieldSearch.getText().trim();
+
+				if(!inputUser.equals("")) {
+					String request = "(admin)_search_user-" + _username + "-" + inputUser + "-";
+					System.out.println(request);
+					
+					_writeThread = new ClientWriteThread(_clientSocket, _pw, request);
+					_writeThread.start();
+				}
+			}
+		});
+		
+		// Button Sort
+		btnSort.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String filter = "";
+				if (rdbtnHoTen.isSelected()) {
+					filter = "hoten";
+				}
+				else {
+					filter = "ngaytao";
+				}
+				String request = "(admin)_sort_user-" + _username + "-" + filter + "-";
+				
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, request);
+				_writeThread.start();
+			}
+		});
 	}
 }
