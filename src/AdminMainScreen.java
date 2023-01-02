@@ -25,6 +25,7 @@ public class AdminMainScreen extends JFrame {
 	ClientWriteThread  _writeThread;
 	ClientReaderThreadAdmin _readThread;
 	private String _username;
+	private JTable _tableListFriend;
 	
 	public AdminMainScreen(Socket clientSocket, PrintWriter pw, String username) {
 		this._clientSocket = clientSocket;
@@ -74,6 +75,19 @@ public class AdminMainScreen extends JFrame {
 		});
 		tp.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		tp.setBounds(0, 0, 1066, 683);
+		
+		// Table List Of Friend
+		String[] columnTableListFriend = { "Username", "Họ tên" };
+		String[][] dataListFriend = { { "", "" }
+
+		};
+		_tableListFriend = new JTable(dataListFriend, columnTableListFriend);
+		_tableListFriend.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		_tableListFriend.setEnabled(false);
+		_tableListFriend.setDefaultEditor(Object.class, null);
+		_tableListFriend.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
+		
+		
 		String[][] data = {
 				{ "", "", "", "", "", "", "" }
 
@@ -99,7 +113,7 @@ public class AdminMainScreen extends JFrame {
 					data[i] = userTable.getModel().getValueAt(row, i).toString();
 					System.out.println(data[i]);
 				}
-				InteractAccount new_frame = new InteractAccount(clientSocket, pw, _username, data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+				InteractAccount new_frame = new InteractAccount(clientSocket, pw, _tableListFriend, _username, data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
 				new_frame.setVisible(true);
 			}
 		});
@@ -251,7 +265,7 @@ public class AdminMainScreen extends JFrame {
 		// ----------------------------------------------------------- EVENT
 		// -------------------------------------------------------------
 
-		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable);
+		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable, _tableListFriend);
 		_readThread.start();
 		
 		// Button Refresh

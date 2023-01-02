@@ -18,14 +18,13 @@ import java.awt.Font;
 
 public class InteractAccount extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private ClientWriteThread  _writeThread;
-	private ClientReaderThreadAdmin2 _readThread;
+	private ClientWriteThread _writeThread;
 	private JPanel contentPane;
 	private JTextField textFieldFullname;
 	private JTextField textFieldAddress;
 	private JTextField textFieldDOB;
 	private JTextField textFieldGender;
-	private JTable tableListFriend;
+	private JTable _tableListFriend;
 
 	/**
 	 * Launch the application.
@@ -34,8 +33,11 @@ public class InteractAccount extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public InteractAccount(Socket clientSocket, PrintWriter pw, String admin, String username, String Fullname, String Address,
-			String DOB, String Gender, String Email, String status) {
+	public InteractAccount(Socket clientSocket, PrintWriter pw, JTable tableListFriend, String admin, String username,
+			String Fullname, String Address, String DOB, String Gender, String Email, String status) {
+
+		this._tableListFriend = tableListFriend;
+
 		setResizable(false);
 		setTitle("Interact account");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -115,16 +117,8 @@ public class InteractAccount extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(15, 203, 405, 138);
 		contentPane.add(scrollPane);
-		String[] columnNames = { "Username", "Họ tên" };
-		String[][] data = { { "", "" }
 
-		};
-		tableListFriend = new JTable(data, columnNames);
-		tableListFriend.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		tableListFriend.setEnabled(false);
-		tableListFriend.setDefaultEditor(Object.class, null);
-		tableListFriend.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
-		scrollPane.setViewportView(tableListFriend);
+		scrollPane.setViewportView(_tableListFriend);
 
 		JLabel lblDanhSchBn = new JLabel("Danh sách bạn bè");
 		lblDanhSchBn.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -167,8 +161,7 @@ public class InteractAccount extends JFrame {
 		btnBlock.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnBlock.setBounds(240, 382, 100, 21);
 		contentPane.add(btnBlock);
-		
-		
+
 		JButton btnUnBlock = new JButton("Mở khóa");
 		btnUnBlock.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnUnBlock.setBounds(240, 382, 100, 21);
@@ -196,55 +189,50 @@ public class InteractAccount extends JFrame {
 		lblUsername_1_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblUsername_1_1.setBounds(114, 158, 200, 15);
 		contentPane.add(lblUsername_1_1);
-		
-		// ------------------------------------ EVENT --------------------------------------
-		
+
+		// ------------------------------------ EVENT
+		// --------------------------------------
+
 		// Update The status of btn Block
 		if (status.equals("Bị khóa")) {
 			btnBlock.setVisible(false);
 			btnUnBlock.setVisible(true);
-		}
-		else {
+		} else {
 			btnBlock.setVisible(true);
 			btnUnBlock.setVisible(false);
 		}
-		
+
 		// ---------------------------------------------------------------------------------
-		
-		
-		String requestUpdateListFriend = "(admin)_diplay_list_friends-" + admin + "-" + username + "-";
-		
-		_writeThread = new ClientWriteThread(clientSocket, pw, requestUpdateListFriend);
-		_readThread = new ClientReaderThreadAdmin2(clientSocket, admin, tableListFriend);
-		_writeThread.start();
+
 		// Update friend-list
-		
-		_readThread.start();
-		
-		
-		
-		
+
+		String requestUpdateListFriend = "(admin)_diplay_list_friends-" + admin + "-" + username + "-";
+
+		_writeThread = new ClientWriteThread(clientSocket, pw, requestUpdateListFriend);
+
+		_writeThread.start();
+
 		// Button Lock And Unlock
-		
+
 		btnBlock.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String request = "(admin)_lock_user-" + admin + "-" + username + "-1-";
-				
+
 				_writeThread = new ClientWriteThread(clientSocket, pw, request);
 				_writeThread.start();
-				
+
 				JOptionPane.showMessageDialog(null, "Lock succesfully!");
 				dispose();
 			}
 		});
-		
+
 		btnUnBlock.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String request = "(admin)_lock_user-" + admin + "-" + username + "-0-";
-				
+
 				_writeThread = new ClientWriteThread(clientSocket, pw, request);
 				_writeThread.start();
-				
+
 				JOptionPane.showMessageDialog(null, "Unlock succesfully!");
 				dispose();
 			}

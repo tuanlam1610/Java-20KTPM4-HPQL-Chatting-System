@@ -5,11 +5,11 @@ import javax.swing.table.DefaultTableModel;
 
 public class AdminDisplayListOfFriendUser {
 	private String[] _listOfUsers;
-	private JTable _userTable;
+	private JTable _tableListFriend;
 	
-	public AdminDisplayListOfFriendUser(String[] listOfUsers, JTable userTable) {
+	public AdminDisplayListOfFriendUser(String[] listOfUsers, JTable tableListFriend) {
 		this._listOfUsers = listOfUsers;
-		this._userTable = userTable;
+		this._tableListFriend = tableListFriend;
 		
 		ArrayList<String[]> tableData = new ArrayList<String[]>();
 		
@@ -20,7 +20,7 @@ public class AdminDisplayListOfFriendUser {
 
 		String[] columnName = { "Username", "Họ tên"};
 		String[][] tableDataArray = tableData.toArray(String[][]::new);
-		_userTable.setModel(new DefaultTableModel(tableDataArray, columnName));
+		_tableListFriend.setModel(new DefaultTableModel(tableDataArray, columnName));
 		System.out.println("finish");
 	}
 }
