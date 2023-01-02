@@ -25,11 +25,21 @@ public class AdminMainScreen extends JFrame {
 	ClientWriteThread  _writeThread;
 	ClientReaderThreadAdmin _readThread;
 	private String _username;
+	private JTable _loginUserTable;
 	
 	public AdminMainScreen(Socket clientSocket, PrintWriter pw, String username) {
 		this._clientSocket = clientSocket;
 		this._pw = pw;
 		this._username = username;
+		
+		String[] columnB = { "Username", "Thời Gian Đăng Nhập" };
+		String[][] dataB = { { "", "" }};
+		_loginUserTable = new JTable(dataB, columnB);
+		_loginUserTable.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		_loginUserTable.setEnabled(false);
+		_loginUserTable.setDefaultEditor(Object.class, null);
+		_loginUserTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Admin Main Screen");
 		getContentPane().setBackground(new Color(255, 255, 255));
@@ -99,7 +109,7 @@ public class AdminMainScreen extends JFrame {
 					data[i] = userTable.getModel().getValueAt(row, i).toString();
 					System.out.println(data[i]);
 				}
-				InteractAccount new_frame = new InteractAccount(clientSocket, pw, _username, data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+				InteractAccount new_frame = new InteractAccount(clientSocket, pw, _username, data[0], data[1], data[2], data[3], data[4], data[5], data[6], _loginUserTable);
 				new_frame.setVisible(true);
 			}
 		});
@@ -251,7 +261,7 @@ public class AdminMainScreen extends JFrame {
 		// ----------------------------------------------------------- EVENT
 		// -------------------------------------------------------------
 
-		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable);
+		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable, _loginUserTable);
 		_readThread.start();
 		
 		// Button Refresh

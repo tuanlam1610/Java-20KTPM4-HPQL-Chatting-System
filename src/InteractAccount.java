@@ -26,6 +26,7 @@ public class InteractAccount extends JFrame {
 	private JTextField textFieldDOB;
 	private JTextField textFieldGender;
 	private JTable table;
+	private JTable _loginUserTable;
 
 	/**
 	 * Launch the application.
@@ -35,7 +36,9 @@ public class InteractAccount extends JFrame {
 	 * Create the frame.
 	 */
 	public InteractAccount(Socket clientSocket, PrintWriter pw, String admin, String username, String Fullname, String Address,
-			String DOB, String Gender, String Email, String status) {
+			String DOB, String Gender, String Email, String status, JTable LoginUserTable) {
+		this._loginUserTable = LoginUserTable;
+		
 		setResizable(false);
 		setTitle("Interact account");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -140,7 +143,7 @@ public class InteractAccount extends JFrame {
 				dispose();
 			}
 		});
-		btnUpdate.setBounds(45, 351, 100, 21);
+		btnUpdate.setBounds(20, 351, 100, 21);
 		contentPane.add(btnUpdate);
 
 		JButton btnDelete = new JButton("Xóa");
@@ -160,18 +163,18 @@ public class InteractAccount extends JFrame {
 
 			}
 		});
-		btnDelete.setBounds(45, 382, 100, 21);
+		btnDelete.setBounds(20, 382, 100, 21);
 		contentPane.add(btnDelete);
 
 		JButton btnBlock = new JButton("Chặn");
 		btnBlock.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnBlock.setBounds(240, 382, 100, 21);
+		btnBlock.setBounds(290, 382, 100, 21);
 		contentPane.add(btnBlock);
 		
 		
 		JButton btnUnBlock = new JButton("Bỏ chặn");
 		btnUnBlock.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnUnBlock.setBounds(240, 382, 100, 21);
+		btnUnBlock.setBounds(290, 382, 100, 21);
 		contentPane.add(btnUnBlock);
 
 		JButton btnResetPassword = new JButton("Khởi tạo lại mật khẩu");
@@ -196,6 +199,17 @@ public class InteractAccount extends JFrame {
 		lblUsername_1_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblUsername_1_1.setBounds(114, 158, 200, 15);
 		contentPane.add(lblUsername_1_1);
+		
+		JButton btnLchSng = new JButton("Lịch sử đ/n");
+		btnLchSng.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				InteractAccountLoginHistory loginPopup = new InteractAccountLoginHistory(clientSocket, pw, admin, username, _loginUserTable);
+				loginPopup.setVisible(true);;
+			}
+		});
+		btnLchSng.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnLchSng.setBounds(130, 382, 150, 21);
+		contentPane.add(btnLchSng);
 		
 		// ------------------------------------ EVENT --------------------------------------
 		

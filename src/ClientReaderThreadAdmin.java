@@ -28,13 +28,15 @@ public class ClientReaderThreadAdmin extends Thread {
 	private JTable _loginHistoryTable;
 	private JTable _userTable;
 	private JTable _groupChatTable;
+	private JTable _loginUserTable;
 	
-	public ClientReaderThreadAdmin(Socket socket, String username, JTable loginHTable, JTable userTable, JTable groupTable) {
+	public ClientReaderThreadAdmin(Socket socket, String username, JTable loginHTable, JTable userTable, JTable groupTable, JTable loginUserTable) {
 		this._socket = socket;
 		this._username = username;
 		this._loginHistoryTable = loginHTable;
 		this._userTable = userTable;
 		this._groupChatTable = groupTable;
+		this._loginUserTable = loginUserTable;
 		
 		try {
 			InputStream input = this._socket.getInputStream();
@@ -62,12 +64,30 @@ public class ClientReaderThreadAdmin extends Thread {
 							String[] rowData = msg.split(",");
 							tableData.add(rowData);
 							
-							System.out.println("row" + i);
+							//System.out.println("row" + i);
 						}
 	
 						String[] columnNames2 = { "Thời gian đăng nhập", "Username", "Họ tên" };
 						String[][] tableDataArray = tableData.toArray(String[][]::new);
 						_loginHistoryTable.setModel(new DefaultTableModel(tableDataArray, columnNames2));
+						System.out.println("finish");
+						break;
+					}
+					
+					case "get_specific_login_history": {
+						System.out.println("data received");
+						ArrayList<String[]> tableData = new ArrayList<String[]>();
+						for (int i = 1; i < message.length; i++) {
+							String msg = message[i];
+							String[] rowData = msg.split(",");
+							tableData.add(rowData);
+							
+							System.out.println("row" + i);
+						}
+	
+						String[] columnNames2 = {  "Username", "Thời gian đăng nhập" };
+						String[][] tableDataArray = tableData.toArray(String[][]::new);
+						_loginUserTable.setModel(new DefaultTableModel(tableDataArray, columnNames2));
 						System.out.println("finish");
 						break;
 					}
