@@ -123,8 +123,7 @@ public class AdminMainScreen extends JFrame {
 					data[i] = userTable.getModel().getValueAt(row, i).toString();
 					System.out.println(data[i]);
 				}
-				InteractAccount new_frame = new InteractAccount(clientSocket, pw, _tableListFriend, _username, data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
-				InteractAccount new_frame = new InteractAccount(clientSocket, pw, _username, data[0], data[1], data[2], data[3], data[4], data[5], data[6], _loginUserTable);
+				InteractAccount new_frame = new InteractAccount(clientSocket, pw, _tableListFriend, _username, data[0], data[1], data[2], data[3], data[4], data[5], data[6], _loginUserTable);
 				new_frame.setVisible(true);
 			}
 		});
@@ -276,8 +275,7 @@ public class AdminMainScreen extends JFrame {
 		// ----------------------------------------------------------- EVENT
 		// -------------------------------------------------------------
 
-		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable, _tableListFriend);
-		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable, _loginUserTable);
+		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable, _tableListFriend, _loginUserTable);
 		_readThread.start();
 		
 		// Button Refresh
