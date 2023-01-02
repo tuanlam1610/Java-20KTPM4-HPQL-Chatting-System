@@ -640,7 +640,15 @@ public class ThreadServer extends Thread {
 				case "(admin)_lock_user": {
 					
 					// block (threadServer, LockedUser, status)
-					LockAndUnlockUser(server.getUserThreads().get(data[1]), data[1], data[2]);
+					lockAndUnlockUser(server.getUserThreads().get(data[1]), data[2], data[3]);
+					
+					break;
+				}
+				
+				case "(admin)_diplay_list_friends" : {
+					
+					// display...(threadServer, admin, username)
+					displayListOfFriends(server.getUserThreads().get(data[1]), data[2]);
 					
 					break;
 				}
@@ -664,19 +672,6 @@ public class ThreadServer extends Thread {
 			ex.printStackTrace();
 		}
 	}
-
-	// Update Online List
-	// public void updateListFriend(HashMap<String, ThreadServer> listOnline) {
-	// String listOnl = "";
-	// for (String friend : _listFriend) {
-	// if (listOnline.containsKey(friend)) {
-	// listOnl += (friend.concat(" 1")).concat(",");
-	// } else {
-	// listOnl += (friend.concat(" 0")).concat(",");
-	// }
-	// }
-	// listOnl = "update_online_list-" + listOnl;
-	// }
 
 	public void updateListFriend() {
 		_updateListFriend = new ServerUpdateListFriendThread(server, conn, _username);
@@ -900,7 +895,7 @@ public class ThreadServer extends Thread {
 		}
 	}
 	
-	public void LockAndUnlockUser(ThreadServer threadBlockedUser, String username, String status) {
+	public void lockAndUnlockUser(ThreadServer threadSender, String username, String status) {
 		Statement st;
 		String query = "";
 		String sts = "TRUE";
@@ -916,6 +911,40 @@ public class ThreadServer extends Thread {
 					+ " WHERE username = '" + username + "'";
 					
 			st.executeUpdate(query);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		displayListOfUsers(threadSender);
+	}
+	
+	public void displayListOfFriends(ThreadServer threadSender, String username) {
+		Statement st;
+		String query ="";
+		String respond = "|";
+		
+		try {
+			st = conn.createStatement();
+			query = "SELECT username, hoten "
+					+ "FROM TaiKhoan "
+					+ "WHERE username in ("
+						+ "SELECT BB.friend_username "
+						+ "FROM TaiKhoan AS TK JOIN BanBe AS BB "
+						+ "ON TK.username = BB.user_username "
+						+ "WHERE TK.username = '" + username + "')";
+			ResultSet rs = st.executeQuery(query);
+			
+			while(rs.next()) {
+				String usernameCol = rs.getString("username");
+				String nameCol = rs.getString("hoten");
+				
+				respond = respond + usernameCol + "," + nameCol + "|";
+			}
+			
+			System.out.println(respond);
+			server.sendMessageToAUser(threadSender, "(admin)_diplay_list_friends" + respond);
+			// }
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

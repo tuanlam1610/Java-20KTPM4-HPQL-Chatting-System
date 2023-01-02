@@ -126,5 +126,6 @@ values ("nnquang", "htlam"),
 	("tghuy", "htlam"),
 	("lhminh", "nnquang"),
 	("lhminh", "htlam");*/
-    
-select * from taikhoan;
+Select username, hoten from Taikhoan
+where username in (
+select BB.friend_username from taikhoan as TK JOIN BanBe as BB ON TK.username = BB.user_username WHERE TK.username = "ntphu");

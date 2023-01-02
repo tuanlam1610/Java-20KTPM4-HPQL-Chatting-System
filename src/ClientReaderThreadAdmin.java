@@ -21,6 +21,7 @@ public class ClientReaderThreadAdmin extends Thread {
 	private ClientUpdateListGroupThread _updateListGroup;
 	private ClientReceiveFriendRequestThread _friendRequest;
 	private AdminDisplayListOfUsers _displayListOfUser;
+	private AdminDisplayListOfFriendUser _displayListOfFriendUser;
 	private BufferedReader _reader;
 	private Socket _socket;
 	private String _username;
@@ -28,6 +29,7 @@ public class ClientReaderThreadAdmin extends Thread {
 	private JTable _loginHistoryTable;
 	private JTable _userTable;
 	private JTable _groupChatTable;
+
 	
 	public ClientReaderThreadAdmin(Socket socket, String username, JTable loginHTable, JTable userTable, JTable groupTable) {
 		this._socket = socket;
@@ -44,7 +46,7 @@ public class ClientReaderThreadAdmin extends Thread {
 			ex.printStackTrace();
 		}
 	}
-
+	
 	public void run() {
 		while (true) {
 			try {
@@ -84,6 +86,17 @@ public class ClientReaderThreadAdmin extends Thread {
 					
 						break;
 					}
+					
+					/*
+					 * case "(admin)_diplay_list_friends": { if (message.length > 1) { String[]
+					 * listOfFriendUser = Arrays.copyOfRange(message, 1, message.length);
+					 * _displayListOfFriendUser = new AdminDisplayListOfFriendUser(listOfFriendUser,
+					 * _listFriendTable); } else { DefaultTableModel model1 = (DefaultTableModel)
+					 * _listFriendTable.getModel(); model1.setRowCount(0); }
+					 * 
+					 * break; }
+					 */
+					
 					case "admin_updateGroup": {
 						String msg = message[1];
 						ArrayList<String[]> tableData = new ArrayList<String[]>();
