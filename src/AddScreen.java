@@ -19,6 +19,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
 import java.awt.event.ActionEvent;
 import javax.swing.JRadioButton;
 import java.awt.event.ItemListener;
@@ -42,6 +48,53 @@ public class AddScreen extends JFrame {
 	/**
 	 * Create the frame.
 	 */
+	public void setNull__textField_1() {
+		textField.setText("");
+	}
+	public void setNull__textField_2() {
+		textField_2.setText("");
+	}
+	public void setNull__textField_3() {
+		textField_3.setText("");
+	}
+	public void setNull__textField_4() {
+		textField_4.setText("");
+	}
+	public void setNull__textField_5() {
+		textField_5.setText("");
+	}
+	public void setNull_password() {
+		passwordField.setText("");
+	}
+	
+	public static boolean isValidFormat(String format, String value, Locale locale) {
+	    LocalDateTime ldt = null;
+	    DateTimeFormatter fomatter = DateTimeFormatter.ofPattern(format, locale);
+
+	    try {
+	        ldt = LocalDateTime.parse(value, fomatter);
+	        String result = ldt.format(fomatter);
+	        return result.equals(value);
+	    } catch (DateTimeParseException e) {
+	        try {
+	            LocalDate ld = LocalDate.parse(value, fomatter);
+	            String result = ld.format(fomatter);
+	            return result.equals(value);
+	        } catch (DateTimeParseException exp) {
+	            try {
+	                LocalTime lt = LocalTime.parse(value, fomatter);
+	                String result = lt.format(fomatter);
+	                return result.equals(value);
+	            } catch (DateTimeParseException e2) {
+	                // Debugging purposes
+	                //e2.printStackTrace();
+	            }
+	        }
+	    }
+
+	    return false;
+	}
+	
 	public AddScreen(Socket clientSocket, PrintWriter pw) {
 
 		setResizable(false);
@@ -170,6 +223,12 @@ public class AddScreen extends JFrame {
 				if (textField.getText().equals("") || textField_2.getText().equals("") || textField_5.getText().equals("") || passwordField.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, "Bạn phải nhập đầy đủ username, password, họ tên, email!");
 					return;
+				}
+				if (textField_4.getText().equals("") == false) {
+					if (isValidFormat("yyyy/MM/dd", textField_4.getText(), Locale.ENGLISH) == false) {
+						JOptionPane.showMessageDialog(null, "Bạn phải ngày sinh có dạng 'yyyy/MM/dd'!");
+						return;
+					}
 				}
 				pw.println("them_tai_khoan-" + textField.getText() + "-" + passwordField.getText() + "-" + textField_2.getText() + "-" +
 						 textField_5.getText() + "-" + textField_4.getText() + "-" + textField_3.getText() + "-" + gender);
