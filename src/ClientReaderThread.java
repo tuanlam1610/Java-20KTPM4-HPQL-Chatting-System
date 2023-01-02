@@ -3,10 +3,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import javax.swing.JList;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
 
 public class ClientReaderThread extends Thread {
 	private ClientUpdateListFriendThread _updateListFriend;
@@ -15,14 +19,16 @@ public class ClientReaderThread extends Thread {
 	private BufferedReader _reader;
 	private Socket _socket;
 	private JTextArea _textArea;
+	private JTabbedPane _tabbedPane;
 	private JList<String> _listFriend;
 	private JList<String> _listGroup;
 	private JList<String> _listFriendRequest;
 	private String _username;
 	private String _response;
 	private JTextArea _stringTextArea;
-	
-	public ClientReaderThread(Socket socket, JTextArea textArea, JList<String> listFriend, JList<String> listGroup, JList<String> listFriendRequest, String username, JTextArea stringSearchTextArea) {
+
+	public ClientReaderThread(Socket socket, JTextArea textArea, JList<String> listFriend, JList<String> listGroup,
+			JList<String> listFriendRequest, String username, JTextArea stringSearchTextArea, JTabbedPane tabbedPane) {
 		this._socket = socket;
 		this._textArea = textArea;
 		this._listFriend = listFriend;
@@ -30,6 +36,7 @@ public class ClientReaderThread extends Thread {
 		this._listFriendRequest = listFriendRequest;
 		this._username = username;
 		this._stringTextArea = stringSearchTextArea;
+		this._tabbedPane = tabbedPane;
 		
 		try {
 			InputStream input = this._socket.getInputStream();
@@ -39,14 +46,14 @@ public class ClientReaderThread extends Thread {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	public ClientReaderThread(Socket socket, JList<String> listFriend, String username) {
 		this._socket = socket;
 //		this._textArea = textArea;
 		this._listFriend = listFriend;
 //		this._listFriendRequest = listFriendRequest;
 		this._username = username;
-		
+
 		try {
 			InputStream input = this._socket.getInputStream();
 			_reader = new BufferedReader(new InputStreamReader(input));
@@ -55,12 +62,12 @@ public class ClientReaderThread extends Thread {
 			ex.printStackTrace();
 		}
 	}
-	
+
 	public void run() {
 		while (true) {
 			try {
 				_response = _reader.readLine();
-				System.out.println(_response);
+                //System.out.println(_response);
 				String[] message = _response.split("-");
 				switch (message[0]) {
 				case "update_friend_group_list": {
@@ -91,19 +98,30 @@ public class ClientReaderThread extends Thread {
 					break;
 				}
 				case "message": {
-					String senderName = message[1];
-					String receiverName = message[2];
-					String msg = message[3];
-					
-					System.out.println(senderName + " " + receiverName + " " + msg);
-					String selectedName = "";
-					if(!(_listFriend.getSelectedValue() == null)) {
-						selectedName = _listFriend.getSelectedValue().toString();
-						selectedName = selectedName.split(" ")[0];
+					String msgType = message[1];
+					String senderName = message[2];
+					String receiverName = message[3];
+					String msg = message[4];
+					if (!msgType.equals("user") && !msgType.equals("group")) {
+						System.out.println("Can't read message type (Must be 'user' or 'group')");
+						break;
 					}
-					if(selectedName.equals(senderName)) {
-						//System.out.println("Message before append: " + msg);
-						_textArea.append(msg + "\n");
+					System.out.println(msg + " " + senderName + " " + receiverName + " " + msg);
+					String currentTab = this._tabbedPane.getTitleAt(this._tabbedPane.getSelectedIndex()).toString();
+					String selectedName = "";
+					if(msgType.equals("user") && currentTab.equals("Bạn bè")) {
+						if(!(_listFriend.getSelectedValue() == null)) {
+							selectedName = _listFriend.getSelectedValue().toString();
+							selectedName = selectedName.split(" ")[0];
+						}
+						if(selectedName.equals(senderName)) {
+							_textArea.append(msg + "\n");
+						}
+					}
+					else if(msgType.equals("group") && currentTab.equals("Nhóm")) {
+						if(!(_listGroup.getSelectedValue() == null) && _listGroup.getSelectedValue().toString().equals(receiverName)) {
+							_textArea.append(msg + "\n");
+						}
 					}
 					break;
 				}
@@ -131,6 +149,30 @@ public class ClientReaderThread extends Thread {
 					}
 					break;
 				}
+				case "get_group_chat_history": {
+					String msg = message[2];
+					String str = "";
+					while((str = _reader.readLine())!= null) {
+						if(!str.equals("EndOfString"))
+							msg = msg + "\n" + str;
+						else 
+							break;
+					}
+					if(message.length > 2) {
+					String senderName = message[1];
+					//String receiverName = message[2];
+					//System.out.println(msg);
+					String selectedName = "";
+					if(!(_listGroup.getSelectedValue() == null)) {
+						selectedName = _listGroup.getSelectedValue().toString();
+						//selectedName = selectedName.split(" ")[0];
+					}
+					if(selectedName.equals(senderName)) {
+						_textArea.setText(msg);
+					}
+					}
+					break;
+				}
 				case "string_search": {
 					String targetString = message[1];
 					String msg = message[2];
@@ -142,15 +184,17 @@ public class ClientReaderThread extends Thread {
 					
 					String str = "";
 					while((str = _reader.readLine())!= null) {
-						if(!str.equals("EndOfString"))
+						if(!str.equals("EndOfString")) {
 							if(str.contains(targetString)) {
 								if(once == 1) {
 									msg = str;
 									once = 0;
 								}
-								else
+								else {
 								 msg = msg + "\n" + str;
+								}
 							}
+						}
 							
 						else 
 							break;
@@ -160,6 +204,39 @@ public class ClientReaderThread extends Thread {
 					//System.out.println(m
 					
 						_stringTextArea.setText(msg);
+					break;
+				}
+				//admin get login history case:
+				case "get_login_history": {
+					ArrayList<String[]> tableData = new ArrayList<String[]>();
+					for (int i = 1; i < message.length; i++) {
+						String msg = message[i];
+						String[] rowData = msg.split(",");
+						tableData.add(rowData);
+					}
+					String[] columnNames2 = { "Thời gian đăng nhập", "Username", "Họ tên" };
+					//loginTable.setModel(new DefaultTableModel(tableData, columnNames2));
+					String msg = message[2];
+					String str = "";
+					while((str = _reader.readLine())!= null) {
+						if(!str.equals("EndOfString"))
+							msg = msg + "\n" + str;
+						else 
+							break;
+					}
+					if(message.length > 2) {
+					String senderName = message[1];
+					//String receiverName = message[2];
+					//System.out.println(msg);
+					String selectedName = "";
+					if(!(_listFriend.getSelectedValue() == null)) {
+						selectedName = _listFriend.getSelectedValue().toString();
+						selectedName = selectedName.split(" ")[0];
+					}
+					if(selectedName.equals(senderName)) {
+						_textArea.setText(msg);
+					}
+					}
 					break;
 				}
 				}

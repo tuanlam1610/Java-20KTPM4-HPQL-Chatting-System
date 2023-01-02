@@ -17,14 +17,10 @@ public class ClientWriteThread extends Thread{
 		_pw.println(_message);
 		_pw.flush();
 		
-		if (_message.equals("bye")) {
-			try { 
-				_pw.flush();
-				_pw.close();
-				_socket.close(); 
-			} catch (IOException ex) {
-				System.out.println("Error writing to server: " + ex.getMessage()); 
-			}
-		}
+		/*
+		 * if (_message.equals("bye")) { try { _pw.flush(); _pw.close();
+		 * _socket.close(); } catch (IOException ex) {
+		 * System.out.println("Error writing to server: " + ex.getMessage()); } }
+		 */
 	}
 }
