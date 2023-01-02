@@ -240,13 +240,6 @@ public class ClientReaderThread extends Thread {
 					break;
 				}
 				}
-//				if (message[0].equals("update_online_list") && message.length > 1) {
-//					_updateThread = new ThreadUpdateListFriend(_socket, message[1].split(","), _jList, _username);
-//					_updateThread.start();
-//				}
-//				else
-//					_textArea.append("\n" + _response);
-
 			} catch (IOException ex) {
 				System.out.println("Error reading from server: " + ex.getMessage());
 				ex.printStackTrace();

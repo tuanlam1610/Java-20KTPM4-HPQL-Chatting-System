@@ -44,7 +44,6 @@ public class UserMainScreen extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField msg_field;
-
 	private String _username;
 	private Socket _clientSocket;
 	private PrintWriter _pw;
@@ -395,7 +394,6 @@ public class UserMainScreen extends JFrame {
 				System.out.println(message);
 				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
 				_writeThread.start();
-
 				// msg_area.setText(friendChatMSG.get(value));
 
 			}

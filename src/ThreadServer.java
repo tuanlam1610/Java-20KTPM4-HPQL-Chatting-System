@@ -13,9 +13,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class ThreadServer extends Thread {
@@ -112,7 +114,6 @@ public class ThreadServer extends Thread {
 						if (rs.next()) {
 							System.out.println(rs.getString(3));
 							System.out.println(data[2]);
-
 							if (data[2].equals(rs.getString(3))) {
 								Statement stmt = conn.createStatement();
 								query = "update taikhoan set thoigiandangnhap = current_timestamp() where username = '" + data[1] +"';";
@@ -419,7 +420,7 @@ public class ThreadServer extends Thread {
 							sendermsgDB = rs.getNString("tinnhan");
 						else
 							sendermsgDB = "";
-
+						
 						if (sendermsgDB.equals(""))
 							sendermsgDB = " ";
 						ThreadServer senderThread = listOnline.get(senderName);
@@ -527,23 +528,47 @@ public class ThreadServer extends Thread {
 						// Update Database
 						// Update 2 row for sender and receiver in DB
 						Statement stmt = conn.createStatement();
+
+						String sql = "select ID_nhom from nhom;";
+						ResultSet rs = stmt.executeQuery(sql);
+						
+						List<String> list = new ArrayList<>();
+
+						while(rs.next()){
+						   list.add(rs.getString("ID_nhom"));
+						}
+						
+						int ID_nhom;
+						
+						do {
+							ID_nhom = Rndmbtwn(100, 999);
+						}
+						while(list.contains(Integer.toString(ID_nhom)));
+						
+						
 //						PreparedStatement pstmt;
 //						String sendermsgDB;
 						// String receivermsgDB;
 						// Get msg from sender DB
-						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n" + "values \r\n" + "('"
-								+ group_name + "', 'CREATION', '" + date_created + "');";
+//						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n" + "values \r\n" + 
+//								"('"+ID_nhom+"', '" + group_name + "', 'CREATION', '" + date_created + "');";
+//						stmt.executeUpdate(sql);
+						
+						 sql = "insert into nhom(Id_nhom, tennhom, tinnhan, ngaytaonhom)\r\n"
+								+ "values('"+ID_nhom+"', '" + group_name + "', '', '" + date_created + "');";
 						stmt.executeUpdate(sql);
+						
+						
 
-						sql = "select ID_nhom from nhom where tennhom = '" + group_name + "';";
-						ResultSet rs = stmt.executeQuery(sql);
-
-						int ID_nhom;
-
-						if (rs.next())
-							ID_nhom = rs.getInt("ID_nhom");
-						else
-							ID_nhom = 0;
+//						sql = "select ID_nhom from nhom where tennhom = '" + group_name + "';";
+//						ResultSet rs = stmt.executeQuery(sql);
+//
+//						int ID_nhom;
+//
+//						if (rs.next())
+//							ID_nhom = rs.getInt("ID_nhom");
+//						else
+//							ID_nhom = 0;
 
 						sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
 								+ ID_nhom + ", '" + group_admin + "', 1);";
@@ -559,6 +584,33 @@ public class ThreadServer extends Thread {
 						e.printStackTrace();
 					}
 
+					break;
+				}
+				case "admin_updateGroup": {
+					try {
+						HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+						String senderName = data[1];
+						System.out.println("Sender:" + senderName);
+						for(Map.Entry<String, ThreadServer> entry : listOnline.entrySet()) {
+							System.out.println(entry.getKey() + "-" + entry.getValue().toString());
+						}
+						Statement stmt = conn.createStatement();
+						String sql = "SELECT tennhom, ngaytaonhom FROM Nhom";
+						String msg = "admin_updateGroup|";
+						ResultSet rs = stmt.executeQuery(sql);
+						SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/YYYY");
+						while(rs.next()) {
+							msg = msg + rs.getNString("tennhom") + "," + dateformat.format(rs.getDate("ngaytaonhom")) + "_";
+							System.out.println(rs.getNString("tennhom"));
+							System.out.println(dateformat.format(rs.getDate("ngaytaonhom")));
+						}
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread, msg);
+						stmt.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				}
 				
@@ -699,6 +751,11 @@ public class ThreadServer extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public int Rndmbtwn(int min, int max) {
+	    Random random = new Random();
+	    return random.nextInt(max - min) + min;
 	}
 	
 	// ------------------------------ ADMIN -------------------------------
@@ -872,5 +929,8 @@ public class ThreadServer extends Thread {
 	 */
 	void sendMessage(String message) {
 		writer.println(message);
+		
+		
+
 	}
 }
