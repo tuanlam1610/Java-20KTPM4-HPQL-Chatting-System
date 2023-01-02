@@ -48,7 +48,7 @@ public class AdminMainScreen extends JFrame {
 		tp.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		tp.setBounds(0, 0, 1066, 683);
 		String[][] data = {
-				{ "ntphu", "Hà Tuấn Lâm", "227 NVC", "16-10-2002", "Nam", "20127677@student.hcmus.edu.vn" }
+				{ "", "", "", "", "", "" }
 
 		};
 		// Column Names
@@ -92,16 +92,16 @@ public class AdminMainScreen extends JFrame {
 				addFrame.setVisible(true);
 			}
 		});
-		btnAdd.setBounds(131, 35, 150, 35);
+		btnAdd.setBounds(203, 35, 150, 35);
 		p1.add(btnAdd);
 
 		JButton btnSearch = new JButton("Tìm kiếm");
 		btnSearch.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnSearch.setBounds(496, 35, 100, 35);
+		btnSearch.setBounds(377, 35, 100, 35);
 		p1.add(btnSearch);
 
 		textField = new JTextField();
-		textField.setBounds(596, 35, 150, 35);
+		textField.setBounds(478, 35, 150, 35);
 		p1.add(textField);
 		textField.setColumns(10);
 
@@ -110,6 +110,25 @@ public class AdminMainScreen extends JFrame {
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setBounds(337, 104, 259, 13);
 		p1.add(lblNewLabel);
+		
+		JButton btnRefresh = new JButton("Refresh");
+		btnRefresh.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnRefresh.setBounds(26, 35, 150, 35);
+		p1.add(btnRefresh);
+		
+		JButton btnSort = new JButton("Sắp xếp");
+		btnSort.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnSort.setBounds(650, 35, 150, 35);
+		p1.add(btnSort);
+		
+		JRadioButton rdbtnNewRadioButton = new JRadioButton("New radio button");
+		rdbtnNewRadioButton.setSelected(true);
+		rdbtnNewRadioButton.setBounds(650, 76, 103, 21);
+		p1.add(rdbtnNewRadioButton);
+		
+		JRadioButton rdbtnNewRadioButton_1 = new JRadioButton("New radio button");
+		rdbtnNewRadioButton_1.setBounds(763, 76, 103, 21);
+		p1.add(rdbtnNewRadioButton_1);
 
 		tp.add("Danh sách đăng nhập", p2);
 		p2.setLayout(null);
@@ -187,7 +206,17 @@ public class AdminMainScreen extends JFrame {
 		// ----------------------------------------------------------- EVENT
 		// -------------------------------------------------------------
 
-		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable);
+		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable);
 		_readThread.start();
+		
+		// Button Refresh
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String request = "(admin)_display_list_of_users-" + _username + "-";
+				
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, request);
+				_writeThread.start();
+			}
+		});
 	}
 }

@@ -561,6 +561,12 @@ public class ThreadServer extends Thread {
 
 					break;
 				}
+				
+				case "(admin)_display_list_of_users": {
+					
+					displayListOfUsers(server.getUserThreads().get(data[1]));
+				}
+				
 				default: {
 					System.out.println("Message is invalid!");
 				}
@@ -668,6 +674,55 @@ public class ThreadServer extends Thread {
 			e.printStackTrace();
 		}
 	}
+	
+	// ------------------------------ ADMIN -------------------------------
+	
+	public void displayListOfUsers(ThreadServer threadSender) {
+		Statement st;
+		String query ="";
+		String respond = "";
+		
+		try {
+			st = conn.createStatement();
+			query = "SELECT username, hoten, diachi, dob, gioitinh, email "
+					+ "FROM TaiKhoan";
+			ResultSet rs = st.executeQuery(query);
+			
+			while(rs.next()) {
+				
+				String usernameCol = rs.getString("username");
+				String nameCol = rs.getString("hoten");
+				String addressCol = rs.getString("diachi");
+				String dobCol = rs.getString("dob");
+				String gender = rs.getString("gioitinh");
+				String emailCol = rs.getString("email");
+				
+				String genderCol = "";
+				if (gender.equals("1")) {
+					genderCol = "Nam";
+				}
+				else {
+					genderCol = "Nữ";
+				}
+				
+				respond = respond +"|" + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol;
+				//System.out.println(sendermsgDB);
+			}
+
+			if (respond.equals(""))
+				respond = " ";
+			
+			System.out.println(respond);
+			server.sendMessageToAUser(threadSender, "(admin)_display_list_of_users" + respond);
+			// }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	// --------------------------------------------------------------------
+	
 	/**
 	 * Sends a message to the client.
 	 */
