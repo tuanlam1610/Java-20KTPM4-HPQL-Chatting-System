@@ -31,7 +31,7 @@ Create table LoiMoiKetBan (
 );
 
 Create table Nhom (
-	ID_nhom int auto_increment,
+	ID_nhom char(3) ,
     tennhom varchar(30) charset utf8mb4,
     tinnhan longtext,
     ngaytaonhom datetime,
@@ -39,7 +39,7 @@ Create table Nhom (
 );
 
 Create table ThanhVienNhom (
-	ID_nhom int,
+	ID_nhom char(3),
     username varchar(20),
     isGroupAdmin bool,
     primary key (ID_nhom, username)
@@ -102,6 +102,18 @@ values ("nnquang", "htlam", ""),
 	("lhminh", "ntphu", ""),
 	("lhminh", "tghuy", "");
     
+-- insert into Nhom(tennhom, ngaytaonhom, tinnhan)
+-- values ("Nhóm 1", current_timestamp(), ""),
+-- 	   ("Nhóm 2", current_timestamp(), ""),
+--        ("Nhóm 3", current_timestamp(), "");
+
+-- insert into ThanhVienNhom(ID_nhom, username, isGroupAdmin)
+-- values (1, "nnquang", true),
+-- 	   (1, "htlam", false),
+--        (1, "tghuy", false),
+--        (1, "ntphu", false),
+--        (1, "lhminh", false);
+
 /*insert into LoiMoiKetBan(sender_username, receiver_username)
 values ("nnquang", "htlam"),
 	("nnquang", "ntphu"),

@@ -387,28 +387,50 @@ public class ThreadServer extends Thread {
 						// Update Database
 						// Update 2 row for sender and receiver in DB
 						Statement stmt = conn.createStatement();
+
+						String sql = "select ID_nhom from nhom;";
+						ResultSet rs = stmt.executeQuery(sql);
+						
+						List<String> list = new ArrayList<>();
+
+						while(rs.next()){
+						   list.add(rs.getString("ID_nhom"));
+						}
+						
+						int ID_nhom;
+						
+						do {
+							ID_nhom = Rndmbtwn(100, 999);
+						}
+						while(list.contains(Integer.toString(ID_nhom)));
+						
+						
 //						PreparedStatement pstmt;
 //						String sendermsgDB;
 						// String receivermsgDB;
 						// Get msg from sender DB
-						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n"
-								+ "values \r\n"
-								+ "('"+group_name+"', 'CREATION', '"+date_created+"');";
+//						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n" + "values \r\n" + 
+//								"('"+ID_nhom+"', '" + group_name + "', 'CREATION', '" + date_created + "');";
+//						stmt.executeUpdate(sql);
+						
+						 sql = "insert into nhom(Id_nhom, tennhom, tinnhan, ngaytaonhom)\r\n"
+								+ "values('"+ID_nhom+"', '" + group_name + "', 'CREATION', '" + date_created + "');";
 						stmt.executeUpdate(sql);
 						
-						sql = "select ID_nhom from nhom where tennhom = '"+group_name+"';";
-						ResultSet rs = stmt.executeQuery(sql);
 						
-						int ID_nhom ;
 
-						if (rs.next())
-							ID_nhom = rs.getInt("ID_nhom");
-						else
-							ID_nhom = 0;
-						
-						sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n"
-								+ "values \r\n"
-								+ "("+ID_nhom+", '"+group_admin+"', 1);";
+//						sql = "select ID_nhom from nhom where tennhom = '" + group_name + "';";
+//						ResultSet rs = stmt.executeQuery(sql);
+//
+//						int ID_nhom;
+//
+//						if (rs.next())
+//							ID_nhom = rs.getInt("ID_nhom");
+//						else
+//							ID_nhom = 0;
+
+						sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
+								+ ID_nhom + ", '" + group_admin + "', 1);";
 						stmt.executeUpdate(sql);
 						
 						for(int i = 0; i < members.length; i++) {
@@ -546,10 +568,32 @@ public class ThreadServer extends Thread {
 		}
 	}
 
+	public void deleteChat(String user, String friend) {
+		Statement st;
+		String query = "";
+		try {
+			st = conn.createStatement();
+			query = "update banbe set tinnhan = '' where user_username ='"
+					+ user + "' and friend_username = '" + friend + "';";
+			st.executeUpdate(query);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public int Rndmbtwn(int min, int max) {
+	    Random random = new Random();
+	    return random.nextInt(max - min) + min;
+	}
+	
 	/**
 	 * Sends a message to the client.
 	 */
 	void sendMessage(String message) {
 		writer.println(message);
+		
+		
+
 	}
 }
