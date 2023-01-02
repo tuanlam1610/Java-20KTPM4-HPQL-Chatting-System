@@ -13,6 +13,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 public class ClientReaderThreadAdmin extends Thread {
 	private ClientUpdateListFriendThread _updateListFriend;
@@ -21,22 +22,18 @@ public class ClientReaderThreadAdmin extends Thread {
 	private AdminDisplayListOfUsers _displayListOfUser;
 	private BufferedReader _reader;
 	private Socket _socket;
-	private JTextArea _textArea;
-	private JTabbedPane _tabbedPane;
-	private JList<String> _listFriend;
-	private JList<String> _listGroup;
-	private JList<String> _listFriendRequest;
 	private String _username;
 	private String _response;
-	private JTextArea _stringTextArea;
 	private JTable _loginHistoryTable;
 	private JTable _userTable;
+	private JTable _groupChatTable;
 	
-	public ClientReaderThreadAdmin(Socket socket, String username, JTable loginHTable, JTable userTable) {
+	public ClientReaderThreadAdmin(Socket socket, String username, JTable loginHTable, JTable userTable, JTable groupTable) {
 		this._socket = socket;
 		this._username = username;
 		this._loginHistoryTable = loginHTable;
 		this._userTable = userTable;
+		this._groupChatTable = groupTable;
 		
 		try {
 			InputStream input = this._socket.getInputStream();
@@ -49,9 +46,6 @@ public class ClientReaderThreadAdmin extends Thread {
 
 	public ClientReaderThreadAdmin(Socket socket, JList<String> listFriend, String username) {
 		this._socket = socket;
-//		this._textArea = textArea;
-		this._listFriend = listFriend;
-//		this._listFriendRequest = listFriendRequest;
 		this._username = username;
 
 		try {
@@ -101,14 +95,21 @@ public class ClientReaderThreadAdmin extends Thread {
 						}
 					
 						break;
+				case "admin_updateGroup": {
+					String msg = message[1];
+					ArrayList<String[]> tableData = new ArrayList<String[]>();
+					String[] rows = msg.split("_");
+					for(int i = 0; i < rows.length; i++) {
+						 String[] cols = rows[i].split(",");
+						 tableData.add(cols);
+						 System.out.println("Row " + i + ": " + cols[0] + cols[1]);
+					}
+					String[] columnNames3 = { "Tên nhóm", "Thời gian tạo"};
+					String[][] tableValue = tableData.toArray(String[][]::new);
+					_groupChatTable.setModel(new DefaultTableModel(tableValue, columnNames3));
+					break;
 				}
-//				if (message[0].equals("update_online_list") && message.length > 1) {
-//					_updateThread = new ThreadUpdateListFriend(_socket, message[1].split(","), _jList, _username);
-//					_updateThread.start();
-//				}
-//				else
-//					_textArea.append("\n" + _response);
-
+				}
 			} catch (IOException ex) {
 				System.out.println("Error reading from server: " + ex.getMessage());
 				ex.printStackTrace();

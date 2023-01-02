@@ -44,7 +44,6 @@ public class UserMainScreen extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField msg_field;
-
 	private String _username;
 	private Socket _clientSocket;
 	private PrintWriter _pw;

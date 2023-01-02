@@ -13,9 +13,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class ThreadServer extends Thread {
@@ -112,7 +114,6 @@ public class ThreadServer extends Thread {
 						if (rs.next()) {
 							System.out.println(rs.getString(3));
 							System.out.println(data[2]);
-
 							if (data[2].equals(rs.getString(3))) {
 								Statement stmt = conn.createStatement();
 								query = "update taikhoan set thoigiandangnhap = current_timestamp() where username = '" + data[1] +"';";
@@ -559,6 +560,33 @@ public class ThreadServer extends Thread {
 						e.printStackTrace();
 					}
 
+					break;
+				}
+				case "admin_updateGroup": {
+					try {
+						HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+						String senderName = data[1];
+						System.out.println("Sender:" + senderName);
+						for(Map.Entry<String, ThreadServer> entry : listOnline.entrySet()) {
+							System.out.println(entry.getKey() + "-" + entry.getValue().toString());
+						}
+						Statement stmt = conn.createStatement();
+						String sql = "SELECT tennhom, ngaytaonhom FROM Nhom";
+						String msg = "admin_updateGroup|";
+						ResultSet rs = stmt.executeQuery(sql);
+						SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/YYYY");
+						while(rs.next()) {
+							msg = msg + rs.getNString("tennhom") + "," + dateformat.format(rs.getDate("ngaytaonhom")) + "_";
+							System.out.println(rs.getNString("tennhom"));
+							System.out.println(dateformat.format(rs.getDate("ngaytaonhom")));
+						}
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread, msg);
+						stmt.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				}
 				
