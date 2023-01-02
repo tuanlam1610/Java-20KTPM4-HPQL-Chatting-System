@@ -18,7 +18,7 @@ public class AdminDisplayListOfUsers {
 			tableData.add(rowData);
 		}
 
-		String[] columnName = { "Username", "Họ tên", "Địa chỉ", "Ngày sinh", "Giới tính", "Email" };
+		String[] columnName = { "Username", "Họ tên", "Địa chỉ", "Ngày sinh", "Giới tính", "Email", "Trạng thái"};
 		String[][] tableDataArray = tableData.toArray(String[][]::new);
 		_userTable.setModel(new DefaultTableModel(tableDataArray, columnName));
 		System.out.println("finish");

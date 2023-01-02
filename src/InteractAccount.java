@@ -17,7 +17,9 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 
 public class InteractAccount extends JFrame {
-
+	private static final long serialVersionUID = 1L;
+	private ClientWriteThread  _writeThread;
+	private ClientReaderThreadAdmin _readThread;
 	private JPanel contentPane;
 	private JTextField textFieldFullname;
 	private JTextField textFieldAddress;
@@ -32,8 +34,8 @@ public class InteractAccount extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public InteractAccount(Socket clientSocket, PrintWriter pw, String username, String Fullname, String Address,
-			String DOB, String Gender, String Email) {
+	public InteractAccount(Socket clientSocket, PrintWriter pw, String admin, String username, String Fullname, String Address,
+			String DOB, String Gender, String Email, String status) {
 		setResizable(false);
 		setTitle("Interact account");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -163,14 +165,14 @@ public class InteractAccount extends JFrame {
 
 		JButton btnBlock = new JButton("Chặn");
 		btnBlock.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnBlock.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Block succesfully!");
-				dispose();
-			}
-		});
 		btnBlock.setBounds(240, 382, 100, 21);
 		contentPane.add(btnBlock);
+		
+		
+		JButton btnUnBlock = new JButton("Bỏ chặn");
+		btnUnBlock.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnUnBlock.setBounds(240, 382, 100, 21);
+		contentPane.add(btnUnBlock);
 
 		JButton btnResetPassword = new JButton("Khởi tạo lại mật khẩu");
 		btnResetPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -194,6 +196,43 @@ public class InteractAccount extends JFrame {
 		lblUsername_1_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblUsername_1_1.setBounds(114, 158, 200, 15);
 		contentPane.add(lblUsername_1_1);
-
+		
+		// ------------------------------------ EVENT --------------------------------------
+		
+		// Update The status of btn Block
+		if (status.equals("Bị khóa")) {
+			btnBlock.setVisible(false);
+			btnUnBlock.setVisible(true);
+		}
+		else {
+			btnBlock.setVisible(true);
+			btnUnBlock.setVisible(false);
+		}
+		
+		// ---------------------------------------------------------------------------------
+		
+		btnBlock.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String request = "(admin)_lock_user-" + username + "-1-";
+				
+				_writeThread = new ClientWriteThread(clientSocket, pw, request);
+				_writeThread.start();
+				
+				JOptionPane.showMessageDialog(null, "Lock succesfully!");
+				dispose();
+			}
+		});
+		
+		btnUnBlock.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String request = "(admin)_lock_user-" + username + "-0-";
+				
+				_writeThread = new ClientWriteThread(clientSocket, pw, request);
+				_writeThread.start();
+				
+				JOptionPane.showMessageDialog(null, "Unlock succesfully!");
+				dispose();
+			}
+		});
 	}
 }
