@@ -88,6 +88,11 @@ public class ClientReaderThreadAdmin extends Thread {
 						String[] listOfUser = Arrays.copyOfRange(message, 1, message.length);
 						_displayListOfUser = new AdminDisplayListOfUsers(listOfUser, _userTable);
 					}
+					else {
+						String[] columnName = { "Username", "Họ tên", "Địa chỉ", "Ngày sinh", "Giới tính", "Email", "Trạng thái"};
+						String[][] data = {{"", "", "", "", "", "", ""},};
+						_userTable.setModel(new DefaultTableModel(data, columnName));
+					}
 
 					break;
 				}
@@ -96,6 +101,11 @@ public class ClientReaderThreadAdmin extends Thread {
 					if (message.length > 1) {
 						String[] listOfFriendUser = Arrays.copyOfRange(message, 1, message.length);
 						_displayListOfFriendUser = new AdminDisplayListOfFriendUser(listOfFriendUser, _tableListFriend);
+					}
+					else {
+						String[] columnName = { "Username", "Họ tên"};
+						String[][] data = {{"", ""},};
+						_tableListFriend.setModel(new DefaultTableModel(data, columnName));
 					}
 
 					break;
