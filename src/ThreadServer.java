@@ -60,13 +60,13 @@ public class ThreadServer extends Thread {
 						ResultSet rs = st.executeQuery(query);
 
 						if (rs.next()) {
-							writer.println("Fail-username");
+							writer.println("admin_add_user|Fail|username");
 							break;
 						}
 						query = "select username from taikhoan where email ='" + data[4] + "';";
 						rs = st.executeQuery(query);
 						if (rs.next()) {
-							writer.println("Fail-email");
+							writer.println("admin_add_user|Fail|email");
 							break;
 						}
 //						for (int i = 3; i < data.length; i++) {
@@ -74,12 +74,49 @@ public class ThreadServer extends Thread {
 //								data[i] = null;
 //							}
 //						}
-						query = "insert into TaiKhoan(username, pass, hoten, email, dob, diachi, gioitinh, isAdmin, ngaytao)" + "values ('" + data[1]
-								+ "', '" + data[2] + "', '" + data[3] + "', '" + data[4] + "', '"  + data[5] + "', '" + data[6] + 
-									"', '"  + data[7] + "', false, current_timestamp());";
-						System.out.println(query);
+						query = "insert into TaiKhoan(username, pass, hoten, email, gioitinh, isAdmin, ngaytao)" + "values ('" + data[1]
+								+ "', '" + data[2] + "', '" + data[3] + "', '" + data[4] + "', '"  + data[7] + "', false, current_timestamp());";
 						st.executeUpdate(query);
-						writer.println("Success");
+						if (data[5].equals("") == false) {
+							query = "update taikhoan set dob ='" + data[5] +"' where username ='" + data[1] + "';";
+							st.executeUpdate(query);
+						}
+						if (data[6].equals("") == false) {
+							query = "update taikhoan set diachi ='" + data[6] +"' where username ='" + data[1] + "';";
+							st.executeUpdate(query);
+						}
+						writer.println("admin_add_user|Success");
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
+				case "doi_mat_khau_tai_khoan":{
+					try {
+						Statement st = conn.createStatement();
+						String query = "select username,email from taikhoan where username ='" + data[1]
+								+ "' AND email ='" + data[2] + "';";
+						ResultSet rs = st.executeQuery(query);
+						
+						if (rs.next()) {
+							int leftLimit = 97; // letter 'a'
+							int rightLimit = 122; // letter 'z'
+							int targetStringLength = 10;
+							Random random = new Random();
+							StringBuilder buffer = new StringBuilder(targetStringLength);
+							for (int i = 0; i < targetStringLength; i++) {
+								int randomLimitedInt = leftLimit
+										+ (int) (random.nextFloat() * (rightLimit - leftLimit + 1));
+								buffer.append((char) randomLimitedInt);
+							}
+							String generatedString = buffer.toString();
+							SendEmail.sendMail(rs.getString(1), rs.getString(2), generatedString);
+							query = "update taikhoan set pass = '" + generatedString + "' where username ='"
+									+ rs.getString(1) + "';";
+							st.executeUpdate(query);
+							break;
+						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -99,6 +136,31 @@ public class ThreadServer extends Thread {
 						st.executeUpdate(query);
 						query = "delete from taikhoan where username = '" + data[1] +"';";
 						st.executeUpdate(query);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
+				case "cap_nhat_tai_khoan":{
+					try {
+						Statement st = conn.createStatement();
+						if (data[2].equals("") == false) {
+							String query = "update taikhoan set hoten ='" + data[2] +"';";
+							st.executeUpdate(query);
+						}
+						if (data[3].equals("") == false) {
+							String query = "update taikhoan set diachi ='" + data[3] +"';";
+							st.executeUpdate(query);
+						}
+						if (data[4].equals("") == false) {
+							String query = "update taikhoan set dob ='" + data[4] +"';";
+							st.executeUpdate(query);
+						}
+						if (data[5].equals("") == false) {
+							String query = "update taikhoan set gioitinh ='" + data[5] +"';";
+							st.executeUpdate(query);
+						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -749,20 +811,16 @@ public class ThreadServer extends Thread {
 				case "admin_updateGroup": {
 					try {
 						HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+						System.out.println("Message to server: " + message);
 						String senderName = data[1];
-						System.out.println("Sender:" + senderName);
-						for(Map.Entry<String, ThreadServer> entry : listOnline.entrySet()) {
-							System.out.println(entry.getKey() + "-" + entry.getValue().toString());
-						}
+						String sortValue = data[2];
 						Statement stmt = conn.createStatement();
-						String sql = "SELECT tennhom, ngaytaonhom FROM Nhom";
+						String sql = "SELECT tennhom, ngaytaonhom FROM Nhom ORDER BY " + sortValue + " ASC";
 						String msg = "admin_updateGroup|";
 						ResultSet rs = stmt.executeQuery(sql);
 						SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/YYYY");
 						while(rs.next()) {
 							msg = msg + rs.getNString("tennhom") + "," + dateformat.format(rs.getDate("ngaytaonhom")) + "_";
-							System.out.println(rs.getNString("tennhom"));
-							System.out.println(dateformat.format(rs.getDate("ngaytaonhom")));
 						}
 						ThreadServer senderThread = listOnline.get(senderName);
 						server.sendMessageToAUser(senderThread, msg);
@@ -773,7 +831,100 @@ public class ThreadServer extends Thread {
 					}
 					break;
 				}
+				case "admin_getGroupMemberList":{
+					try {
+						HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+						String senderName = data[1];
+						String selectedGroupName = data[2];
+						System.out.println("Sender:" + senderName);
+						Statement stmt = conn.createStatement();
+						String sql = "SELECT t2.username, t2.hoten, t2.email, t2.dob "
+									+ "FROM nhom AS n JOIN thanhviennhom t ON (n.ID_nhom = t.ID_nhom AND n.tennhom = '"
+									+ selectedGroupName +"') JOIN taikhoan t2 on (t.username = t2.username)";
+						String msg = "admin_getGroupMemberList|" + selectedGroupName + "|";
+						ResultSet rs = stmt.executeQuery(sql);
+						SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/YYYY");
+						while(rs.next()) {
+							msg = msg + rs.getNString("username") + "," + rs.getNString("hoten") + "," 
+									  + rs.getNString("email") + "," + dateformat.format(rs.getDate("dob")) + "_";
+						}
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread, msg);
+						stmt.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
+				case "admin_getGroupAdminList":{
+					try {
+						HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+						String senderName = data[1];
+						String selectedGroupName = data[2];
+						System.out.println("Sender:" + senderName);
+						Statement stmt = conn.createStatement();
+						String sql = "SELECT tk.username, tk.hoten, tk.email, tk.dob "
+									+ "FROM nhom AS n JOIN thanhviennhom AS t ON (n.ID_nhom = t.ID_nhom and n.tennhom = '"
+									+ selectedGroupName +"') JOIN taikhoan AS tk on (t.username = tk.username and t.isGroupAdmin = 1)";
+						String msg = "admin_getGroupAdminList|" + selectedGroupName + "|";
+						ResultSet rs = stmt.executeQuery(sql);
+						SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/YYYY");
+						while(rs.next()) {
+							msg = msg + rs.getNString("username") + "," + rs.getNString("hoten") + "," 
+									  + rs.getNString("email") + "," + dateformat.format(rs.getDate("dob")) + "_";
+						}
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread, msg);
+						stmt.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				
+				case "get_specific_login_history": {
+					// Initial Data
+					//System.out.println("access_login_history");
+					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+					String senderName = data[1];
+					String targetName = data[2];
+					// String msg = data[3];
+					try {
+						// Update Database
+						// Update 2 row for sender and receiver in DB
+						Statement stmt = conn.createStatement();
+						PreparedStatement pstmt;
+						String sendermsgDB = "";
+						// String receivermsgDB;
+						// Get msg from sender DB
+						String sql = "SELECT  lichsudangnhap.username, lichsudangnhap.thoigiandangnhap  FROM lichsudangnhap where (lichsudangnhap.username = '" + targetName  + "');";
+						System.out.println(0);
+						ResultSet rs = stmt.executeQuery(sql);
+						System.out.println(1);
+						while(rs.next()) {
+							String usernameCol = rs.getNString("username");
+							//System.out.println(usernameCol);
+							Timestamp dateCol = rs.getTimestamp("thoigiandangnhap");
+							//System.out.println(dateCol.toString());
+							sendermsgDB= sendermsgDB +"|"  + usernameCol + "," + dateCol.toString();
+							//System.out.println(sendermsgDB);
+						}
+
+						if (sendermsgDB.equals(""))
+							sendermsgDB = " ";
+						
+						System.out.println(sendermsgDB);
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread,"get_specific_login_history" + sendermsgDB);
+						
+						// }
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
 				// -------------------------------- ADMIN -------------------------------
 				case "(admin)_display_list_of_users": {
 					
@@ -797,6 +948,22 @@ public class ThreadServer extends Thread {
 					break;
 				}
 				
+				case "(admin)_lock_user": {
+					
+					// block (threadServer, LockedUser, status)
+					lockAndUnlockUser(server.getUserThreads().get(data[1]), data[2], data[3]);
+					
+					break;
+				}
+				
+				case "(admin)_diplay_list_friends" : {
+					
+					// display...(threadServer, admin, username)
+					displayListOfFriends(server.getUserThreads().get(data[1]), data[2]);
+					
+					break;
+				}
+				
 				default: {
 					System.out.println("Message is invalid!");
 				}
@@ -816,19 +983,6 @@ public class ThreadServer extends Thread {
 			ex.printStackTrace();
 		}
 	}
-
-	// Update Online List
-	// public void updateListFriend(HashMap<String, ThreadServer> listOnline) {
-	// String listOnl = "";
-	// for (String friend : _listFriend) {
-	// if (listOnline.containsKey(friend)) {
-	// listOnl += (friend.concat(" 1")).concat(",");
-	// } else {
-	// listOnl += (friend.concat(" 0")).concat(",");
-	// }
-	// }
-	// listOnl = "update_online_list-" + listOnl;
-	// }
 
 	public void updateListFriend() {
 		_updateListFriend = new ServerUpdateListFriendThread(server, conn, _username);
@@ -915,32 +1069,37 @@ public class ThreadServer extends Thread {
 	public void displayListOfUsers(ThreadServer threadSender) {
 		Statement st;
 		String query ="";
-		String respond = "";
+		String respond = "|";
 		
 		try {
 			st = conn.createStatement();
-			query = "SELECT username, hoten, diachi, dob, gioitinh, email "
+			query = "SELECT username, hoten, diachi, dob, gioitinh, email, isLocked "
 					+ "FROM TaiKhoan";
 			ResultSet rs = st.executeQuery(query);
 			
 			while(rs.next()) {
-				
 				String usernameCol = rs.getString("username");
 				String nameCol = rs.getString("hoten");
 				String addressCol = rs.getString("diachi");
 				String dobCol = rs.getString("dob");
 				String gender = rs.getString("gioitinh");
 				String emailCol = rs.getString("email");
+				String isLocked = rs.getString("isLocked");
 				
 				String genderCol = "";
-				if (gender.equals("1")) {
+				if (gender.equals("1")) 
 					genderCol = "Nam";
-				}
-				else {
+				else 
 					genderCol = "Nữ";
-				}
 				
-				respond = respond +"|" + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol;
+				String isLockedCol = "";
+				if (isLocked.equals("1")) 
+					isLockedCol = "Bị khóa";
+				else 
+					isLockedCol = "Hoạt động";
+
+				
+				respond = respond + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol + "," + isLockedCol + "|";
 				//System.out.println(sendermsgDB);
 			}
 			
@@ -960,7 +1119,7 @@ public class ThreadServer extends Thread {
 		
 		try {
 			st = conn.createStatement();
-			query = "SELECT username, hoten, diachi, dob, gioitinh, email "
+			query = "SELECT username, hoten, diachi, dob, gioitinh, email, isLocked "
 					+ "FROM TaiKhoan "
 					+ "WHERE username = '" + inputUser + "' OR hoten = '" + inputUser + "'";
 			ResultSet rs = st.executeQuery(query);
@@ -972,16 +1131,22 @@ public class ThreadServer extends Thread {
 				String dobCol = rs.getString("dob");
 				String gender = rs.getString("gioitinh");
 				String emailCol = rs.getString("email");
+				String isLocked = rs.getString("isLocked");
 				
 				String genderCol = "";
-				if (gender.equals("1")) {
+				if (gender.equals("1")) 
 					genderCol = "Nam";
-				}
-				else {
+				else 
 					genderCol = "Nữ";
-				}
 				
-				respond = respond + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol + "|";
+				String isLockedCol = "";
+				if (isLocked.equals("1")) 
+					isLockedCol = "Bị khóa";
+				else 
+					isLockedCol = "Hoạt động";
+
+				
+				respond = respond + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol + "," + isLockedCol + "|";
 				//System.out.println(sendermsgDB);
 			}
 			
@@ -1001,7 +1166,7 @@ public class ThreadServer extends Thread {
 		
 		try {
 			st = conn.createStatement();
-			query = "SELECT username, hoten, diachi, dob, gioitinh, email "
+			query = "SELECT username, hoten, diachi, dob, gioitinh, email, isLocked "
 					+ "FROM TaiKhoan "
 					+ "ORDER BY "+ filter + " ASC"; 
 			ResultSet rs = st.executeQuery(query);
@@ -1013,21 +1178,83 @@ public class ThreadServer extends Thread {
 				String dobCol = rs.getString("dob");
 				String gender = rs.getString("gioitinh");
 				String emailCol = rs.getString("email");
+				String isLocked = rs.getString("isLocked");
 				
 				String genderCol = "";
-				if (gender.equals("1")) {
+				if (gender.equals("1")) 
 					genderCol = "Nam";
-				}
-				else {
+				else 
 					genderCol = "Nữ";
-				}
 				
-				respond = respond + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol + "|";
+				String isLockedCol = "";
+				if (isLocked.equals("1")) 
+					isLockedCol = "Bị khóa";
+				else 
+					isLockedCol = "Hoạt động";
+
+				
+				respond = respond + usernameCol + "," + nameCol + "," + addressCol + "," + dobCol + "," + genderCol + "," + emailCol + "," + isLockedCol + "|";
 				//System.out.println(sendermsgDB);
 			}
 			
 			System.out.println(respond);
 			server.sendMessageToAUser(threadSender, "(admin)_display_list_of_users" + respond);
+			// }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void lockAndUnlockUser(ThreadServer threadSender, String username, String status) {
+		Statement st;
+		String query = "";
+		String sts = "TRUE";
+		
+		if (status.equals("0")) {
+			sts = "FALSE";
+		}
+
+		try {
+			st = conn.createStatement();
+			query = "UPDATE TaiKhoan "
+					+ "SET isLocked = " + sts
+					+ " WHERE username = '" + username + "'";
+					
+			st.executeUpdate(query);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		displayListOfUsers(threadSender);
+	}
+	
+	public void displayListOfFriends(ThreadServer threadSender, String username) {
+		Statement st;
+		String query ="";
+		String respond = "|";
+		
+		try {
+			st = conn.createStatement();
+			query = "SELECT username, hoten "
+					+ "FROM TaiKhoan "
+					+ "WHERE username in ("
+						+ "SELECT BB.friend_username "
+						+ "FROM TaiKhoan AS TK JOIN BanBe AS BB "
+						+ "ON TK.username = BB.user_username "
+						+ "WHERE TK.username = '" + username + "')";
+			ResultSet rs = st.executeQuery(query);
+			
+			while(rs.next()) {
+				String usernameCol = rs.getString("username");
+				String nameCol = rs.getString("hoten");
+				
+				respond = respond + usernameCol + "," + nameCol + "|";
+			}
+			
+			System.out.println(respond);
+			server.sendMessageToAUser(threadSender, "(admin)_diplay_list_friends" + respond);
 			// }
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1042,8 +1269,5 @@ public class ThreadServer extends Thread {
 	 */
 	void sendMessage(String message) {
 		writer.println(message);
-		
-		
-
 	}
 }

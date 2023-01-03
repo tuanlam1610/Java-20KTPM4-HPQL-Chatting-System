@@ -3,13 +3,13 @@ import java.util.ArrayList;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class AdminDisplayListOfUsers {
+public class AdminDisplayListOfFriendUser {
 	private String[] _listOfUsers;
-	private JTable _userTable;
+	private JTable _tableListFriend;
 	
-	public AdminDisplayListOfUsers(String[] listOfUsers, JTable userTable) {
+	public AdminDisplayListOfFriendUser(String[] listOfUsers, JTable tableListFriend) {
 		this._listOfUsers = listOfUsers;
-		this._userTable = userTable;
+		this._tableListFriend = tableListFriend;
 		
 		ArrayList<String[]> tableData = new ArrayList<String[]>();
 		
@@ -18,9 +18,9 @@ public class AdminDisplayListOfUsers {
 			tableData.add(rowData);
 		}
 
-		String[] columnName = { "Username", "Họ tên", "Địa chỉ", "Ngày sinh", "Giới tính", "Email", "Trạng thái"};
+		String[] columnName = { "Username", "Họ tên"};
 		String[][] tableDataArray = tableData.toArray(String[][]::new);
-		_userTable.setModel(new DefaultTableModel(tableDataArray, columnName));
+		_tableListFriend.setModel(new DefaultTableModel(tableDataArray, columnName));
 		System.out.println("finish");
 	}
 }

@@ -3,88 +3,77 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.Font;
+import java.io.PrintWriter;
+import java.net.Socket;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
 
 public class GroupDetails extends JFrame {
-
 	private JPanel contentPane;
-	private JTable table;
-	private JTable table_1;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
-	public GroupDetails(String GrouopName) {
+	private JTable memberTable;
+	private JTable adminTable;
+	private String[][] _members;
+	private String[][] _admins;
+	private String _groupName;
+	public GroupDetails(String GroupName, String[][] members, String[][] admins) {
+		this._members = members;
+		this._admins = admins;
+		setTitle("Danh Sách Thành Viên (" + _groupName + ")");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(350, 150, 450, 450);
+		setBounds(350, 150, 640, 480);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		JLabel adminLabel = new JLabel("Danh Sách Admin");
+		adminLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
+		adminLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		adminLabel.setBounds(197, 10, 232, 40);
+		contentPane.add(adminLabel);
 		
-		JLabel lblNewLabel = new JLabel("Danh sách Admin");
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(143, 25, 150, 13);
-		contentPane.add(lblNewLabel);
+		JScrollPane memberSP = new JScrollPane();
+		memberSP.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		memberSP.setBounds(10, 231, 606, 202);
+		contentPane.add(memberSP);
+		memberTable = new JTable();
+		String[] memberCols = { "Username", "Họ và tên", "Email", "Ngày sinh"}; 
+		memberTable.setModel(new DefaultTableModel(_members, memberCols));
+		DefaultTableCellRenderer memberTableRenderer = (DefaultTableCellRenderer) memberTable.getDefaultRenderer(String.class);
+		memberTableRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		memberTable.setRowHeight(24);
+		memberTable.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		memberTable.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 12));
+		memberTable.setEnabled(false);
+		memberSP.setViewportView(memberTable);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 52, 416, 132);
-		contentPane.add(scrollPane);
-		String[][] dataAdmin = {
-				{"lam123", "Tuan Lam"},
-				{"quang123", "Ngoc Quang"},
-		};
-		String[] colNames = {"username", "Họ tên"};
-		table = new JTable(dataAdmin, colNames);
-		table.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		table.setEnabled(false);
-		scrollPane.setViewportView(table);
+		JLabel memberLabel = new JLabel("Danh Sách Thành Viên");
+		memberLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		memberLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
+		memberLabel.setBounds(197, 181, 232, 40);
+		contentPane.add(memberLabel);
 		
-		JLabel lblDanhSchThnh = new JLabel("Danh sách thành viên");
-		lblDanhSchThnh.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblDanhSchThnh.setHorizontalAlignment(SwingConstants.CENTER);
-		lblDanhSchThnh.setBounds(143, 219, 203, 13);
-		contentPane.add(lblDanhSchThnh);
+		JScrollPane adminSP = new JScrollPane();
+		adminSP.setBounds(10, 60, 606, 110);
+		contentPane.add(adminSP);
+		String[] adminCols = { "Username", "Họ và tên", "Email", "Ngày sinh"}; 
+		adminTable = new JTable();
+		adminTable.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		adminTable.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 12));
+		adminTable.setEnabled(false);
+		adminTable.setModel(new DefaultTableModel(_admins, adminCols));
+		DefaultTableCellRenderer adminTableRenderer = (DefaultTableCellRenderer) adminTable.getDefaultRenderer(String.class);
+		adminTableRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		adminTable.setRowHeight(24);
+		adminSP.setViewportView(adminTable);
 		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(10, 246, 416, 132);
-		contentPane.add(scrollPane_1);
-		String[][] dataMember = {
-				{"lam123", "Ha Tuan Lam"},
-				{"quang123", "Ngoc Quang"},
-				{"lam123", "Ha Tuan Lam"},
-				{"lam123", "Ha Tuan Lam"},
-				{"lam123", "Ha Tuan Lam"},
-				{"lam123", "Ha Tuan Lam"},
-				{"lam123", "Ha Tuan Lam"},
-		};
-		table_1 = new JTable(dataMember, colNames);
-		table_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		table_1.setEnabled(false);
-		scrollPane_1.setViewportView(table_1);
-		table.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
-		table_1.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
 	}
 }

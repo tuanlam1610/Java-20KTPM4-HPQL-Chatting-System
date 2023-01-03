@@ -13,17 +13,26 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 
 public class InteractAccount extends JFrame {
-
+	private static final long serialVersionUID = 1L;
+	private ClientWriteThread _writeThread;
 	private JPanel contentPane;
 	private JTextField textFieldFullname;
 	private JTextField textFieldAddress;
 	private JTextField textFieldDOB;
-	private JTextField textFieldGender;
+	private JTable _tableListFriend;
 	private JTable table;
+	private JTable _loginUserTable;
+	private JTextField textFieldGender;
 
 	/**
 	 * Launch the application.
@@ -32,8 +41,41 @@ public class InteractAccount extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public InteractAccount(Socket clientSocket, PrintWriter pw, String username, String Fullname, String Address,
-			String DOB, String Gender, String Email) {
+	
+	public static boolean isValidFormat(String format, String value, Locale locale) {
+	    LocalDateTime ldt = null;
+	    DateTimeFormatter fomatter = DateTimeFormatter.ofPattern(format, locale);
+
+	    try {
+	        ldt = LocalDateTime.parse(value, fomatter);
+	        String result = ldt.format(fomatter);
+	        return result.equals(value);
+	    } catch (DateTimeParseException e) {
+	        try {
+	            LocalDate ld = LocalDate.parse(value, fomatter);
+	            String result = ld.format(fomatter);
+	            return result.equals(value);
+	        } catch (DateTimeParseException exp) {
+	            try {
+	                LocalTime lt = LocalTime.parse(value, fomatter);
+	                String result = lt.format(fomatter);
+	                return result.equals(value);
+	            } catch (DateTimeParseException e2) {
+	                // Debugging purposes
+	                //e2.printStackTrace();
+	            }
+	        }
+	    }
+
+	    return false;
+	}
+	
+	public InteractAccount(Socket clientSocket, PrintWriter pw, JTable tableListFriend, String admin, String username,
+			String Fullname, String Address, String DOB, String Gender, String Email, String status, JTable LoginUserTable) {
+
+		this._tableListFriend = tableListFriend;
+		this._loginUserTable = LoginUserTable;
+		
 		setResizable(false);
 		setTitle("Interact account");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -98,12 +140,6 @@ public class InteractAccount extends JFrame {
 		lblGender.setBounds(20, 130, 84, 15);
 		contentPane.add(lblGender);
 
-		textFieldGender = new JTextField();
-		textFieldGender.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		textFieldGender.setColumns(10);
-		textFieldGender.setBounds(114, 128, 200, 20);
-		contentPane.add(textFieldGender);
-
 		JLabel lblEmail = new JLabel("Email:");
 		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblEmail.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -113,16 +149,8 @@ public class InteractAccount extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(15, 203, 405, 138);
 		contentPane.add(scrollPane);
-		String[] columnNames = { "Username", "Họ tên" };
-		String[][] data = { { "quang123", "Ngọc Quang" }
 
-		};
-		table = new JTable(data, columnNames);
-		table.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		table.setEnabled(false);
-		table.setDefaultEditor(Object.class, null);
-		table.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
-		scrollPane.setViewportView(table);
+		scrollPane.setViewportView(_tableListFriend);
 
 		JLabel lblDanhSchBn = new JLabel("Danh sách bạn bè");
 		lblDanhSchBn.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -134,11 +162,35 @@ public class InteractAccount extends JFrame {
 		btnUpdate.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Update succesfully!");
-				dispose();
+				if (isValidFormat("yyyy/MM/dd", textFieldDOB.getText(), Locale.ENGLISH) == false && isValidFormat("yyyy-MM-dd", textFieldDOB.getText(), Locale.ENGLISH) == false ) {
+					JOptionPane.showMessageDialog(null, "Ngày sinh phải có dạng 'yyyy/MM/dd' hoặc 'yyyy-MM-dd'!");
+					return;
+				}
+				String gender;
+				if (textFieldGender.getText().equalsIgnoreCase("Nam")) {
+					gender = "1";
+				}
+				else if (textFieldGender.getText().equalsIgnoreCase("Nữ")) {
+					gender = "0";
+				}
+				else {
+					JOptionPane.showMessageDialog(null, "Giới tính phải là Nam hoặc Nữ!");
+					return;
+				}
+				int dialogButton = JOptionPane.YES_NO_OPTION;
+				int dialogResult = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn cập nhật tài khoản này chứ?",
+						"Warning", dialogButton);
+				if (dialogResult == JOptionPane.YES_OPTION) {
+					pw.println("cap_nhat_tai_khoan-" + lblUsername_1.getText() + "-" + textFieldFullname.getText() + "-" + 
+							textFieldAddress.getText() + "-" + textFieldDOB.getText()+ "-" + gender);
+					JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
+					dispose();
+				} else {
+					return;
+				}
 			}
 		});
-		btnUpdate.setBounds(45, 351, 100, 21);
+		btnUpdate.setBounds(20, 351, 100, 21);
 		contentPane.add(btnUpdate);
 
 		JButton btnDelete = new JButton("Xóa");
@@ -150,7 +202,7 @@ public class InteractAccount extends JFrame {
 						"Warning", dialogButton);
 				if (dialogResult == JOptionPane.YES_OPTION) {
 					pw.println("xoa_tai_khoan-" + lblUsername_1.getText());
-					JOptionPane.showMessageDialog(null, "Delete succesfully!");
+					JOptionPane.showMessageDialog(null, "Xóa thành công!");
 					dispose();
 				} else {
 					return;
@@ -158,24 +210,32 @@ public class InteractAccount extends JFrame {
 
 			}
 		});
-		btnDelete.setBounds(45, 382, 100, 21);
+		btnDelete.setBounds(20, 382, 100, 21);
 		contentPane.add(btnDelete);
 
-		JButton btnBlock = new JButton("Chặn");
+		JButton btnBlock = new JButton("Khóa");
 		btnBlock.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnBlock.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Block succesfully!");
-				dispose();
-			}
-		});
-		btnBlock.setBounds(240, 382, 100, 21);
+		btnBlock.setBounds(290, 382, 100, 21);
 		contentPane.add(btnBlock);
+
+		JButton btnUnBlock = new JButton("Mở khóa");
+		btnUnBlock.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnUnBlock.setBounds(290, 382, 100, 21);
+		contentPane.add(btnUnBlock);
 
 		JButton btnResetPassword = new JButton("Khởi tạo lại mật khẩu");
 		btnResetPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnResetPassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int dialogButton = JOptionPane.YES_NO_OPTION;
+				int dialogResult = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn reset mật khẩu của tài khoản này chứ?",
+						"Warning", dialogButton);
+				if (dialogResult == JOptionPane.YES_OPTION) {
+					pw.println("doi_mat_khau_tai_khoan-" + lblUsername_1.getText());
+					JOptionPane.showMessageDialog(null, "Đổi mật khẩu của tài khoản thành công!\nMật khẩu mới đã được gửi đến email của người dùng.");
+				} else {
+					return;
+				}
 				JOptionPane.showMessageDialog(null,
 						"Reset password succesfully!\nNew password was send to email for user.");
 				dispose();
@@ -186,14 +246,79 @@ public class InteractAccount extends JFrame {
 		textFieldFullname.setText(Fullname);
 		textFieldAddress.setText(Address);
 		textFieldDOB.setText(DOB);
-		textFieldGender.setText(Gender);
+		
 		lblUsername_1.setText(username);
 
-		JLabel lblUsername_1_1 = new JLabel(Email);
-		lblUsername_1_1.setHorizontalAlignment(SwingConstants.LEFT);
-		lblUsername_1_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblUsername_1_1.setBounds(114, 158, 200, 15);
-		contentPane.add(lblUsername_1_1);
+		JLabel lblEmail_1 = new JLabel(Email);
+		lblEmail_1.setHorizontalAlignment(SwingConstants.LEFT);
+		lblEmail_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblEmail_1.setBounds(114, 158, 200, 15);
+		contentPane.add(lblEmail_1);
+		
+		textFieldGender = new JTextField();
+		textFieldGender.setText(Gender);
+		textFieldGender.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		textFieldGender.setColumns(10);
+		textFieldGender.setBounds(114, 130, 200, 20);
+		contentPane.add(textFieldGender);
+		
+		JButton btnLchSng = new JButton("Lịch sử đ/n");
+		btnLchSng.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				InteractAccountLoginHistory loginPopup = new InteractAccountLoginHistory(clientSocket, pw, admin, username, _loginUserTable);
+				loginPopup.setVisible(true);;
+			}
+		});
+		btnLchSng.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnLchSng.setBounds(130, 382, 150, 21);
+		contentPane.add(btnLchSng);
+		
+		
+		// ------------------------------------ EVENT --------------------------------------
+		
+		// Update The status of btn Block
+		if (status.equals("Bị khóa")) {
+			btnBlock.setVisible(false);
+			btnUnBlock.setVisible(true);
+		} else {
+			btnBlock.setVisible(true);
+			btnUnBlock.setVisible(false);
+		}
 
+		// ---------------------------------------------------------------------------------
+
+		// Update friend-list
+
+		String requestUpdateListFriend = "(admin)_diplay_list_friends-" + admin + "-" + username + "-";
+
+		_writeThread = new ClientWriteThread(clientSocket, pw, requestUpdateListFriend);
+
+		_writeThread.start();
+
+		// Button Lock And Unlock
+
+		btnBlock.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String request = "(admin)_lock_user-" + admin + "-" + username + "-1-";
+
+				_writeThread = new ClientWriteThread(clientSocket, pw, request);
+				_writeThread.start();
+
+				JOptionPane.showMessageDialog(null, "Lock succesfully!");
+				dispose();
+			}
+		});
+
+		btnUnBlock.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String request = "(admin)_lock_user-" + admin + "-" + username + "-0-";
+
+				_writeThread = new ClientWriteThread(clientSocket, pw, request);
+				_writeThread.start();
+
+				JOptionPane.showMessageDialog(null, "Unlock succesfully!");
+				dispose();
+			}
+		});
 	}
 }
