@@ -342,10 +342,12 @@ public class UserMainScreen extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String current_group_name = listGroup.getSelectedValue();
 				String name_to_add = JOptionPane.showInputDialog("Enter username to add");
-				String message = "add_user_to_group-" + _username + "-" + current_group_name + "-" + name_to_add;
-				System.out.println(message);
-				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
-				_writeThread.start();
+				if(!(name_to_add==null)) {
+					String message = "add_user_to_group-" + _username + "-" + current_group_name + "-" + name_to_add;
+					System.out.println(message);
+					_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+					_writeThread.start();
+				}
 			}
 		});
 
@@ -354,10 +356,12 @@ public class UserMainScreen extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String current_group_name = listGroup.getSelectedValue();
 				String name_to_remove = JOptionPane.showInputDialog("Enter username to remove");
-				String message = "remove_user_from_group-" + _username + "-" + current_group_name + "-" + name_to_remove;
-				System.out.println(message);
-				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
-				_writeThread.start();
+				if(!(name_to_remove==null)) {
+					String message = "remove_user_from_group-" + _username + "-" + current_group_name + "-" + name_to_remove;
+					System.out.println(message);
+					_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+					_writeThread.start();
+				}
 			}
 		});
 
@@ -366,10 +370,12 @@ public class UserMainScreen extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String current_group_name = listGroup.getSelectedValue();
 				String new_group_name = JOptionPane.showInputDialog("Enter new name for group");
-				String message = "change_group_name-" + _username + "-" + current_group_name + "-" + new_group_name;
-				System.out.println(message);
-				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
-				_writeThread.start();
+				if(!(new_group_name==null)) {
+					String message = "change_group_name-" + _username + "-" + current_group_name + "-" + new_group_name;
+					System.out.println(message);
+					_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+					_writeThread.start();
+				}
 			}
 		});
 
@@ -378,10 +384,13 @@ public class UserMainScreen extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String current_group_name = listGroup.getSelectedValue();
 				String new_admin = JOptionPane.showInputDialog("Enter username to make admin");
-				String message = "grant_admin-" + _username + "-" + current_group_name + "-" + new_admin;
-				System.out.println(message);
-				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
-				_writeThread.start();
+				if(!(new_admin==null)) {
+					String message = "grant_admin-" + _username + "-" + current_group_name + "-" + new_admin;
+					System.out.println(message);
+					_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+					_writeThread.start();
+				}
+				
 			}
 		});
 
