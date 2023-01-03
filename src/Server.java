@@ -18,7 +18,6 @@ public class Server {
 	private Connection conn;
 	//private Set<String> userNames = new HashSet<>();
 	private HashMap<String, ThreadServer> userThreads = new HashMap<String, ThreadServer>();
-
 	public Server(int port) {
 		this.port = port;
 	}

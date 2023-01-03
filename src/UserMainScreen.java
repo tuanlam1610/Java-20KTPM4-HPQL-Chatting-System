@@ -336,31 +336,51 @@ public class UserMainScreen extends JFrame {
 			}
 		});
 
-		// Event Add To Group
+		// Event Add User To Group
 		btnAddToGroup.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showInputDialog("Enter username to add");
+				String current_group_name = listGroup.getSelectedValue();
+				String name_to_add = JOptionPane.showInputDialog("Enter username to add");
+				String message = "add_user_to_group-" + _username + "-" + current_group_name + "-" + name_to_add;
+				System.out.println(message);
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+				_writeThread.start();
 			}
 		});
 
 		// Event Remove User From Group
 		btnRemoveFromGroup.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showInputDialog("Enter username to remove");
+				String current_group_name = listGroup.getSelectedValue();
+				String name_to_remove = JOptionPane.showInputDialog("Enter username to remove");
+				String message = "remove_user_from_group-" + _username + "-" + current_group_name + "-" + name_to_remove;
+				System.out.println(message);
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+				_writeThread.start();
 			}
 		});
 
 		// Event Change Group Name
 		btnChangeGroupName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showInputDialog("Enter new name for group");
+				String current_group_name = listGroup.getSelectedValue();
+				String new_group_name = JOptionPane.showInputDialog("Enter new name for group");
+				String message = "change_group_name-" + _username + "-" + current_group_name + "-" + new_group_name;
+				System.out.println(message);
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+				_writeThread.start();
 			}
 		});
 
 		// Event Make Admin
 		btnMakeAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showInputDialog("Enter username to make admin");
+				String current_group_name = listGroup.getSelectedValue();
+				String new_admin = JOptionPane.showInputDialog("Enter username to make admin");
+				String message = "grant_admin-" + _username + "-" + current_group_name + "-" + new_admin;
+				System.out.println(message);
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+				_writeThread.start();
 			}
 		});
 

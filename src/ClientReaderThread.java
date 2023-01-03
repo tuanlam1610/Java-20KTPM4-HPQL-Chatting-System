@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
@@ -171,6 +172,108 @@ public class ClientReaderThread extends Thread {
 						_textArea.setText(msg);
 					}
 					}
+					break;
+				}
+				case "change_group_name": {
+					String msg = message[1];
+//					String str = "";
+//					while((str = _reader.readLine())!= null) {
+//						if(!str.equals("EndOfString"))
+//							msg = msg + "\n" + str;
+//						else 
+//							break;
+//					}
+//					if(message.length > 2) {
+//					String senderName = message[1];
+//					//String receiverName = message[2];
+//					//System.out.println(msg);
+//					String selectedName = "";
+//					if(!(_listGroup.getSelectedValue() == null)) {
+//						selectedName = _listGroup.getSelectedValue().toString();
+//						//selectedName = selectedName.split(" ")[0];
+//					}
+//					if(selectedName.equals(senderName)) {
+//						_textArea.setText(msg);
+//					}
+//					}
+					JOptionPane.showMessageDialog(_textArea, message);
+					break;
+				}
+				
+				case "grant_admin": {
+					String msg = message[1];
+//					String str = "";
+//					while((str = _reader.readLine())!= null) {
+//						if(!str.equals("EndOfString"))
+//							msg = msg + "\n" + str;
+//						else 
+//							break;
+//					}
+//					if(message.length > 2) {
+//					String senderName = message[1];
+//					//String receiverName = message[2];
+//					//System.out.println(msg);
+//					String selectedName = "";
+//					if(!(_listGroup.getSelectedValue() == null)) {
+//						selectedName = _listGroup.getSelectedValue().toString();
+//						//selectedName = selectedName.split(" ")[0];
+//					}
+//					if(selectedName.equals(senderName)) {
+//						_textArea.setText(msg);
+//					}
+//					}
+					JOptionPane.showMessageDialog(_textArea, message);
+					break;
+				}
+				
+				case "add_user_to_group": {
+					String msg = message[1];
+//					String str = "";
+//					while((str = _reader.readLine())!= null) {
+//						if(!str.equals("EndOfString"))
+//							msg = msg + "\n" + str;
+//						else 
+//							break;
+//					}
+//					if(message.length > 2) {
+//					String senderName = message[1];
+//					//String receiverName = message[2];
+//					//System.out.println(msg);
+//					String selectedName = "";
+//					if(!(_listGroup.getSelectedValue() == null)) {
+//						selectedName = _listGroup.getSelectedValue().toString();
+//						//selectedName = selectedName.split(" ")[0];
+//					}
+//					if(selectedName.equals(senderName)) {
+//						_textArea.setText(msg);
+//					}
+//					}
+					JOptionPane.showMessageDialog(_textArea, message);
+					break;
+				}
+				case "remove_user_from_group": {
+					String msg = message[1];
+//					String str = "";
+//					while((str = _reader.readLine())!= null) {
+//						if(!str.equals("EndOfString"))
+//							msg = msg + "\n" + str;
+//						else 
+//							break;
+//					}
+//					if(message.length > 2) {
+//					String senderName = message[1];
+//					//String receiverName = message[2];
+//					//System.out.println(msg);
+//					String selectedName = "";
+//					if(!(_listGroup.getSelectedValue() == null)) {
+//						selectedName = _listGroup.getSelectedValue().toString();
+//						//selectedName = selectedName.split(" ")[0];
+//					}
+//					if(selectedName.equals(senderName)) {
+//						_textArea.setText(msg);
+//					}
+//					}
+					JOptionPane.showMessageDialog(_textArea, message);
 					break;
 				}
 				case "string_search": {

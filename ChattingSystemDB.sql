@@ -103,17 +103,28 @@ values ("nnquang", "htlam", ""),
 	("lhminh", "ntphu", ""),
 	("lhminh", "tghuy", "");
     
--- insert into Nhom(tennhom, ngaytaonhom, tinnhan)
--- values ("Nhóm 1", current_timestamp(), ""),
--- 	   ("Nhóm 2", current_timestamp(), ""),
---        ("Nhóm 3", current_timestamp(), "");
+insert into Nhom(ID_nhom, tennhom, ngaytaonhom, tinnhan)
+values ("1", "Nhóm 1", current_timestamp(), ""),
+	   ("2", "Nhóm 2", current_timestamp(), ""),
+       ("3", "Nhóm 3", current_timestamp(), "");
 
--- insert into ThanhVienNhom(ID_nhom, username, isGroupAdmin)
--- values (1, "nnquang", true),
--- 	   (1, "htlam", false),
---        (1, "tghuy", false),
---        (1, "ntphu", false),
---        (1, "lhminh", false);
+insert into ThanhVienNhom(ID_nhom, username, isGroupAdmin)
+values (1, "nnquang", true),
+	   (1, "htlam", false),
+       (1, "tghuy", false),
+       (1, "ntphu", false),
+       (1, "lhminh", true);
+       -- (2, "nnquang", true),
+-- 	   (2, "htlam", false),
+--        (2, "tghuy", false),
+--        (2, "ntphu", false),
+--        (2, "lhminh", false),
+--        (3, "nnquang", true),
+-- 	   (3, "htlam", false),
+--        (3, "tghuy", false),
+--        (3, "ntphu", false),
+--        (3, "lhminh", false);
+       
 
 /*insert into LoiMoiKetBan(sender_username, receiver_username)
 values ("nnquang", "htlam"),
