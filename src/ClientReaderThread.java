@@ -71,6 +71,10 @@ public class ClientReaderThread extends Thread {
                 //System.out.println(_response);
 				String[] message = _response.split("-");
 				switch (message[0]) {
+				case "logout": {
+					_socket.close();
+					return;
+				}
 				case "update_friend_group_list": {
 					String[] lstFriend = null;
 					String[] lstGroup = null;

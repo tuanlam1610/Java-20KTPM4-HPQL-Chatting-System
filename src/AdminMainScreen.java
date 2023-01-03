@@ -200,6 +200,8 @@ public class AdminMainScreen extends JFrame {
 		// -------------------------------------------------------------
 		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable, _tableListFriend, _loginUserTable, addFrame);
 		_readThread.start();
+		String request = "(admin)_display_list_of_users-" + _username + "-";
+		_pw.println(request);
 		// Tabbed Pane Change State Listener
 		tp.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {

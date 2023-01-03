@@ -210,6 +210,12 @@ public class ThreadServer extends Thread {
 					}
 					break;
 				}
+				case "logout":{
+					String username = data[1];
+					server.sendMessageToAUser(server.getUserThreads().get(username), message);
+					server.removeUser(username, this);
+					return;
+				}
 				case "register": {
 					try {
 						Statement st = conn.createStatement();

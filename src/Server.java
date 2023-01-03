@@ -107,7 +107,7 @@ public class Server {
 		System.out.println("Add userThread: " + userName + "-" + threadServer);
 	}
 	 
-	public void removeUser(String userName, ThreadServer aUser) {
+	public void removeUser(String userName, ThreadServer threadServer) {
 		userThreads.remove(userName);
 		System.out.println("The user " + userName + " quitted");
 	}
