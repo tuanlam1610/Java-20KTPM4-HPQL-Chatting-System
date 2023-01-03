@@ -830,7 +830,17 @@ public class ThreadServer extends Thread {
 							is_exists = true;
 						}
 						
+						
+						
+						
+						
 						ThreadServer senderThread = listOnline.get(group_member);
+						
+						
+						
+						if(user_to_remove.equals(group_member)) {
+							server.sendMessageToAUser(senderThread,"remove_user_from_group!");
+						}
 						
 						if(is_exists == false) {
 							server.sendMessageToAUser(senderThread,"remove_user_from_group-User does not exists in group!");
@@ -844,7 +854,26 @@ public class ThreadServer extends Thread {
 									+ "											from nhom as n \r\n"
 									+ "                                            where n.tennhom = '"+current_group_name+"');  ";
 							stmt.executeUpdate(sql);
-							server.sendMessageToAUser(senderThread,"remove_user_from_group-user "+user_to_remove+" is removed from group "+current_group_name+"\nEndOfString");
+							
+							sql = "SELECT username FROM Nhom as N JOIN ThanhVienNhom as TV \r\n"
+									+ "						ON N.ID_nhom = TV.ID_nhom \r\n"
+									+ "						WHERE N.tennhom = '"+current_group_name+"';";
+							rs = stmt.executeQuery(sql);
+							
+							List<String> list = new ArrayList<>();
+
+							while(rs.next()){
+							   list.add(rs.getString("username"));
+							}
+							
+							int Random_User= Rndmbtwn(1, list.size());
+							
+							sql = "update thanhviennhom\r\n"
+									+ "set isgroupadmin = '1'\r\n"
+									+ "where username = '"+list.get(Random_User)+"';";
+							stmt.executeUpdate(sql);
+							
+							server.sendMessageToAUser(senderThread,"remove_user_from_group-user "+user_to_remove+" is removed from group, "+list.get(Random_User)+" is now the admin "+current_group_name+"\nEndOfString");
 							
 						}
 					} catch (SQLException e) {
