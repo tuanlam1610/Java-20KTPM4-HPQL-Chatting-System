@@ -10,6 +10,8 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -66,6 +68,17 @@ public class AddScreen extends JFrame {
 	}
 	public void setNull_password() {
 		this.passwordField.setText("");
+	}
+	
+	public static boolean isValidEmailAddress(String email) {
+		   boolean result = true;
+		   try {
+		      InternetAddress emailAddr = new InternetAddress(email);
+		      emailAddr.validate();
+		   } catch (AddressException ex) {
+		      result = false;
+		   }
+		   return result;
 	}
 	
 	public static boolean isValidFormat(String format, String value, Locale locale) {
@@ -230,6 +243,10 @@ public class AddScreen extends JFrame {
 						JOptionPane.showMessageDialog(null, "Bạn phải ngày sinh có dạng 'yyyy/MM/dd' hoặc 'yyyy-MM-dd'!");
 						return;
 					}
+				}
+				if (isValidEmailAddress(textField_5.getText()) == false) {
+					JOptionPane.showMessageDialog(null, "Bạn phải nhập đúng định dạng email!");
+					return;
 				}
 				pw.println("them_tai_khoan-" + textField.getText() + "-" + passwordField.getText() + "-" + textField_2.getText() + "-" +
 						 textField_5.getText() + "-" + textField_4.getText() + "-" + textField_3.getText() + "-" + gender);
