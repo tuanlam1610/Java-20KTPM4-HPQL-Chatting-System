@@ -32,7 +32,7 @@ public class Server {
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/chattingsystem","root","thienphu1206");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/chattingsystem","root","Iuuhoangminh11");
 //				JOptionPane.showMessageDialog(null, "Connected to database successfully...");
 				final JOptionPane pane = new JOptionPane();
 
@@ -107,7 +107,7 @@ public class Server {
 		System.out.println("Add userThread: " + userName + "-" + threadServer);
 	}
 	 
-	public void removeUser(String userName, ThreadServer aUser) {
+	public void removeUser(String userName, ThreadServer threadServer) {
 		userThreads.remove(userName);
 		System.out.println("The user " + userName + " quitted");
 	}

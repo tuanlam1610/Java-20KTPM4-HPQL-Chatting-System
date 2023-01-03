@@ -19,6 +19,7 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -390,6 +391,7 @@ public class UserMainScreen extends JFrame {
 				MainScreen loginScreen = new MainScreen();
 				loginScreen.setLocationRelativeTo(null);
 				loginScreen.setVisible(true);
+				_pw.println("logout-" + _username);
 				dispose();
 			}
 		});
@@ -400,6 +402,9 @@ public class UserMainScreen extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				// On Mouse Click
 				String value = listFriend.getSelectedValue().toString();
+				Color color= new Color(255,0,0);
+				ListModel listModel = listFriend.getModel();
+//				listFriend.getComponent(listFriend.getSelectedIndex()).setForeground(color);
 				value = value.split(" ")[0];
 
 				btnUnfriend.setVisible(true);
@@ -424,15 +429,13 @@ public class UserMainScreen extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				// On Mouse Click
 				String value = listGroup.getSelectedValue().toString();
-
 				btnUnfriend.setVisible(false);
-				btnSearchHistory.setVisible(true);
-				btnDeleteHistory.setVisible(true);
+				btnSearchHistory.setVisible(false);
+				btnDeleteHistory.setVisible(false);
 				btnAddToGroup.setVisible(true);
 				btnRemoveFromGroup.setVisible(true);
 				btnChangeGroupName.setVisible(true);
 				btnMakeAdmin.setVisible(true);
-
 				String message = "get_group_chat_history-" + _username + "-" + value;
 				System.out.println(message);
 				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
@@ -484,7 +487,7 @@ public class UserMainScreen extends JFrame {
 				}
 			}
 		});
-
+		
 		// SEND MESSAGE ON CLICK BUTTON
 		btnSENDMSG.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
