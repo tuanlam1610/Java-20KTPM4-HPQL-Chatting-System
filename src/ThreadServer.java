@@ -74,8 +74,8 @@ public class ThreadServer extends Thread {
 //								data[i] = null;
 //							}
 //						}
-						query = "insert into TaiKhoan(username, pass, hoten, email, gioitinh, isAdmin, ngaytao)" + "values ('" + data[1]
-								+ "', '" + data[2] + "', '" + data[3] + "', '" + data[4] + "', '"  + data[7] + "', false, current_timestamp());";
+						query = "insert into TaiKhoan(username, pass, hoten, email, gioitinh, isAdmin, ngaytao, isLocked)" + "values ('" + data[1]
+								+ "', '" + data[2] + "', '" + data[3] + "', '" + data[4] + "', '"  + data[7] + "', false, current_timestamp(), false);";
 						st.executeUpdate(query);
 						if (data[5].equals("") == false) {
 							query = "update taikhoan set dob ='" + data[5] +"' where username ='" + data[1] + "';";
@@ -239,8 +239,8 @@ public class ThreadServer extends Thread {
 							break;
 						}
 						
-						query = "insert into TaiKhoan(username, pass, hoten, email, gioitinh, isAdmin, ngaytao)" + "values ('" + data[1]
-								+ "', '" + data[2] + "', '" + data[3] + "', '" + data[4] + "', '"  + data[7] + "', false, current_timestamp());";
+						query = "insert into TaiKhoan(username, pass, hoten, email, gioitinh, isAdmin, ngaytao, isLocked)" + "values ('" + data[1]
+								+ "', '" + data[2] + "', '" + data[3] + "', '" + data[4] + "', '"  + data[7] + "', false, current_timestamp(), false);";
 						st.executeUpdate(query);
 						if (data[5].equals("") == false) {
 							query = "update taikhoan set dob ='" + data[5] +"' where username ='" + data[1] + "';";
