@@ -226,16 +226,24 @@ public class ThreadServer extends Thread {
 							writer.println("Fail-username");
 							break;
 						}
-						query = "select username from taikhoan where email ='" + data[2] + "';";
+						query = "select username from taikhoan where email ='" + data[4] + "';";
 						rs = st.executeQuery(query);
 						if (rs.next()) {
 							writer.println("Fail-email");
 							break;
 						}
-						query = "insert into TaiKhoan(username, pass, email, isAdmin, ngaytao)" + "values ('" + data[1]
-								+ "', '" + data[3] + "', '" + data[2] + "', false, current_timestamp());";
-						System.out.println(query);
+						
+						query = "insert into TaiKhoan(username, pass, hoten, email, gioitinh, isAdmin, ngaytao)" + "values ('" + data[1]
+								+ "', '" + data[2] + "', '" + data[3] + "', '" + data[4] + "', '"  + data[7] + "', false, current_timestamp());";
 						st.executeUpdate(query);
+						if (data[5].equals("") == false) {
+							query = "update taikhoan set dob ='" + data[5] +"' where username ='" + data[1] + "';";
+							st.executeUpdate(query);
+						}
+						if (data[6].equals("") == false) {
+							query = "update taikhoan set diachi ='" + data[6] +"' where username ='" + data[1] + "';";
+							st.executeUpdate(query);
+						}
 						writer.println("Success");
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
