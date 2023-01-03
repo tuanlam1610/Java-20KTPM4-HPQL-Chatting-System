@@ -170,37 +170,43 @@ public class ThreadServer extends Thread {
 				case "login": {
 					try {
 						Statement st = conn.createStatement();
-						String query = "select username, isAdmin, pass from taikhoan where username ='" + data[1]
+						String query = "select username, isAdmin, pass, isLocked from taikhoan where username ='" + data[1]
 								+ "';";
 						ResultSet rs = st.executeQuery(query);
 						if (rs.next()) {
 							System.out.println(rs.getString(3));
 							System.out.println(data[2]);
-							if (data[2].equals(rs.getString(3))) {
-								Statement stmt = conn.createStatement();
-								query = "update taikhoan set thoigiandangnhap = current_timestamp() where username = '" + data[1] +"';";
-								stmt.executeUpdate(query);
-								//add to login history
-								query = "insert into lichsudangnhap (username, thoigiandangnhap) values ('"+ data[1] + "', current_timestamp());";
-								stmt.executeUpdate(query);
-								if (rs.getString(2).equals("1")) {
-									server.addUserName(this, data[1]); 
-									_username = server.getUserName(this); //them login cho admin
-									writer.println("logined-1");
-								} else {
-									server.addUserName(this, data[1]);
-									_username = server.getUserName(this);
-									writer.println("logined-0");
+							if (rs.getString(4).equals("0")) {
+								if (data[2].equals(rs.getString(3))) {
+									Statement stmt = conn.createStatement();
+									query = "update taikhoan set thoigiandangnhap = current_timestamp() where username = '" + data[1] +"';";
+									stmt.executeUpdate(query);
+									//add to login history
+									query = "insert into lichsudangnhap (username, thoigiandangnhap) values ('"+ data[1] + "', current_timestamp());";
+									stmt.executeUpdate(query);
+									if (rs.getString(2).equals("1")) {
+										server.addUserName(this, data[1]); 
+										_username = server.getUserName(this); //them login cho admin
+										writer.println("logined-1");
+									} else {
+										server.addUserName(this, data[1]);
+										_username = server.getUserName(this);
+										writer.println("logined-0");
 
-									// Thread update list friend
-									updateListFriend();
-									
-									updateFriendRequest(this, _username);
+										// Thread update list friend
+										updateListFriend();
+										
+										updateFriendRequest(this, _username);
+									}
+									break;
+								} else {
+									writer.println("notlogined");
 								}
-								break;
-							} else {
-								writer.println("notlogined");
 							}
+							else {
+								writer.println("lock");
+							}
+							
 						} else {
 							writer.println("notlogined");
 						}
