@@ -26,8 +26,6 @@ public class AdminMainScreen extends JFrame {
 	ClientWriteThread _writeThread;
 	ClientReaderThreadAdmin _readThread;
 	private String _username;
-	private String[][] groupMembers;
-	private String[][] groupAdmins;
 	private JTable _tableListFriend;
 	private JTable _loginUserTable;
 	private AddScreen addFrame;
@@ -50,43 +48,10 @@ public class AdminMainScreen extends JFrame {
 		getContentPane().setBackground(new Color(255, 255, 255));
 		setResizable(false);
 		JPanel p2 = new JPanel();
-		p2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				String message = "get_login_history-" + _username;
-				System.out.println(message);
-				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
-				_writeThread.start();
-			}
-		});
 		p2.setBackground(new Color(255, 255, 255));
 		JPanel p3 = new JPanel();
 		p3.setBackground(new Color(255, 255, 255));
 		JTabbedPane tp = new JTabbedPane();
-		tp.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				int currentTab = tp.getSelectedIndex();
-				switch (currentTab) {
-				case 0: {
-					System.out.println("Current tab is 'Danh sách người dùng'");
-					String request = "(admin)_display_list_of_users-" + _username + "-";
-					_pw.println(request);
-					break;
-				}
-				case 1: {
-					System.out.println("Current tab is 'Lịch sử đăng nhập'");
-					String message = "get_login_history-" + _username;
-					_pw.println(message);
-					break;
-				}
-				case 2: {
-					System.out.println("Current tab is 'Danh sách nhóm chat'");
-					_pw.println("admin_updateGroup-" + _username);
-					break;
-				}
-				}
-			}
-		});
 		tp.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		tp.setBounds(0, 0, 1066, 683);
 		
@@ -176,31 +141,6 @@ public class AdminMainScreen extends JFrame {
 		bg.add(rdbtnHoTen);
 		bg.add(rdbtnNgayTao);
 
-		JButton btnRefresh = new JButton("Refresh");
-		btnRefresh.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnRefresh.setBounds(26, 35, 150, 35);
-		p1.add(btnRefresh);
-
-		JButton btnSort = new JButton("Sắp xếp");
-		btnSort.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnSort.setBounds(650, 35, 150, 35);
-		p1.add(btnSort);
-
-		JRadioButton rdbtnHoTen = new JRadioButton("Họ tên");
-		rdbtnHoTen.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		rdbtnHoTen.setSelected(true);
-		rdbtnHoTen.setBounds(650, 76, 72, 21);
-		p1.add(rdbtnHoTen);
-
-		JRadioButton rdbtnNgayTao = new JRadioButton("Ngày tạo");
-		rdbtnNgayTao.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		rdbtnNgayTao.setBounds(737, 76, 83, 21);
-		p1.add(rdbtnNgayTao);
-
-		ButtonGroup bg = new ButtonGroup();
-		bg.add(rdbtnHoTen);
-		bg.add(rdbtnNgayTao);
-
 		tp.add("Danh sách đăng nhập", p2);
 		p2.setLayout(null);
 		String[][] data2 = { { "2022-12-03 12:03:30", "lam123", "Tuấn Lâm" },
@@ -216,15 +156,7 @@ public class AdminMainScreen extends JFrame {
 		loginTable.setDefaultEditor(Object.class, null);
 		loginTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
 		JScrollPane sp2 = new JScrollPane();
-//		sp2.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//				String message = "get_login_history-" + _username;
-//				System.out.println(message);
-//				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
-//				_writeThread.start();
-//			}
-//		});
+
 		sp2.setLocation(0, 0);
 		sp2.setSize(1061, 649);
 		sp2.setViewportView(loginTable);
@@ -266,7 +198,7 @@ public class AdminMainScreen extends JFrame {
 
 		// ----------------------------------------------------------- EVENT
 		// -------------------------------------------------------------
-		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable);
+		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable, _tableListFriend, _loginUserTable, addFrame);
 		_readThread.start();
 		// Tabbed Pane Change State Listener
 		tp.addChangeListener(new ChangeListener() {
@@ -311,12 +243,12 @@ public class AdminMainScreen extends JFrame {
 		userTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				String[] data = new String[6];
+				String[] data = new String[7];
 				int row = userTable.getSelectedRow();
-				for (int i = 0; i < 6; i++)
+				for (int i = 0; i < 7; i++)
 					data[i] = userTable.getModel().getValueAt(row, i).toString();
-				InteractAccount new_frame = new InteractAccount(clientSocket, pw, data[0], data[1], data[2], data[3],
-						data[4], data[5]);
+				InteractAccount new_frame = new InteractAccount(clientSocket, pw, _tableListFriend, _username, data[0], data[1], data[2], data[3], data[4]
+																, data[5], data[6], _loginUserTable);
 				new_frame.setVisible(true);
 			}
 		});

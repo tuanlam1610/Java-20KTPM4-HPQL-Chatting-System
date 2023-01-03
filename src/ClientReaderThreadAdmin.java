@@ -33,7 +33,9 @@ public class ClientReaderThreadAdmin extends Thread {
 	private JTable _tableListFriend;
 	private JTable _loginUserTable;
 	private AddScreen _addFrame;
-
+	private String[][] _groupMembers;
+	private String[][] _groupAdmins;
+	
 	public ClientReaderThreadAdmin(Socket socket, String username, JTable loginHTable, JTable userTable,
 			JTable groupTable, JTable tableListFriend, JTable loginUserTable, AddScreen addFrame) {
 
