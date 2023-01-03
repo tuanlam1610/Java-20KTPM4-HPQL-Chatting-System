@@ -651,20 +651,16 @@ public class ThreadServer extends Thread {
 				case "admin_updateGroup": {
 					try {
 						HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+						System.out.println("Message to server: " + message);
 						String senderName = data[1];
-						System.out.println("Sender:" + senderName);
-						for(Map.Entry<String, ThreadServer> entry : listOnline.entrySet()) {
-							System.out.println(entry.getKey() + "-" + entry.getValue().toString());
-						}
+						String sortValue = data[2];
 						Statement stmt = conn.createStatement();
-						String sql = "SELECT tennhom, ngaytaonhom FROM Nhom";
+						String sql = "SELECT tennhom, ngaytaonhom FROM Nhom ORDER BY " + sortValue + " ASC";
 						String msg = "admin_updateGroup|";
 						ResultSet rs = stmt.executeQuery(sql);
 						SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/YYYY");
 						while(rs.next()) {
 							msg = msg + rs.getNString("tennhom") + "," + dateformat.format(rs.getDate("ngaytaonhom")) + "_";
-							System.out.println(rs.getNString("tennhom"));
-							System.out.println(dateformat.format(rs.getDate("ngaytaonhom")));
 						}
 						ThreadServer senderThread = listOnline.get(senderName);
 						server.sendMessageToAUser(senderThread, msg);
@@ -675,6 +671,58 @@ public class ThreadServer extends Thread {
 					}
 					break;
 				}
+				case "admin_getGroupMemberList":{
+					try {
+						HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+						String senderName = data[1];
+						String selectedGroupName = data[2];
+						System.out.println("Sender:" + senderName);
+						Statement stmt = conn.createStatement();
+						String sql = "SELECT t2.username, t2.hoten, t2.email, t2.dob "
+									+ "FROM nhom AS n JOIN thanhviennhom t ON (n.ID_nhom = t.ID_nhom AND n.tennhom = '"
+									+ selectedGroupName +"') JOIN taikhoan t2 on (t.username = t2.username)";
+						String msg = "admin_getGroupMemberList|" + selectedGroupName + "|";
+						ResultSet rs = stmt.executeQuery(sql);
+						SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/YYYY");
+						while(rs.next()) {
+							msg = msg + rs.getNString("username") + "," + rs.getNString("hoten") + "," 
+									  + rs.getNString("email") + "," + dateformat.format(rs.getDate("dob")) + "_";
+						}
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread, msg);
+						stmt.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
+				case "admin_getGroupAdminList":{
+					try {
+						HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+						String senderName = data[1];
+						String selectedGroupName = data[2];
+						System.out.println("Sender:" + senderName);
+						Statement stmt = conn.createStatement();
+						String sql = "SELECT tk.username, tk.hoten, tk.email, tk.dob "
+									+ "FROM nhom AS n JOIN thanhviennhom AS t ON (n.ID_nhom = t.ID_nhom and n.tennhom = '"
+									+ selectedGroupName +"') JOIN taikhoan AS tk on (t.username = tk.username and t.isGroupAdmin = 1)";
+						String msg = "admin_getGroupAdminList|" + selectedGroupName + "|";
+						ResultSet rs = stmt.executeQuery(sql);
+						SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/YYYY");
+						while(rs.next()) {
+							msg = msg + rs.getNString("username") + "," + rs.getNString("hoten") + "," 
+									  + rs.getNString("email") + "," + dateformat.format(rs.getDate("dob")) + "_";
+						}
+						ThreadServer senderThread = listOnline.get(senderName);
+						server.sendMessageToAUser(senderThread, msg);
+						stmt.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
 				case "get_specific_login_history": {
 					// Initial Data
 					//System.out.println("access_login_history");
@@ -715,7 +763,6 @@ public class ThreadServer extends Thread {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-
 					break;
 				}
 				// -------------------------------- ADMIN -------------------------------
@@ -1062,8 +1109,5 @@ public class ThreadServer extends Thread {
 	 */
 	void sendMessage(String message) {
 		writer.println(message);
-		
-		
-
 	}
 }

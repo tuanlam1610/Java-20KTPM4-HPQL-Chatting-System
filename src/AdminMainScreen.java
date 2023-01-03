@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.awt.Font;
@@ -22,7 +23,7 @@ public class AdminMainScreen extends JFrame {
 	private JTable groupTable;
 	private Socket _clientSocket;
 	private PrintWriter _pw;
-	ClientWriteThread  _writeThread;
+	ClientWriteThread _writeThread;
 	ClientReaderThreadAdmin _readThread;
 	private String _username;
 	private JTable _tableListFriend;
@@ -34,7 +35,6 @@ public class AdminMainScreen extends JFrame {
 		this._pw = pw;
 		this._username = username;
 		this.addFrame = new AddScreen(clientSocket, pw);
-		
 		String[] columnB = { "Username", "Thời Gian Đăng Nhập" };
 		String[][] dataB = { { "", "" }};
 		_loginUserTable = new JTable(dataB, columnB);
@@ -48,43 +48,10 @@ public class AdminMainScreen extends JFrame {
 		getContentPane().setBackground(new Color(255, 255, 255));
 		setResizable(false);
 		JPanel p2 = new JPanel();
-		p2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				String message = "get_login_history-" + _username;
-				System.out.println(message);
-				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
-				_writeThread.start();
-			}
-		});
 		p2.setBackground(new Color(255, 255, 255));
 		JPanel p3 = new JPanel();
 		p3.setBackground(new Color(255, 255, 255));
 		JTabbedPane tp = new JTabbedPane();
-		tp.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				int currentTab = tp.getSelectedIndex();
-				switch (currentTab) {
-				case 0: {
-					System.out.println("Current tab is 'Danh sách người dùng'");
-					String request = "(admin)_display_list_of_users-" + _username + "-";
-					_pw.println(request);
-					break;
-				}
-				case 1: {
-					System.out.println("Current tab is 'Lịch sử đăng nhập'");
-					String message = "get_login_history-" + _username;
-					_pw.println(message);
-					break;
-				}
-				case 2: {
-					System.out.println("Current tab is 'Danh sách nhóm chat'");
-					_pw.println("admin_updateGroup-" + _username);
-					break;
-				}
-				}
-			}
-		});
 		tp.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		tp.setBounds(0, 0, 1066, 683);
 		
@@ -113,22 +80,9 @@ public class AdminMainScreen extends JFrame {
 		// Initializing the JTable
 		userTable = new JTable(data, columnNames);
 		DefaultTableCellRenderer userTableRenderer = (DefaultTableCellRenderer) userTable.getDefaultRenderer(String.class);
-		userTableRenderer.setHorizontalAlignment( SwingConstants.CENTER );
+		userTableRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		userTable.setRowHeight(24);
 		userTable.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		userTable.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				String[] data = new String[7];
-				int row = userTable.getSelectedRow();
-				for (int i = 0; i < 7; i++) {
-					data[i] = userTable.getModel().getValueAt(row, i).toString();
-					System.out.println(data[i]);
-				}
-				InteractAccount new_frame = new InteractAccount(clientSocket, pw, _tableListFriend, _username, data[0], data[1], data[2], data[3], data[4], data[5], data[6], _loginUserTable);
-				new_frame.setVisible(true);
-			}
-		});
 		userTable.setColumnSelectionAllowed(false);
 		userTable.setCellSelectionEnabled(false);
 		userTable.setDefaultEditor(Object.class, null);
@@ -141,14 +95,8 @@ public class AdminMainScreen extends JFrame {
 		sp.setViewportView(userTable);
 		userTable.setBounds(0, 0, 880, 400);
 		p1.add(sp);
-
 		JButton btnAdd = new JButton("Thêm tài khoản");
 		btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnAdd.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				addFrame.setVisible(true);
-			}
-		});
 		btnAdd.setBounds(203, 35, 150, 35);
 		p1.add(btnAdd);
 
@@ -193,36 +141,22 @@ public class AdminMainScreen extends JFrame {
 		bg.add(rdbtnHoTen);
 		bg.add(rdbtnNgayTao);
 
-		tp.add("Lịch sử đăng nhập", p2);
+		tp.add("Danh sách đăng nhập", p2);
 		p2.setLayout(null);
-		// Initializing the JTable
-		
-		//Get Data from server
-		
-		
 		String[][] data2 = { { "2022-12-03 12:03:30", "lam123", "Tuấn Lâm" },
 				{ "2022-12-02 16:14:30", "quang123", "Ngọc Quang" }, { "2022-12-02 10:30:30", "huy123", "Gia Huy" }, };
 		String[] columnNames2 = { "Thời gian đăng nhập", "Username", "Họ tên" };
-		
-		
 		loginTable = new JTable(data2, columnNames2);
-		DefaultTableCellRenderer loginTableRenderer = (DefaultTableCellRenderer) loginTable.getDefaultRenderer(String.class);
-		loginTableRenderer.setHorizontalAlignment( SwingConstants.CENTER );
+		DefaultTableCellRenderer loginTableRenderer = (DefaultTableCellRenderer) loginTable
+				.getDefaultRenderer(String.class);
+		loginTableRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		loginTable.setRowHeight(24);
 		loginTable.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		loginTable.setEnabled(false);
 		loginTable.setDefaultEditor(Object.class, null);
 		loginTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
 		JScrollPane sp2 = new JScrollPane();
-//		sp2.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//				String message = "get_login_history-" + _username;
-//				System.out.println(message);
-//				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
-//				_writeThread.start();
-//			}
-//		});
+
 		sp2.setLocation(0, 0);
 		sp2.setSize(1061, 649);
 		sp2.setViewportView(loginTable);
@@ -230,95 +164,160 @@ public class AdminMainScreen extends JFrame {
 		p2.add(sp2);
 		tp.add("Danh sách nhóm chat", p3);
 		p3.setLayout(null);
-
 		JScrollPane sp3 = new JScrollPane();
-		sp3.setBounds(0, 46, 1061, 603);
+		sp3.setBounds(0, 52, 1061, 597);
 		p3.add(sp3);
-		String[][] dataGroupchat = {};
-//		= { { "Project Java", "2022-11-02", "lam123" }, { "Project Web", "2022-11-01", "quang123" },
-//				{ "Project SE", "2022-11-01", "huy123" }, };
-		DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
-		String[] columnNames3 = { "Tên nhóm", "Thời gian tạo"};
-		groupTable = new JTable(dataGroupchat, columnNames3);
-		DefaultTableCellRenderer groupTableRenderer = (DefaultTableCellRenderer)groupTable.getDefaultRenderer(String.class);
-		groupTableRenderer.setHorizontalAlignment( SwingConstants.CENTER );
+		groupTable = new JTable();
+		DefaultTableCellRenderer groupTableRenderer = (DefaultTableCellRenderer) groupTable.getDefaultRenderer(String.class);
+		groupTableRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		groupTable.setRowHeight(24);
 		groupTable.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		groupTable.getTableHeader().setFont(new Font("Tahoma", Font.PLAIN, 16));
-		groupTable.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				GroupDetails newFrame = new GroupDetails("Project Java");
-				newFrame.setVisible(true);
-			}
-		});
 		groupTable.setDefaultEditor(Object.class, null);
 		sp3.setViewportView(groupTable);
-
-		JButton btnSortByName = new JButton("Sắp xếp theo tên");
-		btnSortByName.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnSortByName.setBounds(204, 15, 200, 21);
-		p3.add(btnSortByName);
-
-		JButton btnSortByDate = new JButton("Sắp xếp theo thời gian tạo");
-		btnSortByDate.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnSortByDate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnSortByDate.setBounds(608, 15, 247, 21);
-		p3.add(btnSortByDate);
+		JButton btnGroupSort = new JButton("Sắp Xếp");
+		btnGroupSort.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		btnGroupSort.setBounds(10, 10, 98, 32);
+		p3.add(btnGroupSort);
+		JRadioButton sortNameOpt = new JRadioButton("Tên nhóm");
+		sortNameOpt.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		sortNameOpt.setBounds(114, 15, 84, 24);
+		sortNameOpt.setSelected(true);
+		p3.add(sortNameOpt);
+		JRadioButton sortDateOpt = new JRadioButton("Ngày tạo");
+		sortDateOpt.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		sortDateOpt.setBounds(200, 15, 73, 24);
+		p3.add(sortDateOpt);
+		ButtonGroup groupChatSortBG = new ButtonGroup();
+		groupChatSortBG.add(sortNameOpt);
+		groupChatSortBG.add(sortDateOpt);
 		getContentPane().add(tp);
 		setSize(1080, 720);
 		getContentPane().setLayout(null);
 		setVisible(true);
-		
+
 		// ----------------------------------------------------------- EVENT
 		// -------------------------------------------------------------
-
 		_readThread = new ClientReaderThreadAdmin(clientSocket, _username, loginTable, userTable, groupTable, _tableListFriend, _loginUserTable, addFrame);
 		_readThread.start();
-		
+		// Tabbed Pane Change State Listener
+		tp.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int currentTab = tp.getSelectedIndex();
+				switch (currentTab) {
+				case 0: {
+					System.out.println("Current tab is 'Danh sách người dùng'");
+					String request = "(admin)_display_list_of_users-" + _username + "-";
+					_pw.println(request);
+					break;
+				}
+				case 1: {
+					System.out.println("Current tab is 'Lịch sử đăng nhập'");
+					String message = "get_login_history-" + _username;
+					_pw.println(message);
+					break;
+				}
+				case 2: {
+					System.out.println("Current tab is 'Danh sách nhóm chat'");
+					String sortValue = "";
+					if (sortNameOpt.isSelected())
+						sortValue = "tennhom";
+					else
+						sortValue = "ngaytaonhom";
+					_pw.println("admin_updateGroup-" + _username + "-" + sortValue);
+					break;
+				}
+				}
+			}
+		});
+		// p2 Listener
+		p2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String message = "get_login_history-" + _username;
+				System.out.println(message);
+				_writeThread = new ClientWriteThread(_clientSocket, _pw, message);
+				_writeThread.start();
+			}
+		});
+		userTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String[] data = new String[7];
+				int row = userTable.getSelectedRow();
+				for (int i = 0; i < 7; i++)
+					data[i] = userTable.getModel().getValueAt(row, i).toString();
+				InteractAccount new_frame = new InteractAccount(clientSocket, pw, _tableListFriend, _username, data[0], data[1], data[2], data[3], data[4]
+																, data[5], data[6], _loginUserTable);
+				new_frame.setVisible(true);
+			}
+		});
+		// Button Add
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AddScreen addFrame = new AddScreen(clientSocket, pw);
+				addFrame.setVisible(true);
+			}
+		});
 		// Button Refresh
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String request = "(admin)_display_list_of_users-" + _username + "-";
 				textFieldSearch.setText("");
-				
 				_writeThread = new ClientWriteThread(_clientSocket, _pw, request);
 				_writeThread.start();
 			}
 		});
-		
 		// Button Search
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String inputUser = textFieldSearch.getText().trim();
 
-				if(!inputUser.equals("")) {
+				if (!inputUser.equals("")) {
 					String request = "(admin)_search_user-" + _username + "-" + inputUser + "-";
 					System.out.println(request);
-					
+
 					_writeThread = new ClientWriteThread(_clientSocket, _pw, request);
 					_writeThread.start();
 				}
 			}
 		});
-		
 		// Button Sort
 		btnSort.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String filter = "";
 				if (rdbtnHoTen.isSelected()) {
 					filter = "hoten";
-				}
-				else {
+				} else {
 					filter = "ngaytao";
 				}
 				String request = "(admin)_sort_user-" + _username + "-" + filter + "-";
-				
+
 				_writeThread = new ClientWriteThread(_clientSocket, _pw, request);
 				_writeThread.start();
+			}
+		});
+		
+		//Sort Group Chat
+		btnGroupSort.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String sortValue = "";
+				if (sortNameOpt.isSelected())
+					sortValue = "tennhom";
+				else
+					sortValue = "ngaytaonhom";
+				_pw.println("admin_updateGroup-" + _username + "-" + sortValue);
+			}
+		});
+		
+		// Pop Up Member List
+		groupTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				String selectedGroupName = groupTable.getValueAt(groupTable.getSelectedRow(), 0).toString();
+				_pw.println("admin_getGroupMemberList-" + _username + "-" + selectedGroupName);
+				_pw.println("admin_getGroupAdminList-" + _username + "-" + selectedGroupName);
+				System.out.println("Selected Row: " + groupTable.getSelectedRow());
+				System.out.println("Selected Group: " + selectedGroupName);
 			}
 		});
 	}

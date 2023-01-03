@@ -9,9 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.Timer;
 
 public class Server {
 	private int port;
@@ -35,7 +33,7 @@ public class Server {
 		try (ServerSocket serverSocket = new ServerSocket(port)) {
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/chattingsystem","root","thienphu1206");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/chattingsystem","root","17092002");
 //				JOptionPane.showMessageDialog(null, "Connected to database successfully...");
 				final JOptionPane pane = new JOptionPane();
 

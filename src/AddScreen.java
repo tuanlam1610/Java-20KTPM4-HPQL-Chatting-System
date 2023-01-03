@@ -225,7 +225,7 @@ public class AddScreen extends JFrame {
 					return;
 				}
 				if (textField_4.getText().equals("") == false) {
-					if (isValidFormat("yyyy/MM/dd", textField_4.getText(), Locale.ENGLISH) == false || isValidFormat("yyyy-MM-dd", textField_4.getText(), Locale.ENGLISH) == false ) {
+					if (isValidFormat("yyyy/MM/dd", textField_4.getText(), Locale.ENGLISH) == false && isValidFormat("yyyy-MM-dd", textField_4.getText(), Locale.ENGLISH) == false ) {
 						JOptionPane.showMessageDialog(null, "Bạn phải ngày sinh có dạng 'yyyy/MM/dd' hoặc 'yyyy-MM-dd'!");
 						return;
 					}

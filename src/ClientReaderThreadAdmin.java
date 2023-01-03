@@ -33,7 +33,9 @@ public class ClientReaderThreadAdmin extends Thread {
 	private JTable _tableListFriend;
 	private JTable _loginUserTable;
 	private AddScreen _addFrame;
-
+	private String[][] _groupMembers;
+	private String[][] _groupAdmins;
+	
 	public ClientReaderThreadAdmin(Socket socket, String username, JTable loginHTable, JTable userTable,
 			JTable groupTable, JTable tableListFriend, JTable loginUserTable, AddScreen addFrame) {
 
@@ -131,14 +133,50 @@ public class ClientReaderThreadAdmin extends Thread {
 					String msg = message[1];
 					ArrayList<String[]> tableData = new ArrayList<String[]>();
 					String[] rows = msg.split("_");
-					for (int i = 0; i < rows.length; i++) {
-						String[] cols = rows[i].split(",");
-						tableData.add(cols);
-						System.out.println("Row " + i + ": " + cols[0] + cols[1]);
+					for(int i = 0; i < rows.length; i++) {
+						 String[] cols = rows[i].split(",");
+						 tableData.add(cols);
+						 System.out.println("Row " + i + ": " + cols[0] + cols[1]);
 					}
-					String[] columnNames3 = { "Tên nhóm", "Thời gian tạo" };
+					String[] columnNames3 = { "Tên nhóm", "Thời gian tạo"};
 					String[][] tableValue = tableData.toArray(String[][]::new);
 					_groupChatTable.setModel(new DefaultTableModel(tableValue, columnNames3));
+					break;
+				}
+				case "admin_getGroupMemberList": {
+					String groupName = message[1];
+					String msg;
+					_groupMembers = null;
+					if(message.length == 3) msg = message[2];
+					else break;
+					ArrayList<String[]> tableData = new ArrayList<String[]>();
+					String[] rows = msg.split("_");
+					for(int i = 0; i < rows.length; i++) {
+						 String[] cols = rows[i].split(",");
+						 tableData.add(cols);
+						 System.out.println("Row " + i + ": " + cols[0] + cols[1]);
+					}
+					_groupMembers = tableData.toArray(String[][]::new);
+					break;
+				}
+				case "admin_getGroupAdminList": {
+					String groupName = message[1];
+					String msg;
+					_groupAdmins = null;
+					if(message.length == 3) {
+						msg = message[2];
+						ArrayList<String[]> tableData = new ArrayList<String[]>();
+						String[] rows = msg.split("_");
+						for(int i = 0; i < rows.length; i++) {
+							 String[] cols = rows[i].split(",");
+							 tableData.add(cols);
+							 System.out.println("Row " + i + ": " + cols[0] + cols[1]);
+						}
+						_groupAdmins = tableData.toArray(String[][]::new);
+					}
+					GroupDetails groupDetail = new GroupDetails(groupName, _groupMembers, _groupAdmins);
+					groupDetail.setLocationRelativeTo(null);
+					groupDetail.setVisible(true);
 					break;
 				}
 				case "admin_add_user":{
