@@ -194,7 +194,7 @@ public class ThreadServer extends Thread {
 
 									// Thread update list friend
 									updateListFriend();
-
+									
 									updateFriendRequest(this, _username);
 								}
 								break;
@@ -591,55 +591,215 @@ public class ThreadServer extends Thread {
 						// Update 2 row for sender and receiver in DB
 						Statement stmt = conn.createStatement();
 
-						String sql = "select ID_nhom from nhom;";
+						String sql = "select tennhom from nhom;";
+						ResultSet rs = stmt.executeQuery(sql);		
+						List<String> list = new ArrayList<>();
+
+						while(rs.next()){
+						   list.add(rs.getString("tennhom"));
+						}
+						
+						ThreadServer senderThread = listOnline.get(group_admin);
+						
+						if(list.contains(group_name)) {
+							server.sendMessageToAUser(senderThread,"change_group_name-Group existed");
+						}
+						else {
+
+							sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n"
+									+ "values('" + group_name + "', '', '" + date_created + "');";
+							stmt.executeUpdate(sql);
+
+							sql = "insert into thanhviennhom(id_nhom, username, isgroupadmin)\r\n"
+									+ "select n.id_nhom, '"+group_admin+"', '1'\r\n"
+									+ "from nhom as n\r\n"
+									+ "where n.tennhom = '"+group_name+"';";
+							stmt.executeUpdate(sql);
+
+							for (int i = 0; i < members.length; i++) {
+								sql = "insert into thanhviennhom(id_nhom, username, isgroupadmin)\r\n"
+										+ "select n.id_nhom, '"+members[i]+"', '0'\r\n"
+										+ "from nhom as n\r\n"
+										+ "where n.tennhom = '"+group_name+"';";
+								stmt.executeUpdate(sql);
+							}
+							server.sendMessageToAUser(senderThread,"create_group-Group " + group_name + " created!");
+
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
+				}
+				case "change_group_name": {
+					// Initial Data
+					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+					String group_member = data[1];
+					String current_group_name = data[2];
+					String new_group_name = data[3];
+					try {
+
+						Statement stmt = conn.createStatement();
+						String sql = "select tennhom from nhom;";
+						ResultSet rs = stmt.executeQuery(sql);					
+						List<String> list = new ArrayList<>();
+
+						while(rs.next()){
+						   list.add(rs.getString("tennhom"));
+						}
+						
+						ThreadServer senderThread = listOnline.get(group_member);
+						
+						if(list.contains(new_group_name)) {
+							server.sendMessageToAUser(senderThread,"change_group_name-Group name existed");
+						}
+						else {
+							sql = "update Nhom\r\n"
+									+ "set tennhom = '"+new_group_name+"'\r\n"
+									+ "where tennhom = '"+current_group_name+"';";
+							stmt.executeUpdate(sql);
+							server.sendMessageToAUser(senderThread,"change_group_name-Group name changed to " + new_group_name);
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
+				}
+				case "grant_admin": {
+					// Initial Data
+					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+					String group_member = data[1];
+					String current_group_name = data[2];
+					String new_admin = data[3];
+
+					try {
+						// Update Database
+						// Update 2 row for sender and receiver in DB
+						Statement stmt = conn.createStatement();
+
+						String sql = "SELECT tv.isgroupadmin FROM Nhom as N JOIN ThanhVienNhom as TV \r\n"
+								+ "						ON N.ID_nhom = TV.ID_nhom \r\n"
+								+ "						WHERE N.tennhom = '"+ current_group_name +"' and tv.username = '"+ group_member +"';";
+						ResultSet rs = stmt.executeQuery(sql);
+//						
+						String is_admin = "";
+						
+						if(rs.next()) {
+							is_admin = rs.getString("isgroupadmin");
+						}
+						else {
+							is_admin = "error";
+						}
+						
+						ThreadServer senderThread = listOnline.get(group_member);
+						
+						if(is_admin.equals("")) {					
+							server.sendMessageToAUser(senderThread,"grant_admin-User is not an admin!");
+						}
+						else if(is_admin.equals("1")) {
+							sql = "update thanhviennhom\r\n"
+									+ "set isgroupadmin = '1'\r\n"
+									+ "where username = '"+new_admin+"';";
+							stmt.executeUpdate(sql);
+							server.sendMessageToAUser(senderThread,"grant_admin-user "+new_admin+" is now an admin \nEndOfString");
+							
+						}
+						else {
+							server.sendMessageToAUser(senderThread,"grant_admin-Error: User not found!");
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
+				}
+				case "add_user_to_group": {
+					// Initial Data
+					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+					String group_member = data[1];
+					String current_group_name = data[2];
+					String new_user = data[3];
+
+					try {
+						// Update Database
+						// Update 2 row for sender and receiver in DB
+						Statement stmt = conn.createStatement();
+
+						String sql = "SELECT username FROM Nhom as N JOIN ThanhVienNhom as TV \r\n"
+								+ "						ON N.ID_nhom = TV.ID_nhom \r\n"
+								+ "						WHERE N.tennhom = '"+current_group_name+"';";
 						ResultSet rs = stmt.executeQuery(sql);
 						
 						List<String> list = new ArrayList<>();
 
 						while(rs.next()){
-						   list.add(rs.getString("ID_nhom"));
+						   list.add(rs.getString("username"));
 						}
 						
-						int ID_nhom;
+						ThreadServer senderThread = listOnline.get(group_member);
 						
-						do {
-							ID_nhom = Rndmbtwn(100, 999);
+						if(list.contains(new_user)) {					
+							server.sendMessageToAUser(senderThread,"add_user_to_group-User already exists in group!");
 						}
-						while(list.contains(Integer.toString(ID_nhom)));
-						
-						
-//						PreparedStatement pstmt;
-//						String sendermsgDB;
-						// String receivermsgDB;
-						// Get msg from sender DB
-//						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n" + "values \r\n" + 
-//								"('"+ID_nhom+"', '" + group_name + "', 'CREATION', '" + date_created + "');";
-//						stmt.executeUpdate(sql);
-						
-						 sql = "insert into nhom(Id_nhom, tennhom, tinnhan, ngaytaonhom)\r\n"
-								+ "values('"+ID_nhom+"', '" + group_name + "', '', '" + date_created + "');";
-						stmt.executeUpdate(sql);
-						
-						
-
-//						sql = "select ID_nhom from nhom where tennhom = '" + group_name + "';";
-//						ResultSet rs = stmt.executeQuery(sql);
-//
-//						int ID_nhom;
-//
-//						if (rs.next())
-//							ID_nhom = rs.getInt("ID_nhom");
-//						else
-//							ID_nhom = 0;
-
-						sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
-								+ ID_nhom + ", '" + group_admin + "', 1);";
-						stmt.executeUpdate(sql);
-
-						for (int i = 0; i < members.length; i++) {
-							sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
-									+ ID_nhom + ", '" + members[i] + "', 0);";
+						else {
+							sql = "insert into thanhviennhom(id_nhom, username, isgroupadmin)\r\n"
+									+ "select n.id_nhom, '"+new_user+"', '0'\r\n"
+									+ "from nhom as n\r\n"
+									+ "where n.tennhom = '"+current_group_name+"';";
 							stmt.executeUpdate(sql);
+							server.sendMessageToAUser(senderThread,"add_user_to_group-user "+new_user+" is now added to the group "+current_group_name+"\nEndOfString");
+							
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
+				}
+				case "remove_user_from_group": {
+					// Initial Data
+					HashMap<String, ThreadServer> listOnline = server.getUserThreads();
+					String group_member = data[1];
+					String current_group_name = data[2];
+					String user_to_remove = data[3];
+
+					try {
+						// Update Database
+						// Update 2 row for sender and receiver in DB
+						Statement stmt = conn.createStatement();
+
+						String sql = "SELECT tv.isgroupadmin FROM Nhom as N JOIN ThanhVienNhom as TV \r\n"
+								+ "						ON N.ID_nhom = TV.ID_nhom \r\n"
+								+ "						WHERE N.tennhom = '"+ current_group_name +"' and tv.username = '"+ group_member +"';";
+						ResultSet rs = stmt.executeQuery(sql);				
+						String is_admin = "";
+						
+						if(rs.next()) {
+							is_admin = rs.getString("isgroupadmin");
+						}
+						else {
+							is_admin = "error";
+						}
+						
+						ThreadServer senderThread = listOnline.get(group_member);
+						
+						if(is_admin.equals("0")) {					
+							server.sendMessageToAUser(senderThread,"remove_user_from_group-User is not an admin!");
+						}
+						else if(is_admin.equals("1")) {
+							sql = "delete from thanhviennhom \r\n"
+									+ "where username = '"+user_to_remove+"' and id_nhom = (select n.id_nhom \r\n"
+									+ "											from nhom as n \r\n"
+									+ "                                            where n.tennhom = '"+current_group_name+"');  ";
+							stmt.executeUpdate(sql);
+							server.sendMessageToAUser(senderThread,"remove_user_from_group-user "+user_to_remove+" is removed from group "+current_group_name+"\nEndOfString");
+							
 						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block

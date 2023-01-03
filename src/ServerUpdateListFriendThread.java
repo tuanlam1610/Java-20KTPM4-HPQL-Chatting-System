@@ -52,13 +52,13 @@ public class ServerUpdateListFriendThread extends Thread {
 				listFriendOnlAndGroup = listFriendOnlAndGroup.concat("-");
 				
 				// List Of Group -----------------------------------------------------------------------
-				query = "SELECT N.tennhom FROM Nhom as N JOIN ThanhVienNhom as TV "
+				query = "SELECT N.tennhom, N.ID_nhom FROM Nhom as N JOIN ThanhVienNhom as TV "
 						+ "ON N.ID_nhom = TV.ID_nhom "
 						+ "WHERE TV.username = '" + _username + "'";
 				rs = st.executeQuery(query);
 				
 				while (rs.next()) {
-					group = rs.getString(1).concat(",");
+					group = rs.getString(1).concat("#") + rs.getString(2).concat(",");
 					listFriendOnlAndGroup = listFriendOnlAndGroup.concat(group);
 				}
 				

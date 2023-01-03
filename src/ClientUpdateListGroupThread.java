@@ -1,8 +1,12 @@
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
 public class ClientUpdateListGroupThread extends Thread {
 	private JList<String> _listGroupUI;
+	public Map<String, String> Nhom_Map = new HashMap<>();
 	private String[] _listGroup;
 	private String _username;
 	
@@ -21,7 +25,9 @@ public class ClientUpdateListGroupThread extends Thread {
 		
 		if (_listGroup != null) {
 			for (String aGroup : _listGroup) {
-				lst.addElement(aGroup);
+				String[] Nhom_arr = aGroup.split("#");
+				Nhom_Map.put(Nhom_arr[1], Nhom_arr[0]);
+				lst.addElement(Nhom_arr[0]);
 			}
 		}
 				
