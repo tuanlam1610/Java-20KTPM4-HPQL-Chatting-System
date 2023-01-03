@@ -33,7 +33,7 @@ public class ClientReaderThread extends Thread {
 		this._socket = socket;
 		this._textArea = textArea;
 		this._listFriend = listFriend;
-		this._listGroup = listGroup;
+		this._listGroup = listGroup; 
 		this._listFriendRequest = listFriendRequest;
 		this._username = username;
 		this._stringTextArea = stringSearchTextArea;
@@ -79,7 +79,7 @@ public class ClientReaderThread extends Thread {
 					String[] lstFriend = null;
 					String[] lstGroup = null;
 					
-					if (message.length > 1 && message[1].split(",").length > 0) {
+					if (message.length > 1 && message[1] != "") {
 						lstFriend = Arrays.copyOfRange(message[1].split(","), 0, message[1].split(",").length);
 					}
 					
