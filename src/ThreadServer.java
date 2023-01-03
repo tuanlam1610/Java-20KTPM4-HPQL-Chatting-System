@@ -697,7 +697,7 @@ public class ThreadServer extends Thread {
 						
 						ThreadServer senderThread = listOnline.get(group_member);
 						
-						if(is_admin.equals("")) {					
+						if(is_admin.equals("0")) {					
 							server.sendMessageToAUser(senderThread,"grant_admin-User is not an admin!");
 						}
 						else if(is_admin.equals("1")) {
@@ -741,9 +741,21 @@ public class ThreadServer extends Thread {
 						   list.add(rs.getString("username"));
 						}
 						
+						sql = "select username from taikhoan where username = '"+new_user+"';";
+						rs = stmt.executeQuery(sql);
+						
+						boolean is_exists = false;
+						
+						if(rs.next()){
+							is_exists = true;
+						}
+						
 						ThreadServer senderThread = listOnline.get(group_member);
 						
-						if(list.contains(new_user)) {					
+						if(is_exists == false) {
+							server.sendMessageToAUser(senderThread,"add_user_to_group-User doesn't exist!");
+						}	
+						else if(list.contains(new_user)) {					
 							server.sendMessageToAUser(senderThread,"add_user_to_group-User already exists in group!");
 						}
 						else {
@@ -787,9 +799,23 @@ public class ThreadServer extends Thread {
 							is_admin = "error";
 						}
 						
+						sql = "SELECT username FROM Nhom as N JOIN ThanhVienNhom as TV \r\n"
+								+ "						ON N.ID_nhom = TV.ID_nhom \r\n"
+								+ "						WHERE N.tennhom = '"+current_group_name+"' and tv.username = '"+user_to_remove+"';";
+						rs = stmt.executeQuery(sql);
+						
+						boolean is_exists = false;
+						
+						if(rs.next()){
+							is_exists = true;
+						}
+						
 						ThreadServer senderThread = listOnline.get(group_member);
 						
-						if(is_admin.equals("0")) {					
+						if(is_exists == false) {
+							server.sendMessageToAUser(senderThread,"remove_user_from_group-User does not exists in group!");
+						}
+						else if(is_admin.equals("0")) {					
 							server.sendMessageToAUser(senderThread,"remove_user_from_group-User is not an admin!");
 						}
 						else if(is_admin.equals("1")) {
