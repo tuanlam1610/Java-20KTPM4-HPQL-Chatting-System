@@ -192,7 +192,13 @@ public class MainScreen extends JFrame {
 							user.setVisible(true);
 							dispose();
 						}
-					} else {
+					}
+					else if (data[0].equals("lock")){
+						usernameInput.setText(null);
+						passInput.setText(null);
+						JOptionPane.showMessageDialog(null, "Account is locked");
+					}
+					else {
 						usernameInput.setText(null);
 						passInput.setText(null);
 						JOptionPane.showMessageDialog(null, "Login fail!");
