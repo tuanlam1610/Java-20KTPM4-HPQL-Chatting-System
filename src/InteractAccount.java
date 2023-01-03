@@ -162,7 +162,7 @@ public class InteractAccount extends JFrame {
 		btnUpdate.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (isValidFormat("yyyy/MM/dd", textFieldDOB.getText(), Locale.ENGLISH) == false ||isValidFormat("yyyy-MM-dd", textFieldDOB.getText(), Locale.ENGLISH) == false ) {
+				if (isValidFormat("yyyy/MM/dd", textFieldDOB.getText(), Locale.ENGLISH) == false && isValidFormat("yyyy-MM-dd", textFieldDOB.getText(), Locale.ENGLISH) == false ) {
 					JOptionPane.showMessageDialog(null, "Ngày sinh phải có dạng 'yyyy/MM/dd' hoặc 'yyyy-MM-dd'!");
 					return;
 				}

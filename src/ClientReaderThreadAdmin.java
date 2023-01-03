@@ -182,22 +182,13 @@ public class ClientReaderThreadAdmin extends Thread {
 				case "admin_add_user":{
 					if (message[1].equals("Success")) {
 						JOptionPane.showMessageDialog(null, "Add successfully!");
-						_addFrame.setNull__textField_1();
-						_addFrame.setNull__textField_2();
-						_addFrame.setNull__textField_3();
-						_addFrame.setNull__textField_4();
-						_addFrame.setNull__textField_5();
-						_addFrame.setNull_password();
-						_addFrame.setVisible(false);
 					}
 					else {
 						if (message[2].equals("username")) {
 							JOptionPane.showMessageDialog(null, "Username existed!");
-							_addFrame.setNull__textField_1();
 						}
 						else {
 							JOptionPane.showMessageDialog(null, "Email existed!");
-							_addFrame.setNull__textField_5();
 						}
 						
 					}

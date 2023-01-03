@@ -78,7 +78,7 @@ public class ThreadServer extends Thread {
 								+ "', '" + data[2] + "', '" + data[3] + "', '" + data[4] + "', '"  + data[7] + "', false, current_timestamp());";
 						st.executeUpdate(query);
 						if (data[5].equals("") == false) {
-							query = "update taikhoan set diachi ='" + data[5] +"' where username ='" + data[1] + "';";
+							query = "update taikhoan set dob ='" + data[5] +"' where username ='" + data[1] + "';";
 							st.executeUpdate(query);
 						}
 						if (data[6].equals("") == false) {

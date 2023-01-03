@@ -49,22 +49,23 @@ public class AddScreen extends JFrame {
 	 * Create the frame.
 	 */
 	public void setNull__textField_1() {
-		textField.setText("");
+		System.out.println("hello");
+		this.textField.setText("");
 	}
 	public void setNull__textField_2() {
-		textField_2.setText("");
+		this.textField_2.setText("");
 	}
 	public void setNull__textField_3() {
-		textField_3.setText("");
+		this.textField_3.setText("");
 	}
 	public void setNull__textField_4() {
-		textField_4.setText("");
+		this.textField_4.setText("");
 	}
 	public void setNull__textField_5() {
-		textField_5.setText("");
+		this.textField_5.setText("");
 	}
 	public void setNull_password() {
-		passwordField.setText("");
+		this.passwordField.setText("");
 	}
 	
 	public static boolean isValidFormat(String format, String value, Locale locale) {
@@ -232,34 +233,6 @@ public class AddScreen extends JFrame {
 				}
 				pw.println("them_tai_khoan-" + textField.getText() + "-" + passwordField.getText() + "-" + textField_2.getText() + "-" +
 						 textField_5.getText() + "-" + textField_4.getText() + "-" + textField_3.getText() + "-" + gender);
-				BufferedReader reader;
-				InputStream input;
-				try {
-					input = clientSocket.getInputStream();
-					reader = new BufferedReader(new InputStreamReader(input));
-					String msg = reader.readLine();
-					System.out.println(msg);
-					String[] data = msg.split("-");
-					System.out.println(data);
-					if (data[0].equals("Success")) {
-						JOptionPane.showMessageDialog(null, "Add successfully!");
-						dispose();
-					}
-					else {
-						if (data[1].equals("username")) {
-							JOptionPane.showMessageDialog(null, "Username existed!");
-							textField.setText("");
-						}
-						else {
-							JOptionPane.showMessageDialog(null, "Email existed!");
-							textField_5.setText("");
-						}
-						
-					}
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 			}
 		});
 		btnAdd.setBounds(84, 269, 168, 21);
