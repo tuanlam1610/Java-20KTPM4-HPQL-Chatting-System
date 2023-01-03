@@ -174,6 +174,32 @@ public class ClientReaderThread extends Thread {
 					}
 					break;
 				}
+				case "create_group": {
+					String msg = message[1];
+//					String str = "";
+//					while((str = _reader.readLine())!= null) {
+//						if(!str.equals("EndOfString"))
+//							msg = msg + "\n" + str;
+//						else 
+//							break;
+//					}
+//					if(message.length > 2) {
+//					String senderName = message[1];
+//					//String receiverName = message[2];
+//					//System.out.println(msg);
+//					String selectedName = "";
+//					if(!(_listGroup.getSelectedValue() == null)) {
+//						selectedName = _listGroup.getSelectedValue().toString();
+//						//selectedName = selectedName.split(" ")[0];
+//					}
+//					if(selectedName.equals(senderName)) {
+//						_textArea.setText(msg);
+//					}
+//					}
+					JOptionPane.showMessageDialog(_textArea, message);
+					break;
+				}
+				
 				case "change_group_name": {
 					String msg = message[1];
 //					String str = "";

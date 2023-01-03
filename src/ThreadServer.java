@@ -529,55 +529,40 @@ public class ThreadServer extends Thread {
 						// Update 2 row for sender and receiver in DB
 						Statement stmt = conn.createStatement();
 
-						String sql = "select ID_nhom from nhom;";
-						ResultSet rs = stmt.executeQuery(sql);
-						
+						String sql = "select tennhom from nhom;";
+						ResultSet rs = stmt.executeQuery(sql);		
 						List<String> list = new ArrayList<>();
 
 						while(rs.next()){
-						   list.add(rs.getString("ID_nhom"));
+						   list.add(rs.getString("tennhom"));
 						}
 						
-						int ID_nhom;
+						ThreadServer senderThread = listOnline.get(group_admin);
 						
-						do {
-							ID_nhom = Rndmbtwn(100, 999);
+						if(list.contains(group_name)) {
+							server.sendMessageToAUser(senderThread,"change_group_name-Group existed");
 						}
-						while(list.contains(Integer.toString(ID_nhom)));
-						
-						
-//						PreparedStatement pstmt;
-//						String sendermsgDB;
-						// String receivermsgDB;
-						// Get msg from sender DB
-//						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n" + "values \r\n" + 
-//								"('"+ID_nhom+"', '" + group_name + "', 'CREATION', '" + date_created + "');";
-//						stmt.executeUpdate(sql);
-						
-						 sql = "insert into thanhviennhom(Id_nhom, usern)\r\n"
-								+ "values('"+ID_nhom+"', '" + group_name + "', '', '" + date_created + "');";
-						stmt.executeUpdate(sql);
-						
-						
+						else {
 
-//						sql = "select ID_nhom from nhom where tennhom = '" + group_name + "';";
-//						ResultSet rs = stmt.executeQuery(sql);
-//
-//						int ID_nhom;
-//
-//						if (rs.next())
-//							ID_nhom = rs.getInt("ID_nhom");
-//						else
-//							ID_nhom = 0;
-
-						sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
-								+ ID_nhom + ", '" + group_admin + "', 1);";
-						stmt.executeUpdate(sql);
-
-						for (int i = 0; i < members.length; i++) {
-							sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
-									+ ID_nhom + ", '" + members[i] + "', 0);";
+							sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n"
+									+ "values('" + group_name + "', '', '" + date_created + "');";
 							stmt.executeUpdate(sql);
+
+							sql = "insert into thanhviennhom(id_nhom, username, isgroupadmin)\r\n"
+									+ "select n.id_nhom, '"+group_admin+"', '1'\r\n"
+									+ "from nhom as n\r\n"
+									+ "where n.tennhom = '"+group_name+"';";
+							stmt.executeUpdate(sql);
+
+							for (int i = 0; i < members.length; i++) {
+								sql = "insert into thanhviennhom(id_nhom, username, isgroupadmin)\r\n"
+										+ "select n.id_nhom, '"+members[i]+"', '0'\r\n"
+										+ "from nhom as n\r\n"
+										+ "where n.tennhom = '"+group_name+"';";
+								stmt.executeUpdate(sql);
+							}
+							server.sendMessageToAUser(senderThread,"create_group-Group " + group_name + " created!");
+
 						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
@@ -592,38 +577,16 @@ public class ThreadServer extends Thread {
 					String group_member = data[1];
 					String current_group_name = data[2];
 					String new_group_name = data[3];
-//					String[] members = data[3].split(" ,");
-//					String date_created = data[4];
-
 					try {
-						// Update Database
-						// Update 2 row for sender and receiver in DB
-						Statement stmt = conn.createStatement();
 
+						Statement stmt = conn.createStatement();
 						String sql = "select tennhom from nhom;";
-						ResultSet rs = stmt.executeQuery(sql);
-//						
+						ResultSet rs = stmt.executeQuery(sql);					
 						List<String> list = new ArrayList<>();
 
 						while(rs.next()){
 						   list.add(rs.getString("tennhom"));
 						}
-//						
-//						int ID_nhom;
-//						
-//						do {
-//							ID_nhom = Rndmbtwn(100, 999);
-//						}
-//						while(list.contains(Integer.toString(ID_nhom)));
-//						
-//						
-////						PreparedStatement pstmt;
-////						String sendermsgDB;
-//						// String receivermsgDB;
-//						// Get msg from sender DB
-////						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n" + "values \r\n" + 
-////								"('"+ID_nhom+"', '" + group_name + "', 'CREATION', '" + date_created + "');";
-////						stmt.executeUpdate(sql);
 						
 						ThreadServer senderThread = listOnline.get(group_member);
 						
@@ -637,29 +600,6 @@ public class ThreadServer extends Thread {
 							stmt.executeUpdate(sql);
 							server.sendMessageToAUser(senderThread,"change_group_name-Group name changed to " + new_group_name);
 						}
-						
-						
-						
-
-//						sql = "select ID_nhom from nhom where tennhom = '" + group_name + "';";
-//						ResultSet rs = stmt.executeQuery(sql);
-//
-//						int ID_nhom;
-//
-//						if (rs.next())
-//							ID_nhom = rs.getInt("ID_nhom");
-//						else
-//							ID_nhom = 0;
-
-//						sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
-//								+ ID_nhom + ", '" + group_admin + "', 1);";
-//						stmt.executeUpdate(sql);
-//
-//						for (int i = 0; i < members.length; i++) {
-//							sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
-//									+ ID_nhom + ", '" + members[i] + "', 0);";
-//							stmt.executeUpdate(sql);
-//						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -673,8 +613,6 @@ public class ThreadServer extends Thread {
 					String group_member = data[1];
 					String current_group_name = data[2];
 					String new_admin = data[3];
-//					String[] members = data[3].split(" ,");
-//					String date_created = data[4];
 
 					try {
 						// Update Database
@@ -711,50 +649,6 @@ public class ThreadServer extends Thread {
 						else {
 							server.sendMessageToAUser(senderThread,"grant_admin-Error: User not found!");
 						}
-						
-//						while(rs.next()){
-//						   list.add(rs.getString("ID_nhom"));
-//						}
-//						
-//						int ID_nhom;
-//						
-//						do {
-//							ID_nhom = Rndmbtwn(100, 999);
-//						}
-//						while(list.contains(Integer.toString(ID_nhom)));
-//						
-//						
-////						PreparedStatement pstmt;
-////						String sendermsgDB;
-//						// String receivermsgDB;
-//						// Get msg from sender DB
-////						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n" + "values \r\n" + 
-////								"('"+ID_nhom+"', '" + group_name + "', 'CREATION', '" + date_created + "');";
-////						stmt.executeUpdate(sql);
-						
-						
-						
-						
-
-//						sql = "select ID_nhom from nhom where tennhom = '" + group_name + "';";
-//						ResultSet rs = stmt.executeQuery(sql);
-//
-//						int ID_nhom;
-//
-//						if (rs.next())
-//							ID_nhom = rs.getInt("ID_nhom");
-//						else
-//							ID_nhom = 0;
-
-//						sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
-//								+ ID_nhom + ", '" + group_admin + "', 1);";
-//						stmt.executeUpdate(sql);
-//
-//						for (int i = 0; i < members.length; i++) {
-//							sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
-//									+ ID_nhom + ", '" + members[i] + "', 0);";
-//							stmt.executeUpdate(sql);
-//						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -768,8 +662,6 @@ public class ThreadServer extends Thread {
 					String group_member = data[1];
 					String current_group_name = data[2];
 					String new_user = data[3];
-//					String[] members = data[3].split(" ,");
-//					String date_created = data[4];
 
 					try {
 						// Update Database
@@ -780,15 +672,6 @@ public class ThreadServer extends Thread {
 								+ "						ON N.ID_nhom = TV.ID_nhom \r\n"
 								+ "						WHERE N.tennhom = '"+current_group_name+"';";
 						ResultSet rs = stmt.executeQuery(sql);
-//						
-//						String is_exists = "";
-//						
-//						if(rs.next()) {
-//							is_exists = "1";
-//						}
-//						else {
-//							is_exists = "0";
-//						}
 						
 						List<String> list = new ArrayList<>();
 
@@ -810,50 +693,6 @@ public class ThreadServer extends Thread {
 							server.sendMessageToAUser(senderThread,"add_user_to_group-user "+new_user+" is now added to the group "+current_group_name+"\nEndOfString");
 							
 						}
-						
-//						while(rs.next()){
-//						   list.add(rs.getString("ID_nhom"));
-//						}
-//						
-//						int ID_nhom;
-//						
-//						do {
-//							ID_nhom = Rndmbtwn(100, 999);
-//						}
-//						while(list.contains(Integer.toString(ID_nhom)));
-//						
-//						
-////						PreparedStatement pstmt;
-////						String sendermsgDB;
-//						// String receivermsgDB;
-//						// Get msg from sender DB
-////						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n" + "values \r\n" + 
-////								"('"+ID_nhom+"', '" + group_name + "', 'CREATION', '" + date_created + "');";
-////						stmt.executeUpdate(sql);
-						
-						
-						
-						
-
-//						sql = "select ID_nhom from nhom where tennhom = '" + group_name + "';";
-//						ResultSet rs = stmt.executeQuery(sql);
-//
-//						int ID_nhom;
-//
-//						if (rs.next())
-//							ID_nhom = rs.getInt("ID_nhom");
-//						else
-//							ID_nhom = 0;
-
-//						sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
-//								+ ID_nhom + ", '" + group_admin + "', 1);";
-//						stmt.executeUpdate(sql);
-//
-//						for (int i = 0; i < members.length; i++) {
-//							sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
-//									+ ID_nhom + ", '" + members[i] + "', 0);";
-//							stmt.executeUpdate(sql);
-//						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -867,8 +706,6 @@ public class ThreadServer extends Thread {
 					String group_member = data[1];
 					String current_group_name = data[2];
 					String user_to_remove = data[3];
-//					String[] members = data[3].split(" ,");
-//					String date_created = data[4];
 
 					try {
 						// Update Database
@@ -878,8 +715,7 @@ public class ThreadServer extends Thread {
 						String sql = "SELECT tv.isgroupadmin FROM Nhom as N JOIN ThanhVienNhom as TV \r\n"
 								+ "						ON N.ID_nhom = TV.ID_nhom \r\n"
 								+ "						WHERE N.tennhom = '"+ current_group_name +"' and tv.username = '"+ group_member +"';";
-						ResultSet rs = stmt.executeQuery(sql);
-//						
+						ResultSet rs = stmt.executeQuery(sql);				
 						String is_admin = "";
 						
 						if(rs.next()) {
@@ -903,50 +739,6 @@ public class ThreadServer extends Thread {
 							server.sendMessageToAUser(senderThread,"remove_user_from_group-user "+user_to_remove+" is removed from group "+current_group_name+"\nEndOfString");
 							
 						}
-						
-//						while(rs.next()){
-//						   list.add(rs.getString("ID_nhom"));
-//						}
-//						
-//						int ID_nhom;
-//						
-//						do {
-//							ID_nhom = Rndmbtwn(100, 999);
-//						}
-//						while(list.contains(Integer.toString(ID_nhom)));
-//						
-//						
-////						PreparedStatement pstmt;
-////						String sendermsgDB;
-//						// String receivermsgDB;
-//						// Get msg from sender DB
-////						String sql = "insert into nhom(tennhom, tinnhan, ngaytaonhom)\r\n" + "values \r\n" + 
-////								"('"+ID_nhom+"', '" + group_name + "', 'CREATION', '" + date_created + "');";
-////						stmt.executeUpdate(sql);
-						
-						
-						
-						
-
-//						sql = "select ID_nhom from nhom where tennhom = '" + group_name + "';";
-//						ResultSet rs = stmt.executeQuery(sql);
-//
-//						int ID_nhom;
-//
-//						if (rs.next())
-//							ID_nhom = rs.getInt("ID_nhom");
-//						else
-//							ID_nhom = 0;
-
-//						sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
-//								+ ID_nhom + ", '" + group_admin + "', 1);";
-//						stmt.executeUpdate(sql);
-//
-//						for (int i = 0; i < members.length; i++) {
-//							sql = "insert into thanhviennhom(ID_nhom, username, isGroupAdmin)\r\n" + "values \r\n" + "("
-//									+ ID_nhom + ", '" + members[i] + "', 0);";
-//							stmt.executeUpdate(sql);
-//						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

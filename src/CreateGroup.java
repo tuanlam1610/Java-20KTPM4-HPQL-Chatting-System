@@ -290,8 +290,6 @@ public class CreateGroup extends JFrame {
 						sendmsg += "-" + dateandtime;
 //						System.out.println(sendmsg);
 						_pw.println(sendmsg);
-						JOptionPane.showMessageDialog(contentPane, "Successfully created group chat: "+grp_name+"!",
-					               "Warning", JOptionPane.WARNING_MESSAGE);
 						dispose();
 					}
 					else {

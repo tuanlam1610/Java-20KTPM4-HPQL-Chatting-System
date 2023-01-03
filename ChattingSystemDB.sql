@@ -32,7 +32,7 @@ Create table LoiMoiKetBan (
 );
 
 Create table Nhom (
-	ID_nhom char(3) ,
+	ID_nhom int auto_increment ,
     tennhom varchar(30) charset utf8mb4,
     tinnhan longtext,
     ngaytaonhom datetime,
@@ -40,7 +40,7 @@ Create table Nhom (
 );
 
 Create table ThanhVienNhom (
-	ID_nhom char(3),
+	ID_nhom int,
     username varchar(20),
     isGroupAdmin bool,
     primary key (ID_nhom, username)
@@ -113,7 +113,7 @@ values (1, "nnquang", true),
 	   (1, "htlam", false),
        (1, "tghuy", false),
        (1, "ntphu", false),
-       (1, "lhminh", true);
+       (1, "lhminh", false);
        -- (2, "nnquang", true),
 -- 	   (2, "htlam", false),
 --        (2, "tghuy", false),
