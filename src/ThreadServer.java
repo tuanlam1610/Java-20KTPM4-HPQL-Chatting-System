@@ -729,7 +729,7 @@ public class ThreadServer extends Thread {
 							
 						}
 						else {
-							server.sendMessageToAUser(senderThread,"grant_admin-Error: Input error!");
+							server.sendMessageToAUser(senderThread,"grant_admin-Error: User not found!");
 						}
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
