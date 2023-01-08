@@ -146,19 +146,21 @@ public class ThreadServer extends Thread {
 					try {
 						Statement st = conn.createStatement();
 						if (data[2].equals("") == false) {
-							String query = "update taikhoan set hoten ='" + data[2] +"';";
+							String query = "update taikhoan set hoten ='" + data[2] + "' where username = '" + data[1] + "';";
 							st.executeUpdate(query);
 						}
 						if (data[3].equals("") == false) {
-							String query = "update taikhoan set diachi ='" + data[3] +"';";
+							String query = "update taikhoan set diachi ='" + data[3] + "' where username = '" + data[1] + "';";
 							st.executeUpdate(query);
 						}
 						if (data[4].equals("") == false) {
-							String query = "update taikhoan set dob ='" + data[4] +"';";
+							String query = "update taikhoan set dob ='" + data[4] + "' where username = '" + data[1] + "';";
 							st.executeUpdate(query);
 						}
 						if (data[5].equals("") == false) {
-							String query = "update taikhoan set gioitinh ='" + data[5] +"';";
+							int gender = 0;
+							if (data[5].equals("Nam")) gender = 1;
+							String query = "update taikhoan set gioitinh ='" + gender + "' where username = '" + data[1] + "';";
 							st.executeUpdate(query);
 						}
 					} catch (SQLException e) {

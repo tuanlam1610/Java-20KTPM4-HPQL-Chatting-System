@@ -193,6 +193,7 @@ public class RegisterScreen extends JFrame {
 		btnRegister.setBorder(new LineBorder(new Color(102, 153, 255), 2));
 		btnRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String DOB = textField_2.getText();
 				if(txtUser.getText().equals("")||txtMail.getText().equals("")
 						||passwordField_1.getText().equals("")|| passwordField_2.getText().equals("") || textField.equals("")) {
 							// show message
@@ -202,6 +203,9 @@ public class RegisterScreen extends JFrame {
 						if (isValidFormat("yyyy/MM/dd", textField_2.getText(), Locale.ENGLISH) == false && isValidFormat("yyyy-MM-dd", textField_2.getText(), Locale.ENGLISH) == false ) {
 							JOptionPane.showMessageDialog(null, "Bạn phải ngày sinh có dạng 'yyyy/MM/dd' hoặc 'yyyy-MM-dd'!");
 							return;
+						}
+						else {
+							DOB = DOB.replace('-', '/');
 						}
 					}
 					OutputStream output = null;
@@ -218,7 +222,6 @@ public class RegisterScreen extends JFrame {
 					String re_password = passwordField_2.getText();
 					String hoten = textField.getText();
 					String diachi = textField_1.getText();
-					String ngaysinh = textField_2.getText();
 					
 					if(user.length() > 20) {
 						JOptionPane.showMessageDialog(Panel, "Tên đăng nhập có độ dài không quá 20.");
@@ -231,7 +234,7 @@ public class RegisterScreen extends JFrame {
 					}
 //					TO DO: Add query to check if account already exists in database.
 					else {
-						pw.println("register-" + user + "-" + password + "-" + hoten + "-" + mail + "-" + ngaysinh + "-" + diachi + "-" + gender);
+						pw.println("register-" + user + "-" + password + "-" + hoten + "-" + mail + "-" + DOB + "-" + diachi + "-" + gender);
 						
 						BufferedReader reader;
 						InputStream input;

@@ -234,6 +234,7 @@ public class AddScreen extends JFrame {
 		btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String DOB = textField_4.getText();
 				if (textField.getText().equals("") || textField_2.getText().equals("") || textField_5.getText().equals("") || passwordField.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, "Bạn phải nhập đầy đủ username, password, họ tên, email!");
 					return;
@@ -243,13 +244,16 @@ public class AddScreen extends JFrame {
 						JOptionPane.showMessageDialog(null, "Bạn phải ngày sinh có dạng 'yyyy/MM/dd' hoặc 'yyyy-MM-dd'!");
 						return;
 					}
+					else {
+						DOB = DOB.replace('-', '/');
+					}
 				}
 				if (isValidEmailAddress(textField_5.getText()) == false) {
 					JOptionPane.showMessageDialog(null, "Bạn phải nhập đúng định dạng email!");
 					return;
 				}
 				pw.println("them_tai_khoan-" + textField.getText() + "-" + passwordField.getText() + "-" + textField_2.getText() + "-" +
-						 textField_5.getText() + "-" + textField_4.getText() + "-" + textField_3.getText() + "-" + gender);
+						 textField_5.getText() + "-" + DOB + "-" + textField_3.getText() + "-" + gender);
 			}
 		});
 		btnAdd.setBounds(84, 269, 168, 21);

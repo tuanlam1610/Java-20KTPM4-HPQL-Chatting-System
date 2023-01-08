@@ -162,9 +162,13 @@ public class InteractAccount extends JFrame {
 		btnUpdate.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String DOB = textFieldDOB.getText();
 				if (isValidFormat("yyyy/MM/dd", textFieldDOB.getText(), Locale.ENGLISH) == false && isValidFormat("yyyy-MM-dd", textFieldDOB.getText(), Locale.ENGLISH) == false ) {
 					JOptionPane.showMessageDialog(null, "Ngày sinh phải có dạng 'yyyy/MM/dd' hoặc 'yyyy-MM-dd'!");
 					return;
+				}
+				else {
+					DOB = DOB.replace('-', '/');
 				}
 				String gender;
 				if (textFieldGender.getText().equalsIgnoreCase("Nam")) {
@@ -182,7 +186,7 @@ public class InteractAccount extends JFrame {
 						"Warning", dialogButton);
 				if (dialogResult == JOptionPane.YES_OPTION) {
 					pw.println("cap_nhat_tai_khoan-" + lblUsername_1.getText() + "-" + textFieldFullname.getText() + "-" + 
-							textFieldAddress.getText() + "-" + textFieldDOB.getText()+ "-" + gender);
+							textFieldAddress.getText() + "-" + DOB + "-" + gender);
 					JOptionPane.showMessageDialog(null, "Cập nhật thành công!");
 					dispose();
 				} else {
@@ -223,6 +227,12 @@ public class InteractAccount extends JFrame {
 		btnUnBlock.setBounds(290, 382, 100, 21);
 		contentPane.add(btnUnBlock);
 
+		JLabel lblEmail_1 = new JLabel(Email);
+		lblEmail_1.setHorizontalAlignment(SwingConstants.LEFT);
+		lblEmail_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblEmail_1.setBounds(114, 158, 200, 15);
+		contentPane.add(lblEmail_1);
+		
 		JButton btnResetPassword = new JButton("Khởi tạo lại mật khẩu");
 		btnResetPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnResetPassword.addActionListener(new ActionListener() {
@@ -231,13 +241,11 @@ public class InteractAccount extends JFrame {
 				int dialogResult = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn reset mật khẩu của tài khoản này chứ?",
 						"Warning", dialogButton);
 				if (dialogResult == JOptionPane.YES_OPTION) {
-					pw.println("doi_mat_khau_tai_khoan-" + lblUsername_1.getText());
+					pw.println("doi_mat_khau_tai_khoan-" + lblUsername_1.getText() + "-" + lblEmail_1.getText());
 					JOptionPane.showMessageDialog(null, "Đổi mật khẩu của tài khoản thành công!\nMật khẩu mới đã được gửi đến email của người dùng.");
 				} else {
 					return;
 				}
-				JOptionPane.showMessageDialog(null,
-						"Reset password succesfully!\nNew password was send to email for user.");
 				dispose();
 			}
 		});
@@ -248,12 +256,6 @@ public class InteractAccount extends JFrame {
 		textFieldDOB.setText(DOB);
 		
 		lblUsername_1.setText(username);
-
-		JLabel lblEmail_1 = new JLabel(Email);
-		lblEmail_1.setHorizontalAlignment(SwingConstants.LEFT);
-		lblEmail_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblEmail_1.setBounds(114, 158, 200, 15);
-		contentPane.add(lblEmail_1);
 		
 		textFieldGender = new JTextField();
 		textFieldGender.setText(Gender);
