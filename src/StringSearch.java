@@ -107,7 +107,7 @@ public class StringSearch extends JFrame {
 		lblNewLabel.setBounds(31, 0, 156, 33);
 		contentPane.add(lblNewLabel);
 		
-		JLabel lblNewLabel_1 = new JLabel("from Username/Group name:");
+		JLabel lblNewLabel_1 = new JLabel("from Username:");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblNewLabel_1.setBounds(31, 350, 198, 25);
 		contentPane.add(lblNewLabel_1);
