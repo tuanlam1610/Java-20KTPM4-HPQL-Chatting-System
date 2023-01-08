@@ -180,13 +180,13 @@ public class MainScreen extends JFrame {
 					String[] data = msg.split("-");
 					if (data[0].equals("logined")) {
 						if (data[1].equals("1")) {
-							JOptionPane.showMessageDialog(null, "Login successfully!");
+							JOptionPane.showMessageDialog(null, "Đăng nhập thành công!");
 							AdminMainScreen admin = new AdminMainScreen(clientSocket, pw, usernameInput.getText());
 							admin.setLocationRelativeTo(null);
 							admin.setVisible(true);
 							dispose();
 						} else {
-							JOptionPane.showMessageDialog(null, "Login successfully!");
+							JOptionPane.showMessageDialog(null, "Đăng nhập thành công!");
 							UserMainScreen user = new UserMainScreen(clientSocket, pw, usernameInput.getText());
 							user.setLocationRelativeTo(null);
 							user.setVisible(true);
@@ -196,12 +196,12 @@ public class MainScreen extends JFrame {
 					else if (data[0].equals("lock")){
 						usernameInput.setText(null);
 						passInput.setText(null);
-						JOptionPane.showMessageDialog(null, "Account is locked");
+						JOptionPane.showMessageDialog(null, "Tài khoản đã bị khóa!");
 					}
 					else {
 						usernameInput.setText(null);
 						passInput.setText(null);
-						JOptionPane.showMessageDialog(null, "Login fail!");
+						JOptionPane.showMessageDialog(null, "Tài khoản hoặc mật khẩu không đúng!");
 					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
@@ -308,13 +308,15 @@ public class MainScreen extends JFrame {
 					String msg = reader.readLine();
 					String[] data = msg.split("-");
 					if (data[0].equals("Success")) {
-						JOptionPane.showMessageDialog(null, "Your new password was sent to your email!");
+						JOptionPane.showMessageDialog(null, "Mật khẩu mới đã được gửi đến email của bạn!");
+						textField.setText(null);
+						textField_1.setText(null);
 						reset_desktopPane.setVisible(false);
 						login_desktopPane.setVisible(true);
 					} else {
 						textField.setText(null);
 						textField_1.setText(null);
-						JOptionPane.showMessageDialog(null, "Your username or email is not match!");
+						JOptionPane.showMessageDialog(null, "Tên đăng nhập hoặc email của bạn không đúng!");
 					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block

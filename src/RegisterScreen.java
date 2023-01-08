@@ -18,6 +18,8 @@ import java.awt.CardLayout;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -327,6 +329,10 @@ public class RegisterScreen extends JFrame {
 		radioBtn2.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		radioBtn2.setBounds(409, 354, 103, 21);
 		Panel.add(radioBtn2);
+		
+		ButtonGroup bg = new ButtonGroup();
+        bg.add(radioBtn1);
+        bg.add(radioBtn2);
 		
 		textField = new JTextField();
 		textField.setHorizontalAlignment(SwingConstants.LEFT);
