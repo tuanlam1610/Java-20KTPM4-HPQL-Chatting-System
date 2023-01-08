@@ -832,17 +832,14 @@ public class ThreadServer extends Thread {
 							is_exists = true;
 						}
 						
-						
-						
+						List<String> list = new ArrayList<>();
 						
 						
 						ThreadServer senderThread = listOnline.get(group_member);
 						
 						
 						
-						if(user_to_remove.equals(group_member)) {
-							server.sendMessageToAUser(senderThread,"remove_user_from_group!");
-						}
+						
 						
 						if(is_exists == false) {
 							server.sendMessageToAUser(senderThread,"remove_user_from_group-User does not exists in group!");
@@ -851,31 +848,70 @@ public class ThreadServer extends Thread {
 							server.sendMessageToAUser(senderThread,"remove_user_from_group-User is not an admin!");
 						}
 						else if(is_admin.equals("1")) {
-							sql = "delete from thanhviennhom \r\n"
-									+ "where username = '"+user_to_remove+"' and id_nhom = (select n.id_nhom \r\n"
-									+ "											from nhom as n \r\n"
-									+ "                                            where n.tennhom = '"+current_group_name+"');  ";
-							stmt.executeUpdate(sql);
 							
-							sql = "SELECT username FROM Nhom as N JOIN ThanhVienNhom as TV \r\n"
-									+ "						ON N.ID_nhom = TV.ID_nhom \r\n"
-									+ "						WHERE N.tennhom = '"+current_group_name+"';";
-							rs = stmt.executeQuery(sql);
-							
-							List<String> list = new ArrayList<>();
+							if(user_to_remove.equals(group_member)) {
+								sql = "delete from thanhviennhom \r\n"
+										+ "where username = '"+user_to_remove+"' and id_nhom = (select n.id_nhom \r\n"
+										+ "											from nhom as n \r\n"
+										+ "                                            where n.tennhom = '"+current_group_name+"');  ";
+								stmt.executeUpdate(sql);
+								
+								sql = "SELECT username FROM Nhom as N JOIN ThanhVienNhom as TV \r\n"
+										+ "						ON N.ID_nhom = TV.ID_nhom \r\n"
+										+ "						WHERE N.tennhom = '"+current_group_name+"';";
+								rs = stmt.executeQuery(sql);
+								
+								
 
-							while(rs.next()){
-							   list.add(rs.getString("username"));
+								while(rs.next()){
+								   list.add(rs.getString("username"));
+								}
+								
+								if(list.size() > 0) {
+									int Random_User= Rndmbtwn(1, list.size());
+									
+									sql = "update thanhviennhom\r\n"
+											+ "set isgroupadmin = '1'\r\n"
+											+ "where username = '"+list.get(Random_User)+"';";
+									stmt.executeUpdate(sql);
+									
+									server.sendMessageToAUser(senderThread,"remove_user_from_group-user "+user_to_remove+" is removed from group, "+list.get(Random_User)+" is now the admin "+current_group_name+"\nEndOfString");
+								}
+								
+								else {
+									
+									
+									sql = "delete from nhom where tennhom = '"+current_group_name+"';";
+									stmt.executeUpdate(sql);
+									
+									server.sendMessageToAUser(senderThread,"remove_user_from_group-All user is removed from group, "+current_group_name+" is now deleted \nEndOfString");
+								}
 							}
-							
-							int Random_User= Rndmbtwn(1, list.size());
-							
-							sql = "update thanhviennhom\r\n"
-									+ "set isgroupadmin = '1'\r\n"
-									+ "where username = '"+list.get(Random_User)+"';";
-							stmt.executeUpdate(sql);
-							
-							server.sendMessageToAUser(senderThread,"remove_user_from_group-user "+user_to_remove+" is removed from group, "+list.get(Random_User)+" is now the admin "+current_group_name+"\nEndOfString");
+							else {
+								sql = "delete from thanhviennhom \r\n"
+										+ "where username = '"+user_to_remove+"' and id_nhom = (select n.id_nhom \r\n"
+										+ "											from nhom as n \r\n"
+										+ "                                            where n.tennhom = '"+current_group_name+"');  ";
+								stmt.executeUpdate(sql);
+								server.sendMessageToAUser(senderThread,"remove_user_from_group-user "+user_to_remove+" is removed from group "+current_group_name+"\nEndOfString");
+								
+								sql = "SELECT username FROM Nhom as N JOIN ThanhVienNhom as TV \r\n"
+										+ "						ON N.ID_nhom = TV.ID_nhom \r\n"
+										+ "						WHERE N.tennhom = '"+current_group_name+"';";
+								rs = stmt.executeQuery(sql);
+
+								while(rs.next()){
+								   list.add(rs.getString("username"));
+								}
+								
+								if(list.size() <= 0) {
+									sql = "delete from nhom where tennhom = '"+current_group_name+"';";
+									stmt.executeUpdate(sql);
+									
+									server.sendMessageToAUser(senderThread,"remove_user_from_group-All user is removed from group, "+current_group_name+" is now deleted \nEndOfString");
+								}
+								
+							}
 							
 						}
 					} catch (SQLException e) {
