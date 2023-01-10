@@ -23,6 +23,7 @@ public class GroupDetails extends JFrame {
 	private String[][] _admins;
 	private String _groupName;
 	public GroupDetails(String GroupName, String[][] members, String[][] admins) {
+		this._groupName = GroupName;
 		this._members = members;
 		this._admins = admins;
 		setTitle("Danh Sách Thành Viên (" + _groupName + ")");

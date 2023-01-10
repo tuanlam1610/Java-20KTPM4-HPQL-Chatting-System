@@ -117,7 +117,6 @@ public class UserMainScreen extends JFrame {
 		JScrollPane scrollPaneFriendRequest = new JScrollPane();
 		JLabel lblUser = new JLabel(_username);
 		JLabel lblOnl = new JLabel("(Online)");
-		JButton userInfoBtn = new JButton("Thông tin cá nhân");
 		JButton btnSENDMSG = new JButton("GỬI");
 
 		// Container stores message
@@ -278,12 +277,6 @@ public class UserMainScreen extends JFrame {
 		btnDangXuat.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btnDangXuat.setBounds(243, 34, 97, 32);
 		userInfoPane.add(btnDangXuat);
-
-		// Button View Personal Information
-		userInfoBtn.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		userInfoBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-		userInfoBtn.setBounds(99, 34, 134, 32);
-		userInfoPane.add(userInfoBtn);
 
 		// Button Send Message
 		btnSENDMSG.setFont(new Font("Tahoma", Font.PLAIN, 20));
